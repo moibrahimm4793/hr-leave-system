@@ -69,7 +69,6 @@
             <div class="input-group">
                 <div class="form-field">
                     <label>كود الموظف (Staff No)</label>
-                    <!-- ✅ Text Box عادي بدون اقتراحات -->
                     <input type="text" id="staffId" placeholder="مثال: 5233">
                 </div>
                 <div class="form-field">
@@ -195,24 +194,40 @@
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz2RNWZ7ABzjqXBoxSXi-6eYyed1DTid0eNxJGRWtfJYbYvCfHij88PV6uuHoXxJUao/exec';
         let employees = [];
 
-        // ✅ دالة جلب الموظفين (بتتنادى لما نضغط على الزرار)
-        async function loadEmployees() {
-            try {
-                const response = await fetch(GOOGLE_SCRIPT_URL + '?action=getEmployees', {
-                    method: 'GET',
-                    cache: 'no-store'
-                });
-                if (!response.ok) throw new Error('HTTP ' + response.status);
-                const data = await response.json();
-                if (data.error) throw new Error(data.error);
-                employees = Array.isArray(data) ? data : [];
-                console.log('✅ تم تحميل ' + employees.length + ' موظف');
-                return true;
-            } catch (err) {
-                console.error('❌ خطأ:', err.message);
-                employees = [];
-                return false;
-            }
+        // ✅ تحميل الموظفين باستخدام JSONP
+        function loadEmployees() {
+            return new Promise((resolve) => {
+                const callbackName = 'jsonpCb_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
+                
+                window[callbackName] = function(data) {
+                    employees = Array.isArray(data) ? data : [];
+                    console.log('✅ تم تحميل ' + employees.length + ' موظف');
+                    cleanup();
+                    resolve(true);
+                };
+                
+                function cleanup() {
+                    if (script && script.parentNode) script.parentNode.removeChild(script);
+                    try { delete window[callbackName]; } catch(e) {}
+                }
+                
+                const timeout = setTimeout(function() {
+                    console.error('❌ Timeout: مفيش رد من السكريبت');
+                    cleanup();
+                    resolve(false);
+                }, 15000);
+                
+                const script = document.createElement('script');
+                script.src = GOOGLE_SCRIPT_URL + '?action=getEmployees&callback=' + callbackName;
+                script.onerror = function() {
+                    console.error('❌ فشل تحميل الموظفين');
+                    clearTimeout(timeout);
+                    cleanup();
+                    resolve(false);
+                };
+                
+                document.body.appendChild(script);
+            });
         }
 
         function calculateDays() {
@@ -233,7 +248,6 @@
         }
         function formatDayName(d) { return d.toLocaleDateString('en-US', { weekday: 'long' }); }
 
-        // ✅ دالة عرض النموذج (بتجيب البيانات وقت الضغط)
         async function generateForm() {
             const start = document.getElementById('startDate').value;
             const end = document.getElementById('endDate').value;
@@ -261,7 +275,6 @@
 
             if (!window.hasSignatureDrawn()) { alert('⚠️ ارفع صورة التوقيع'); return; }
 
-            // لو مفيش موظفين متحملين، نجيبهم دلوقتي
             if (employees.length === 0) {
                 const btn = document.getElementById('btnGenerate');
                 btn.disabled = true; btn.innerText = '⏳ جاري تحميل البيانات...';
@@ -354,30 +367,60 @@
                 }
             });
 
-            try {
-                const payload = {
-                    employeeName: document.getElementById('outName').innerText,
-                    staffId: staffId,
-                    title: employee.title,
-                    email: employee.email || '',
-                    fromDate: document.getElementById('outFromDate').innerText,
-                    toDate: document.getElementById('outToDate').innerText,
-                    returnDate: document.getElementById('outResumeDate2').innerText,
-                    totalDays: document.getElementById('totalDaysDisplay').innerText,
-                    type: mainType,
-                    reason: breakdown.join(' | '),
-                    managerEmail: employee.managerEmail,
-                    signature: window.getSignatureDataURL()
-                };
-                await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify(payload)
-                });
-                alert('✅ تم إرسال الطلب للمدير بنجاح!');
-            } catch (err) { alert('خطأ: ' + err.message); }
-            finally { btn.disabled = false; btn.innerText = '📤 إرسال للمدير'; }
+            const payload = {
+                employeeName: document.getElementById('outName').innerText,
+                staffId: staffId,
+                title: employee.title,
+                email: employee.email || '',
+                fromDate: document.getElementById('outFromDate').innerText,
+                toDate: document.getElementById('outToDate').innerText,
+                returnDate: document.getElementById('outResumeDate2').innerText,
+                totalDays: document.getElementById('totalDaysDisplay').innerText,
+                type: mainType,
+                reason: breakdown.join(' | '),
+                managerEmail: employee.managerEmail,
+                signature: window.getSignatureDataURL()
+            };
+
+            // ✅ إرسال عن طريق iframe (form submission) عشان نتجنب CORS
+            const iframeName = 'submitFrame_' + Date.now();
+            const iframe = document.createElement('iframe');
+            iframe.name = iframeName;
+            iframe.style.display = 'none';
+            document.body.appendChild(iframe);
+
+            const form = document.createElement('form');
+            form.action = GOOGLE_SCRIPT_URL;
+            form.method = 'POST';
+            form.target = iframeName;
+            form.style.display = 'none';
+
+            for (const key in payload) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = payload[key];
+                form.appendChild(input);
+            }
+
+            document.body.appendChild(form);
+
+            iframe.onload = function() {
+                setTimeout(function() {
+                    try { document.body.removeChild(form); } catch(e) {}
+                    try { document.body.removeChild(iframe); } catch(e) {}
+                    alert('✅ تم إرسال الطلب للمدير بنجاح!');
+                    btn.disabled = false; btn.innerText = '📤 إرسال للمدير';
+                }, 500);
+            };
+
+            form.submit();
+
+            setTimeout(function() {
+                if (btn.disabled) {
+                    btn.disabled = false; btn.innerText = '📤 إرسال للمدير';
+                }
+            }, 20000);
         }
 
         let signatureDataUrl = "";
