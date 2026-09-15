@@ -62,9 +62,7 @@
             .input-panel { display: none !important; }
         }
 
-        /* ============================================================
-           ✅ wrapper الفورم + Zoom on Tap
-           ============================================================ */
+        /* ✅ wrapper الفورم + Zoom on Tap */
         .form-scaler {
             position: relative;
             background: #fff;
@@ -108,9 +106,7 @@
             50% { opacity: 1; }
         }
 
-        /* ============================================================
-           ✅ تحسين العرض على الموبايل
-           ============================================================ */
+        /* ✅ تحسين العرض على الموبايل */
         @media (max-width: 768px) {
             body { padding: 10px 5px; }
             .container { max-width: 100%; padding: 0 5px; }
@@ -122,6 +118,34 @@
             #btnGenerate, #btnPrint, #btnSave, #btnSend { font-size: 14px; padding: 12px 16px; }
             #btnPrint, #btnSave { width: 100% !important; margin-right: 0 !important; margin-bottom: 6px; }
         }
+
+        /* ✅ رسالة النجاح */
+        .success-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            animation: fadeIn 0.3s ease;
+        }
+        .success-box {
+            background: white;
+            padding: 40px 50px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: scaleIn 0.4s ease;
+            max-width: 90%;
+        }
+        .success-box .icon { font-size: 70px; margin-bottom: 15px; animation: bounceIn 0.6s ease; }
+        .success-box h2 { color: #10b981; margin: 0 0 10px; font-size: 24px; }
+        .success-box p { color: #6b7280; margin: 5px 0; font-size: 14px; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes scaleIn { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes bounceIn { 0% { transform: scale(0); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
@@ -172,7 +196,6 @@
             <span id="errorMsg" class="error-msg"></span>
         </div>
 
-        <!-- ✅ wrapper الفورم -->
         <div class="form-scaler" id="formScaler">
         <div id="leaveForm">
             <table class="header-table">
@@ -387,8 +410,8 @@
     </div>
 
     <script>
-        // ✅ الرابط الحالي
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxTI6hbUsGdM5RDZUVuoE2HaprxTza7hzHIc-XyzCJUxV_cPAzCIPNc1SgBszcdB3C0/exec';
+        // ✅ الرابط الجديد
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxuyWUtLm6uWcVlVAdMUUA2qXEOa0_Yuy8zdybsgQopF99aVJn2-p6HxwY6K4CWVeip/exec';
         const STAFF_SHEET_ID = '1awfrTyQYv3tJhTsBGagjYJgZdHsKlIvug6hvK_oCAR0';
         const STAFF_SHEET_NAME = 'Staff List';
         
@@ -518,7 +541,6 @@
             document.getElementById('btnSend').style.display = 'inline-block';
             document.getElementById('errorMsg').innerText = "";
 
-            // ✅ بعد ما الفورم تظهر، عدّل الحجم
             setTimeout(function() {
                 adjustFormScale();
                 setupZoomListener();
@@ -595,7 +617,6 @@
             };
 
             console.log('📤 جاري إرسال الطلب...');
-            console.log('📏 حجم التوقيع: ' + Math.round(payload.signature.length / 1024) + ' KB');
 
             try {
                 await fetch(GOOGLE_SCRIPT_URL, {
@@ -605,13 +626,70 @@
                     body: JSON.stringify(payload)
                 });
                 console.log('✅ تم إرسال الطلب');
-                alert('✅ تم إرسال الطلب للمدير بنجاح!');
+                showSuccessMessage();
             } catch (err) {
                 console.error('❌ خطأ في الإرسال:', err);
                 alert('❌ فشل الإرسال: ' + err.message);
-            } finally {
                 btn.disabled = false; btn.innerText = '📤 إرسال للمدير';
             }
+        }
+
+        // ✅ رسالة النجاح المنسقة
+        function showSuccessMessage() {
+            const overlay = document.createElement('div');
+            overlay.className = 'success-overlay';
+            overlay.id = 'successOverlay';
+            overlay.innerHTML = `
+                <div class="success-box">
+                    <div class="icon">✅</div>
+                    <h2>تم الإرسال بنجاح!</h2>
+                    <p>تم إرسال طلب الإجازة للمدير</p>
+                    <p style="font-size:12px;color:#9ca3af;margin-top:15px;">سيتم إغلاق الفورم تلقائياً...</p>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+
+            setTimeout(function() {
+                overlay.style.transition = 'opacity 0.4s';
+                overlay.style.opacity = '0';
+                setTimeout(function() {
+                    overlay.remove();
+                    closeFormAfterSend();
+                }, 400);
+            }, 2000);
+        }
+
+        // ✅ إغلاق الفورم بعد الإرسال
+        function closeFormAfterSend() {
+            document.getElementById('leaveForm').style.display = 'none';
+            document.getElementById('btnPrint').style.display = 'none';
+            document.getElementById('btnSave').style.display = 'none';
+            document.getElementById('btnSend').style.display = 'none';
+            document.getElementById('btnSend').disabled = false;
+            document.getElementById('btnSend').innerText = '📤 إرسال للمدير';
+            
+            document.getElementById('staffId').value = '';
+            document.getElementById('startDate').value = '';
+            document.getElementById('endDate').value = '';
+            document.getElementById('totalDaysBox').style.display = 'none';
+            document.getElementById('splitArea').style.display = 'none';
+            
+            const types = ["annual","weekend","withoutPay","maternity","sick","injury","rr","compassionate","paternity"];
+            types.forEach(t => {
+                const input = document.getElementById('split_' + t);
+                if (input) input.value = 0;
+            });
+            
+            clearSignature();
+            
+            const scaler = document.getElementById('formScaler');
+            if (scaler) {
+                scaler.classList.remove('zoomed');
+                scaler.style.height = '';
+                scaler.style.overflow = '';
+            }
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         let signatureDataUrl = "";
@@ -644,9 +722,7 @@
         window.hasSignatureDrawn = () => !!signatureDataUrl;
         window.getSignatureDataURL = () => signatureDataUrl;
 
-        // ============================================================
-        //  ✅ تصغير الفورم + Zoom on Tap
-        // ============================================================
+        // ✅ تصغير الفورم + Zoom on Tap
         function adjustFormScale() {
             const form = document.getElementById('leaveForm');
             const scaler = document.getElementById('formScaler');
