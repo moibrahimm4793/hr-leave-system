@@ -69,8 +69,8 @@
             <div class="input-group">
                 <div class="form-field">
                     <label>كود الموظف (Staff No)</label>
-                    <input type="text" id="staffId" placeholder="مثال: 5233" list="staffList">
-                    <datalist id="staffList"></datalist>
+                    <!-- ✅ تم شيل list="staffList" عشان تبقى Text Box عادي -->
+                    <input type="text" id="staffId" placeholder="مثال: 5233">
                 </div>
                 <div class="form-field">
                     <label>تاريخ البداية (From)</label>
@@ -212,16 +212,10 @@
                 employees = [];
                 alert('⚠️ فشل تحميل الموظفين: ' + err.message);
             }
-            fillDatalist();
+            // ✅ تم شيل fillDatalist() من هنا
         }
 
-        function fillDatalist() {
-            const dl = document.getElementById('staffList');
-            if (!dl) return;
-            dl.innerHTML = employees.map(e =>
-                `<option value="${e.code}">${e.name} - ${e.title}</option>`
-            ).join('');
-        }
+        // ✅ تم شيل دالة fillDatalist() بالكامل
 
         window.addEventListener('DOMContentLoaded', loadEmployees);
 
@@ -318,7 +312,6 @@
             finally { clone.remove(); }
         }
 
-        // ✅ sendToManager بعد التعديل - بتبعت تفاصيل كل أنواع الإجازات
         async function sendToManager() {
             const staffId = document.getElementById('staffId').value.trim();
             const employee = employees.find(emp => String(emp.code) === String(staffId));
@@ -329,7 +322,6 @@
             const btn = document.getElementById('btnSend');
             btn.disabled = true; btn.innerText = '⏳ جاري الإرسال...';
 
-            // تجميع تفاصيل أنواع الإجازات
             const types = ["annual","weekend","withoutPay","maternity","sick","injury","rr","compassionate","paternity"];
             const typeLabels = {
                 annual: "Annual", weekend: "Weekend", withoutPay: "Without Pay",
