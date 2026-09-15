@@ -191,42 +191,71 @@
     </div>
 
     <script>
+        // ✅ رابط السكريبت (لإرسال الطلبات فقط)
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz2RNWZ7ABzjqXBoxSXi-6eYyed1DTid0eNxJGRWtfJYbYvCfHij88PV6uuHoXxJUao/exec';
+        
+        // ✅ بيانات شيت الموظفين (لتحميل البيانات مباشرة)
+        const STAFF_SHEET_ID = '1awfrTyQYv3tJhTsBGagjYJgZdHsKlIvug6hvK_oCAR0';
+        const STAFF_SHEET_NAME = 'Staff List';
+        
         let employees = [];
 
-        // ✅ تحميل الموظفين باستخدام JSONP
+        // ✅ تحميل الموظفين مباشرة من Google Sheets (بدون CORS)
         function loadEmployees() {
             return new Promise((resolve) => {
-                const callbackName = 'jsonpCb_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
+                const callbackName = 'gvizCb_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
                 
-                window[callbackName] = function(data) {
-                    employees = Array.isArray(data) ? data : [];
-                    console.log('✅ تم تحميل ' + employees.length + ' موظف');
-                    cleanup();
-                    resolve(true);
+                // Google Visualization API - يدعم JSONP حقيقي
+                const url = 'https://docs.google.com/spreadsheets/d/' + STAFF_SHEET_ID + 
+                            '/gviz/tq?tqx=responseHandler:' + callbackName + 
+                            '&sheet=' + encodeURIComponent(STAFF_SHEET_NAME);
+                
+                window[callbackName] = function(response) {
+                    try {
+                        const rows = response.table.rows;
+                        employees = rows.map(row => ({
+                            code: row.c[0] ? row.c[0].v : '',
+                            name: row.c[1] ? row.c[1].v : '',
+                            email: row.c[2] ? row.c[2].v : '',
+                            managerEmail: row.c[3] ? row.c[3].v : '',
+                            title: row.c[4] ? row.c[4].v : ''
+                        })).filter(e => e.code);
+                        
+                        console.log('✅ تم تحميل ' + employees.length + ' موظف');
+                        
+                        const script = document.getElementById(callbackName);
+                        if (script) script.remove();
+                        try { delete window[callbackName]; } catch(e) {}
+                        
+                        resolve(true);
+                    } catch (err) {
+                        console.error('❌ خطأ في معالجة البيانات:', err);
+                        resolve(false);
+                    }
                 };
                 
-                function cleanup() {
-                    if (script && script.parentNode) script.parentNode.removeChild(script);
-                    try { delete window[callbackName]; } catch(e) {}
-                }
-                
-                const timeout = setTimeout(function() {
-                    console.error('❌ Timeout: مفيش رد من السكريبت');
-                    cleanup();
-                    resolve(false);
-                }, 15000);
-                
                 const script = document.createElement('script');
-                script.src = GOOGLE_SCRIPT_URL + '?action=getEmployees&callback=' + callbackName;
+                script.id = callbackName;
+                script.src = url;
                 script.onerror = function() {
-                    console.error('❌ فشل تحميل الموظفين');
-                    clearTimeout(timeout);
-                    cleanup();
+                    console.error('❌ فشل تحميل الموظفين - تأكد إن الشيت public');
+                    const s = document.getElementById(callbackName);
+                    if (s) s.remove();
+                    try { delete window[callbackName]; } catch(e) {}
                     resolve(false);
                 };
                 
                 document.body.appendChild(script);
+                
+                setTimeout(function() {
+                    if (window[callbackName]) {
+                        console.warn('⏱️ Timeout في تحميل الموظفين');
+                        const s = document.getElementById(callbackName);
+                        if (s) s.remove();
+                        try { delete window[callbackName]; } catch(e) {}
+                        resolve(false);
+                    }
+                }, 15000);
             });
         }
 
@@ -284,7 +313,7 @@
                 btn.disabled = false; btn.innerText = 'عرض النموذج';
                 
                 if (!success || employees.length === 0) {
-                    document.getElementById('errorMsg').innerText = '⚠️ فشل تحميل بيانات الموظفين. تأكد من إعدادات النشر والإنترنت.';
+                    document.getElementById('errorMsg').innerText = '⚠️ فشل تحميل بيانات الموظفين. تأكد إن الشيت public.';
                     return;
                 }
             }
@@ -340,6 +369,7 @@
             finally { clone.remove(); }
         }
 
+        // ✅ إرسال للمدير باستخدام iframe (بدون CORS)
         async function sendToManager() {
             const staffId = document.getElementById('staffId').value.trim();
             const employee = employees.find(emp => String(emp.code) === String(staffId));
