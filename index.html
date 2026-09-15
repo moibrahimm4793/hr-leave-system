@@ -194,7 +194,7 @@
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz2RNWZ7ABzjqXBoxSXi-6eYyed1DTid0eNxJGRWtfJYbYvCfHij88PV6uuHoXxJUao/exec';
         let employees = [];
 
-        // ✅ تحميل الموظفين باستخدام JSONP
+        // ✅ تحميل الموظفين باستخدام JSONP (بدل fetch عشان نتجنب CORS)
         function loadEmployees() {
             return new Promise((resolve) => {
                 const callbackName = 'jsonpCb_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
@@ -340,6 +340,7 @@
             finally { clone.remove(); }
         }
 
+        // ✅ إرسال للمدير باستخدام iframe (بدل fetch عشان نتجنب CORS)
         async function sendToManager() {
             const staffId = document.getElementById('staffId').value.trim();
             const employee = employees.find(emp => String(emp.code) === String(staffId));
