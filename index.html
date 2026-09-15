@@ -323,8 +323,8 @@
     </div>
 
     <script>
-        // ✅ الرابط الجديد بعد Deployment Version 6
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyvZoJmObiKgCJHhoF0b9Sc1AgcRgY26skH5tvIMBV_ZXHOxqQ2H5EwtlxrDzVKlrdr/exec';
+        // ✅ الرابط الجديد بعد Deployment Version 7
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbytwSmfvqU1_ZeYJdwCNIkrQxN_52X4LMoL21fBmy9AT35GXCaBQdYX3JRMGcWPqLkn/exec';
         const STAFF_SHEET_ID = '1awfrTyQYv3tJhTsBGagjYJgZdHsKlIvug6hvK_oCAR0';
         const STAFF_SHEET_NAME = 'Staff List';
         
@@ -484,7 +484,6 @@
             finally { clone.remove(); }
         }
 
-        // ✅ الإرسال باستخدام fetch مع no-cors
         async function sendToManager() {
             const staffId = document.getElementById('staffId').value.trim();
             const employee = employees.find(emp => String(emp.code) === String(staffId));
