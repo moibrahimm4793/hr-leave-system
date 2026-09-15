@@ -69,7 +69,6 @@
             <div class="input-group">
                 <div class="form-field">
                     <label>كود الموظف (Staff No)</label>
-                    <!-- ✅ تم شيل list="staffList" عشان تبقى Text Box عادي -->
                     <input type="text" id="staffId" placeholder="مثال: 5233">
                 </div>
                 <div class="form-field">
@@ -196,6 +195,7 @@
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz2RNWZ7ABzjqXBoxSXi-6eYyed1DTid0eNxJGRWtfJYbYvCfHij88PV6uuHoXxJUao/exec';
         let employees = [];
 
+        // ✅ دالة جلب الموظفين (بتتنادى بس لما نضغط على الزرار)
         async function loadEmployees() {
             try {
                 const response = await fetch(GOOGLE_SCRIPT_URL + '?action=getEmployees', {
@@ -207,17 +207,13 @@
                 if (data.error) throw new Error(data.error);
                 employees = Array.isArray(data) ? data : [];
                 console.log('✅ تم تحميل ' + employees.length + ' موظف');
+                return true;
             } catch (err) {
                 console.error('❌ خطأ:', err.message);
                 employees = [];
-                alert('⚠️ فشل تحميل الموظفين: ' + err.message);
+                return false;
             }
-            // ✅ تم شيل fillDatalist() من هنا
         }
-
-        // ✅ تم شيل دالة fillDatalist() بالكامل
-
-        window.addEventListener('DOMContentLoaded', loadEmployees);
 
         function calculateDays() {
             const start = document.getElementById('startDate').value;
@@ -237,10 +233,14 @@
         }
         function formatDayName(d) { return d.toLocaleDateString('en-US', { weekday: 'long' }); }
 
-        function generateForm() {
+        // ✅ دالة عرض النموذج (بقت async عشان تجيب البيانات وقت الضغط)
+        async function generateForm() {
             const start = document.getElementById('startDate').value;
             const end = document.getElementById('endDate').value;
             if (!start || !end) { alert("أدخل التواريخ"); return; }
+
+            const staffId = document.getElementById('staffId').value.trim();
+            if (!staffId) { alert("أدخل كود الموظف"); return; }
 
             const startDate = new Date(start);
             const endDate = new Date(end);
@@ -259,10 +259,25 @@
                 return;
             }
 
-            const staffId = document.getElementById('staffId').value.trim();
-            const employee = employees.find(emp => String(emp.code) === String(staffId));
-            if (!employee) { alert("كود الموظف غير موجود"); return; }
             if (!window.hasSignatureDrawn()) { alert('⚠️ ارفع صورة التوقيع'); return; }
+
+            // ✅ لو مفيش موظفين متحملين، نجيبهم دلوقتي
+            if (employees.length === 0) {
+                const btn = document.getElementById('btnGenerate');
+                btn.disabled = true; btn.innerText = '⏳ جاري تحميل البيانات...';
+                
+                const success = await loadEmployees();
+                
+                btn.disabled = false; btn.innerText = 'عرض النموذج';
+                
+                if (!success || employees.length === 0) {
+                    document.getElementById('errorMsg').innerText = '⚠️ فشل تحميل بيانات الموظفين. تأكد من إعدادات النشر والإنترنت.';
+                    return;
+                }
+            }
+
+            const employee = employees.find(emp => String(emp.code) === String(staffId));
+            if (!employee) { alert("كود الموظف غير موجود في Staff List"); return; }
 
             document.getElementById('outName').innerText = employee.name;
             document.getElementById('outTitle').innerText = employee.title;
