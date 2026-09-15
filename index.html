@@ -6,70 +6,400 @@
     <title>Leave Request & Approval Form</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        :root { --primary-color: #2563eb; --bg-color: #f3f4f6; --input-bg: #ffffff; --border-color: #e5e7eb; --text-color: #1f2937; --secondary-text: #6b7280; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); margin: 0; padding: 20px 10px; color: var(--text-color); }
+        :root {
+            --primary-color: #2563eb;
+            --bg-color: #f3f4f6;
+            --input-bg: #ffffff;
+            --border-color: #e5e7eb;
+            --text-color: #1f2937;
+            --secondary-text: #6b7280;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px 10px;
+            color: var(--text-color);
+        }
+
         .container { max-width: 1000px; margin: 0 auto; }
-        .input-panel { background: var(--input-bg); border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); padding: 16px 18px; margin-bottom: 20px; border: 1px solid var(--border-color); }
-        .input-panel h3 { margin-top: 0; margin-bottom: 14px; font-size: 17px; color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 8px; }
-        .input-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 14px; }
-        .form-field label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; color: var(--secondary-text); }
-        .form-field input, .form-field select { width: 100%; padding: 8px 10px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 14px; background-color: #f9fafb; box-sizing: border-box; outline: none; }
-        .form-field input:focus, .form-field select:focus { border-color: var(--primary-color); background-color: white; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
-        .total-days-box { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 10px 12px; text-align: center; margin-bottom: 14px; font-size: 15px; font-weight: 600; }
-        .total-days-box span { color: var(--primary-color); font-size: 22px; font-weight: bold; }
-        .split-area { background: #f9fafb; border: 1px solid var(--border-color); border-radius: 8px; padding: 14px 16px; margin-bottom: 14px; }
-        .split-area h4 { margin-top: 0; margin-bottom: 12px; color: var(--text-color); font-size: 14px; }
-        .split-box { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
-        .type-input { background: white; padding: 8px 6px; border: 1px solid var(--border-color); border-radius: 8px; text-align: center; }
-        .type-input label { display: block; font-size: 11px; color: var(--secondary-text); margin-bottom: 4px; }
-        .type-input input { width: 60%; text-align: center; padding: 4px 2px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 15px; font-weight: bold; outline: none; }
-        button { padding: 10px 20px; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; }
+
+        .input-panel {
+            background: var(--input-bg);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            padding: 16px 18px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .input-panel h3 {
+            margin-top: 0;
+            margin-bottom: 14px;
+            font-size: 17px;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+
+        .input-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+
+        .form-field label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--secondary-text);
+        }
+
+        .form-field input,
+        .form-field select {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            background-color: #f9fafb;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        .form-field input:focus,
+        .form-field select:focus {
+            border-color: var(--primary-color);
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .total-days-box {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 10px 12px;
+            text-align: center;
+            margin-bottom: 14px;
+            font-size: 15px;
+            font-weight: 600;
+        }
+        .total-days-box span {
+            color: var(--primary-color);
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .split-area {
+            background: #f9fafb;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 14px 16px;
+            margin-bottom: 14px;
+        }
+
+        .split-area h4 {
+            margin-top: 0;
+            margin-bottom: 12px;
+            color: var(--text-color);
+            font-size: 14px;
+        }
+
+        .split-box {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+        }
+
+        .type-input {
+            background: white;
+            padding: 8px 6px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            text-align: center;
+        }
+        .type-input label {
+            display: block;
+            font-size: 11px;
+            color: var(--secondary-text);
+            margin-bottom: 4px;
+        }
+        .type-input input {
+            width: 60%;
+            text-align: center;
+            padding: 4px 2px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: bold;
+            outline: none;
+        }
+        .type-input input:focus { border-color: var(--primary-color); }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
         #btnGenerate { background: var(--primary-color); color: white; width: 100%; }
-        #btnPrint { background: #10b981; color: white; width: 48%; margin-top: 8px; display: none; margin-right: 2%; }
-        #btnSave { background: #3b82f6; color: white; width: 48%; margin-top: 8px; display: none; }
-        #btnSend { background: #8b5cf6; color: white; width: 100%; margin-top: 8px; display: none; }
+        #btnGenerate:hover { background: #1d4ed8; }
+
+        #btnPrint {
+            background: #10b981; color: white;
+            width: 48%; margin-top: 8px; display: none; margin-right: 2%;
+        }
+        #btnPrint:hover { background: #059669; }
+
+        #btnSave {
+            background: #3b82f6; color: white;
+            width: 48%; margin-top: 8px; display: none;
+        }
+        #btnSave:hover { background: #2563eb; }
+
+        #btnSend {
+            background: #8b5cf6; color: white;
+            width: 100%; margin-top: 8px; display: none;
+        }
+        #btnSend:hover { background: #7c3aed; }
         #btnSend:disabled { background: #9ca3af; cursor: not-allowed; }
-        .error-msg { color: #dc2626; font-weight: bold; margin-top: 8px; display: block; text-align: center; font-size: 14px; }
-        .signature-wrapper { margin-bottom: 14px; padding: 12px; background: #f0f9ff; border: 2px dashed #2563eb; border-radius: 10px; }
-        .signature-wrapper > label { display: block; font-size: 13px; font-weight: 700; color: #1e40af; margin-bottom: 8px; }
-        #signatureFile { width: 100%; padding: 8px; border: 2px dashed #2563eb; border-radius: 8px; background: #fff; cursor: pointer; font-size: 14px; box-sizing: border-box; }
-        #signaturePreviewBox { display: none; margin-top: 10px; text-align: center; }
-        #signaturePreview { max-height: 120px; max-width: 100%; border: 1px solid #bfdbfe; border-radius: 6px; background: #fff; padding: 4px; }
-        .btn-clear-sig { background: #f97316; color: white; margin-top: 8px; padding: 6px 14px; font-size: 13px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; }
-        #leaveForm { display: none; background: white; border: 1px solid black; padding: 12px 14px; margin-top: 20px; font-family: Arial, sans-serif; font-size: 12px; }
-        .header-table { width: 100%; border-collapse: collapse; margin-bottom: 3px; }
-        .header-table td { text-align: center; font-weight: bold; vertical-align: middle; }
-        .title-box { border: 1px solid black; padding: 4px 6px; font-size: 16px; }
-        .black-box { border: 1px solid black; padding: 4px 6px; font-size: 9px; text-align: center; margin-bottom: 6px; font-weight: bold; }
+
+        .error-msg {
+            color: #dc2626;
+            font-weight: bold;
+            margin-top: 8px;
+            display: block;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        /* ============ Signature Upload ============ */
+        .signature-wrapper {
+            margin-bottom: 14px;
+            padding: 12px;
+            background: #f0f9ff;
+            border: 2px dashed #2563eb;
+            border-radius: 10px;
+        }
+        .signature-wrapper > label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            color: #1e40af;
+            margin-bottom: 8px;
+        }
+        #signatureFile {
+            width: 100%;
+            padding: 8px;
+            border: 2px dashed #2563eb;
+            border-radius: 8px;
+            background: #fff;
+            cursor: pointer;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        #signaturePreviewBox {
+            display: none;
+            margin-top: 10px;
+            text-align: center;
+        }
+        #signaturePreview {
+            max-height: 120px;
+            max-width: 100%;
+            border: 1px solid #bfdbfe;
+            border-radius: 6px;
+            background: #fff;
+            padding: 4px;
+        }
+        .btn-clear-sig {
+            background: #f97316;
+            color: white;
+            margin-top: 8px;
+            padding: 6px 14px;
+            font-size: 13px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .btn-clear-sig:hover { background: #ea580c; }
+
+        /* ============ Leave Form ============ */
+        #leaveForm {
+            display: none;
+            background: white;
+            border: 1px solid black;
+            padding: 12px 14px;
+            margin-top: 20px;
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+        }
+
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 3px;
+        }
+        .header-table td {
+            text-align: center;
+            font-weight: bold;
+            vertical-align: middle;
+        }
+        .title-box {
+            border: 1px solid black;
+            padding: 4px 6px;
+            font-size: 16px;
+        }
+
+        .black-box {
+            border: 1px solid black;
+            padding: 4px 6px;
+            font-size: 9px;
+            text-align: center;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+
         table.main-table { width: 100%; border-collapse: collapse; }
         table.main-table td { padding: 3px 4px; vertical-align: top; }
-        .line { border-bottom: 1px solid black; min-width: 80px; display: inline-block; text-align: center; color: blue; font-weight: bold; }
+
+        .line {
+            border-bottom: 1px solid black;
+            min-width: 80px;
+            display: inline-block;
+            text-align: center;
+            color: blue;
+            font-weight: bold;
+        }
         .line.long { min-width: 160px; }
-        table.leaves { width: 100%; border-collapse: collapse; font-size: 10px; margin-top: 6px; }
+
+        table.leaves {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10px;
+            margin-top: 6px;
+        }
         table.leaves td { border: none; padding: 2px 4px; }
+
         .num-days { color: blue; font-weight: bold; }
-        table.approvals { width: 100%; border-collapse: collapse; border: 1px solid black; margin-top: 10px; font-size: 11px; }
-        table.approvals td { border: 1px solid black; padding: 4px 6px; vertical-align: top; }
-        .sig-slot { display: inline-block; width: 160px; height: 40px; vertical-align: middle; border-bottom: 1px solid black; margin: 0 6px; text-align: center; overflow: hidden; line-height: 38px; }
-        .sig-slot img { max-width: 100%; max-height: 38px; vertical-align: middle; display: none; }
-        .sig-slot img[src]:not([src=""]) { display: inline-block; }
+
+        table.approvals {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid black;
+            margin-top: 10px;
+            font-size: 11px;
+        }
+        table.approvals td {
+            border: 1px solid black;
+            padding: 4px 6px;
+            vertical-align: top;
+        }
+        .sig-line {
+            border-bottom: 1px solid black;
+            display: inline-block;
+            width: 120px;
+        }
+
+        /* ============ صندوق التوقيع بعرض ثابت ============ */
+        .sig-slot {
+            display: inline-block;
+            width: 160px;
+            height: 40px;
+            vertical-align: middle;
+            border-bottom: 1px solid black;
+            margin: 0 6px;
+            text-align: center;
+            overflow: hidden;
+            line-height: 38px;
+        }
+
+        .sig-slot img {
+            max-width: 100%;
+            max-height: 38px;
+            vertical-align: middle;
+            display: none;
+        }
+
+        .sig-slot img[src]:not([src=""]) {
+            display: inline-block;
+        }
+
         @media print {
             body * { visibility: hidden; }
             .container { visibility: visible; }
             #leaveForm, #leaveForm * { visibility: visible; }
-            #leaveForm { position: absolute; top: 0; left: 0; width: 100%; border: 1px solid white; padding: 5px 8px; margin: 0; box-sizing: border-box; font-size: 10px; }
+            #leaveForm {
+                position: absolute;
+                top: 0; left: 0;
+                width: 100%;
+                border: 1px solid white;
+                box-shadow: none;
+                padding: 5px 8px;
+                margin: 0;
+                box-sizing: border-box;
+                font-size: 10px;
+                page-break-after: avoid;
+                page-break-inside: avoid;
+            }
             .input-panel { display: none !important; }
+            table, td, div, span {
+                word-break: break-word;
+                max-width: 100%;
+                page-break-inside: avoid;
+            }
+            table.approvals td,
+            table.main-table td,
+            .header-table td { padding: 2px 3px; }
+            .line {
+                min-width: 50px;
+                max-width: 100%;
+                display: inline-block;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .line.long { min-width: 100px; }
+            .sig-line { width: 80px; }
+            .black-box { font-size: 7px; padding: 1px 2px; }
+            table.leaves { font-size: 8px; }
+            table.approvals { font-size: 8px; }
+            .title-box { font-size: 12px; padding: 2px 4px; }
+            .container { padding: 0; margin: 0; max-width: 100%; }
+            body { padding: 0; margin: 0; background: white; }
+            .approvals, .leaves, .header-table { page-break-inside: avoid; }
+
+            .sig-slot {
+                width: 120px;
+                height: 34px;
+                line-height: 32px;
+            }
+            .sig-slot img {
+                max-height: 32px;
+            }
         }
     </style>
 </head>
 <body>
+
     <div class="container">
+        <!-- ==================== Input Panel ==================== -->
         <div class="input-panel" id="inputPanel">
             <h3>إدخال بيانات الإجازة</h3>
+
             <div class="input-group">
                 <div class="form-field">
                     <label>كود الموظف (Staff No)</label>
-                    <input type="text" id="staffId" placeholder="مثال: 5233">
+                    <input type="text" id="staffId" placeholder="مثال: 5233" list="staffList">
+                    <datalist id="staffList"></datalist>
                 </div>
                 <div class="form-field">
                     <label>تاريخ البداية (From)</label>
@@ -80,174 +410,353 @@
                     <input type="date" id="endDate" onchange="calculateDays()">
                 </div>
             </div>
-            <div class="total-days-box" id="totalDaysBox" style="display:none;">إجمالي الأيام: <span id="totalDaysDisplay">0</span> يوم</div>
-            <div class="split-area" id="splitArea" style="display:none;">
-                <h4>وزّع الأيام:</h4>
+
+            <div class="total-days-box" id="totalDaysBox" style="display: none;">
+                إجمالي الأيام المطلوبة: <span id="totalDaysDisplay">0</span> يوم
+            </div>
+
+            <div class="split-area" id="splitArea" style="display: none;">
+                <h4>قم بتوزيع الأيام على الأنواع (المجموع يجب أن يطابق الإجمالي):</h4>
                 <div class="split-box">
-                    <div class="type-input"><label>سنوية</label><input type="number" id="split_annual" value="0" min="0"></div>
+                    <div class="type-input"><label>أجازة سنوية</label><input type="number" id="split_annual" value="0" min="0"></div>
                     <div class="type-input"><label>بدل أسبوعية</label><input type="number" id="split_weekend" value="0" min="0"></div>
                     <div class="type-input"><label>بدون أجر</label><input type="number" id="split_withoutPay" value="0" min="0"></div>
                     <div class="type-input"><label>مرضية</label><input type="number" id="split_sick" value="0" min="0"></div>
                     <div class="type-input"><label>ولادة</label><input type="number" id="split_maternity" value="0" min="0"></div>
-                    <div class="type-input"><label>إصابة</label><input type="number" id="split_injury" value="0" min="0"></div>
+                    <div class="type-input"><label>إصابة عمل</label><input type="number" id="split_injury" value="0" min="0"></div>
                     <div class="type-input"><label>بدل راحات</label><input type="number" id="split_rr" value="0" min="0"></div>
                     <div class="type-input"><label>إضطرارية</label><input type="number" id="split_compassionate" value="0" min="0"></div>
                     <div class="type-input"><label>أبوة</label><input type="number" id="split_paternity" value="0" min="0"></div>
                 </div>
             </div>
+
+            <!-- ============ Employee Signature (Upload) ============ -->
             <div class="signature-wrapper">
-                <label>✍️ توقيع الموظف - ارفع صورة التوقيع</label>
+                <label>✍️ توقيع الموظف (Employee Signature) - ارفع صورة التوقيع</label>
                 <input type="file" id="signatureFile" accept="image/*">
                 <div id="signaturePreviewBox">
-                    <img id="signaturePreview" src="" alt="preview"><br>
-                    <button type="button" class="btn-clear-sig" onclick="clearSignature()">🗑️ مسح</button>
+                    <img id="signaturePreview" src="" alt="preview">
+                    <br>
+                    <button type="button" class="btn-clear-sig" onclick="clearSignature()">🗑️ مسح الصورة</button>
                 </div>
             </div>
-            <button id="btnGenerate" onclick="generateForm()">عرض النموذج</button>
-            <button id="btnPrint" onclick="window.print()">طباعة</button>
-            <button id="btnSave" onclick="saveForm()">🖼️ حفظ كصورة</button>
+
+            <button id="btnGenerate" onclick="generateForm()">عرض نموذج الإجازة</button>
+            <button id="btnPrint" onclick="window.print()">طباعة النموذج</button>
+            <button id="btnSave" onclick="saveForm()">🖼️ حفظ كصورة A4</button>
             <button id="btnSend" onclick="sendToManager()">📤 إرسال للمدير</button>
             <span id="errorMsg" class="error-msg"></span>
         </div>
 
+        <!-- ==================== Leave Form ==================== -->
         <div id="leaveForm">
             <table class="header-table">
                 <tr>
-                    <td style="width:25%;"><img src="HAC.jpg" style="height:80px;"></td>
-                    <td style="width:50%;">
-                        <div class="title-box" style="background:#ffffcc;">HUB</div>
+                    <td style="width: 25%;text-align: center;">
+                        <img src="HAC.jpg" style="height: 80px; width: auto;">
+                    </td>
+                    <td style="width: 50%;">
+                        <div class="title-box" style="background: #ffffcc;">HUB</div>
                         <div>New Alamein City Projects</div>
                         <div>HAC&CCC JV</div>
-                        <div style="font-size:11px;">نموذج طلب أجازة مع الموافقة</div>
-                        <div style="font-size:16px;font-weight:bold;">LEAVE REQUEST & APPROVAL FORM</div>
+                        <div style="font-size: 11px;">نموذج طلب أجازة مع الموافقة</div>
+                        <div style="font-size: 16px; font-weight: bold;">LEAVE REQUEST & APPROVAL FORM</div>
                     </td>
-                    <td style="width:25%;"><img src="CCC.jpg" style="height:80px;"></td>
+                    <td style="width: 25%;text-align: center;">
+                        <img src="CCC.jpg" style="height: 80px; width: auto;">
+                    </td>
                 </tr>
             </table>
-            <div class="black-box">TO BE COMPLETED BY EMPLOYEE, APPROVED BY DEPARTMENT HEAD</div>
+
+            <div class="black-box">
+                TO BE COMPLETED BY EMPLOYEE , APPROVED BY THE DEPARTMENT HEAD AND PRESNTED TO PERSONNEL FOR APPROPRIATE ACTION<br>
+                AND DISTRIBUTION WELL IN ADVANCE BEFORE COMMANCEMENT OF LEAVE, OR IMMEDIATELY UPON RETURN FROM SICK LEAVE
+            </div>
+
             <table class="main-table">
                 <tr>
-                    <td style="font-weight:bold;">Employee name :</td>
+                    <td style="font-weight: bold;">Employee name :</td>
                     <td><span class="line long" id="outName"></span></td>
-                    <td style="font-weight:bold;">اسم الموظف</td>
-                    <td style="font-weight:bold;">Title :</td>
+                    <td style="font-weight: bold;">اسم الموظف </td>
+                    <td style="font-weight: bold;">Title :</td>
                     <td><span class="line" id="outTitle"></span></td>
-                    <td style="font-weight:bold;">المهنة</td>
-                    <td style="font-weight:bold;">Staff no:</td>
+                    <td style="font-weight: bold;">المهنة </td>
+                    <td style="font-weight: bold;">Staff no:</td>
                     <td><span class="line" id="outStaffId"></span></td>
-                    <td style="font-weight:bold;">رقم الموظف</td>
+                    <td style="font-weight: bold;">رقم الموظف </td>
                 </tr>
             </table>
-            <table class="main-table">
+
+            <table class="main-table" style="margin-top: 3px;">
                 <tr>
-                    <td style="white-space:nowrap;">
-                        <span style="font-weight:bold;">I request leave from :</span>
-                        <span class="line" id="outFromDayName"></span>
-                        <span style="font-size:10px;font-weight:bold;">يوم</span>
-                        <span class="line" id="outFromDate"></span>
-                        <span style="font-size:10px;font-weight:bold;">تاريخ</span>
+                    <td style="white-space: nowrap;">
+                        <span style="font-weight: bold;">I request leave from :</span>
+                        <span class="line" id="outFromDayName" style="min-width: 60px; margin-left: 4px;"></span>
+                        <span style="font-size: 10px;font-weight: bold;">يوم/Day</span>
+                        <span class="line" id="outFromDate" style="min-width: 80px; margin-left: 6px;"></span>
+                        <span style="font-size: 10px;font-weight: bold;">تاريخ/Date</span>
+                        <span style="margin-left: 6px; font-size: 10px;font-weight: bold;">: تاريخ بداية الاجازة من</span>
                     </td>
-                    <td style="white-space:nowrap;padding-left:100px;">
-                        <span style="font-weight:bold;">To : -</span>
-                        <span class="line" id="outToDayName"></span>
-                        <span style="font-size:10px;font-weight:bold;">يوم</span>
-                        <span class="line" id="outToDate"></span>
-                        <span style="font-size:10px;font-weight:bold;">تاريخ</span>
+
+                    <td style="white-space: nowrap; text-align: left; padding-left: 100px;">
+                        <span style="font-weight: bold;">To : -</span>
+                        <span class="line" id="outToDayName" style="min-width: 60px; margin-left: 4px;"></span>
+                        <span style="font-size: 10px;font-weight: bold;">يوم/Day</span>
+                        <span class="line" id="outToDate" style="min-width: 80px; margin-left: 6px;"></span>
+                        <span style="font-size: 10px;font-weight: bold;">تاريخ/Date</span>
+                        <span style="margin-left: 6px; font-size: 10px;font-weight: bold;">: الي</span>
                     </td>
                 </tr>
+                <tr>
+                    <td colspan="2" style="padding-top: 3px; font-weight: bold;">Leave requested :</td>
+                </tr>
             </table>
+
             <table class="leaves">
                 <tr>
-                    <td style="width:33%;">
-                        Days [<span class="num-days" id="days_annual">0</span>] Annual<br><br>
-                        Days [<span class="num-days" id="days_weekend">0</span>] Weekend<br><br>
-                        Days [<span class="num-days" id="days_withoutPay">0</span>] Without Pay
+                    <td style="width: 33%;padding: 0 12px;">
+                        Days [ <span class="num-days" id="days_annual">0</span> ] Annual leave with pay / أجازة سنوية مدفوعة الأجر<br><br>
+                        Days [ <span class="num-days" id="days_weekend">0</span> ] Replace of weekends / بدل اجازه اسبوعيه<br><br>
+                        Days [ <span class="num-days" id="days_withoutPay">0</span> ] Leave Without Pay / اجازه بدون اجر
                     </td>
-                    <td style="width:33%;">
-                        Days [<span class="num-days" id="days_maternity">0</span>] Maternity<br><br>
-                        Days [<span class="num-days" id="days_sick">0</span>] Sick<br><br>
-                        Days [<span class="num-days" id="days_injury">0</span>] Injury<br><br>
-                        Days [<span class="num-days" id="days_rr">0</span>] R&R
+                    <td style="width: 33%; border-left: 1px solid white; border-right: 1px solid white; padding: 0 12px;">
+                        Days [ <span class="num-days" id="days_maternity">0</span> ] Maternity / أجازة ولادة<br><br>
+                        Days [ <span class="num-days" id="days_sick">0</span> ] Sick Leave / أجازة مرضية<br><br>
+                        Days [ <span class="num-days" id="days_injury">0</span> ] Industrial Injury/ أجازة اصابة عمل<br><br>
+                        Days [ <span class="num-days" id="days_rr">0</span> ] Replace&Rest(R&R) / بدل راحات
                     </td>
-                    <td style="width:33%;">
-                        Days [<span class="num-days" id="days_compassionate">0</span>] Compassionate<br><br>
-                        Days [<span class="num-days" id="days_paternity">0</span>] Paternity
+                    <td style="width: 33%;">
+                        Days [ <span class="num-days" id="days_compassionate">0</span> ] Compassionate leave with pay : reason /
+                        --------------------------<br><br>
+                        Days [ <span class="num-days" id="days_paternity">0</span> ] Paternity Leave
                     </td>
                 </tr>
             </table>
-            <table style="width:100%;margin-top:12px;">
-                <tr><td style="font-size:11px;font-weight:bold;">
-                    I shall resume duty on : <span id="outResumeDate2" style="color:blue;">---</span>
-                    &ensp;&ensp;&ensp; Signature : <span class="sig-slot"><img id="sigInForm" src=""></span>
-                    &ensp;&ensp;&ensp; Date : <span id="outDate2" style="color:blue;">---</span>
-                </td></tr>
+
+            <!-- Signature row -->
+            <table style="width: 100%; margin-top: 12px; border-collapse: collapse;">
+                <tr>
+                    <td colspan="3" style="border: 1px solid white; height: 34px; font-size: 11px; text-align: left; vertical-align: middle; font-weight: bold; padding: 0px 5px;">
+                        I shall resume duty on :    <span id="outResumeDate2" style="color: blue; font-weight: bold;">-----------</span>  : سأباشر عملى فى تاريخ
+                        &ensp;&ensp;&ensp;&ensp;&ensp;
+                        Signature :
+                        <span class="sig-slot"><img id="sigInForm" src="" alt=""></span>
+                        : التوقيع
+                        &ensp;&ensp;&ensp;&ensp;&ensp;
+                        Date :<span id="outDate2" style="color: blue; font-weight: bold;">-------------------------------</span>    : التاريخ
+                    </td>
+                </tr>
             </table>
-            <table class="approvals">
-                <tr><td colspan="3" style="background:#f9f9f9;font-weight:bold;">ENDORSEMENT BY DEPARTMENT HEAD</td></tr>
-                <tr><td colspan="3" style="height:34px;text-align:center;font-weight:bold;">Name: ______ Signature: ______ Date: ______</td></tr>
-                <tr><td style="width:50%;height:48px;text-align:center;font-weight:bold;">HAC Representative</td><td style="width:50%;height:48px;text-align:center;font-weight:bold;">CCC Representative</td></tr>
+
+            <!-- Approvals -->
+            <table class="approvals" style="margin-top: 8px;">
+                <tr>
+                    <td colspan="3" style="border: 1px solid black; font-size: 11px; background: #f9f9f9; font-weight: bold;">
+                        ENDORESEMENT BY DEPARTMENT HEAD
+                        <span style="margin-left: 16px;">- Request approved subject to verification of eligibility by Personnel Department موافقة الرئيس المباشر</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="border: 1px solid black; height: 34px; font-size: 11px; text-align: center; vertical-align: middle;font-weight: bold;">
+                        Name :--------------------------------------------------------------: الاسم
+                        &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+                        Signature :-----------------------------------------------------------: التوقيع
+                        &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+                        Date :-------------------------------: التاريخ
+                    </td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid black; width: 50%; height: 48px; text-align: center; vertical-align: middle; font-size: 11px;font-weight: bold;">
+                        HAC Representative---------------------------------------------------------------------
+                    </td>
+                    <td style="border: 1px solid black; width: 50%; height: 48px; text-align: center; vertical-align: middle; font-size: 11px;font-weight: bold;">
+                        CCC Representative---------------------------------------------------------------------
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="border-left: 1px solid black; border-right: 1px solid black; border-top: 1px solid black; border-bottom: 1px solid white; font-weight: bold; font-size: 11px;"><u>
+                            For Personnel Department Use Only : خاص بقسم شئون العاملين</u>
+                        <span style="float: right;">Annual leave entitlement per year ------------- calendar / work days</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="border-left: 1px solid black; border-right: 1px solid black; border-top: 1px solid white; border-bottom: 1px solid white; font-size: 11px;font-weight: bold;text-decoration: underline;padding: 0px 5px;">Leave granted as shown :</td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="border-left: 1px solid black; border-right: 1px solid black; border-top: 1px solid white; border-bottom: 1px solid white; font-size: 11px; text-align: right; padding: 0px 80px 0px;font-weight: bold;">Maternity leave ------------- Days</td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="padding: 0; border-left: 1px solid black; border-right: 1px solid Black; border-top: 1px solid white; border-bottom: 1px solid white;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
+                            <tr>
+                                <td style="width: 33%; padding: 6px; vertical-align: top; border: none; font-weight: bold;">
+                                    Annual Leave with pay :<br><br>
+                                    <div style="margin-bottom: 10px;">
+                                        &nbsp;&nbsp;&nbsp; Day accumulated<br>
+                                        <div style="margin-top: 6px;">---------- as of -------------------</div>
+                                    </div>
+                                    <div style="margin-bottom: 10px;">
+                                        [ ------] Less days now granted<br>
+                                        <div style="margin-top: 8px; white-space: nowrap;">From <span class="line" style="width: 60px; min-width: 60px;"></span> to <span class="line" style="width: 60px; min-width: 60px;"></span></div>
+                                    </div>
+                                    <div style="margin-top: 8px;">
+                                        ------------- Balance
+                                    </div>
+                                </td>
+
+                                <td style="width: 33%; padding: 6px; vertical-align: top; border: none; font-weight: bold;">
+                                    Leave without pay :<br><br>
+                                    <div style="white-space: nowrap;">
+                                        <span class="line" style="width: 70px; min-width: 70px;"></span> Days granted from
+                                        <span class="line" style="width: 70px; min-width: 70px;"></span> to
+                                        <span class="line" style="width: 70px; min-width: 70px;"></span>
+                                    </div>
+                                    <div style="height: 10px;"></div>
+
+                                    Rest and Recreation ( R&R) :<br><br>
+                                    <div style="white-space: nowrap;">
+                                        <span class="line" style="width: 70px; min-width: 70px;"></span> Days granted from
+                                        <span class="line" style="width: 70px; min-width: 70px;"></span> to
+                                        <span class="line" style="width: 70px; min-width: 70px;"></span>
+                                    </div>
+                                    <div style="height: 10px;"></div>
+
+                                    Compassionate Leave :<br><br>
+                                    <div style="white-space: nowrap;">
+                                        <span class="line" style="width: 70px; min-width: 70px;"></span> Days granted from
+                                        <span class="line" style="width: 70px; min-width: 70px;"></span> to
+                                        <span class="line" style="width: 70px; min-width: 70px;"></span>
+                                    </div>
+                                </td>
+
+                                <td style="width: 34%; padding: 6px; vertical-align: top; border: none; font-weight: bold;">
+                                    Sick Leave / Industrial Injury<br><br>
+                                    <div style="white-space: nowrap;">
+                                        <span class="line" style="width: 70px; min-width: 70px;"></span> Days @ full days<br><br>
+                                        <span class="line" style="width: 70px; min-width: 70px;"></span> Days @ 3/4 pay<br><br>
+                                        <span class="line" style="width: 70px; min-width: 70px;"></span> Days @ 1/2 pay<br><br>
+                                        <span class="line" style="width: 70px; min-width: 70px;"></span> Days @ 1/4 pay<br><br>
+                                        <span class="line" style="width: 70px; min-width: 70px;"></span> Days without pay
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td colspan="3" style="border-left: 1px solid black; border-right: 1px solid black; border-top: none; vertical-align: middle; height: 20px; font-size: 11px;">
+                        Comments : ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="border: 1px solid black; padding: 6px 8px; font-size: 11px; vertical-align: middle; text-align: center; font-weight: bold; height: 40px;">
+                        Name :--------------------------------------------------------------: الاسم
+                        &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+                        Signature :-----------------------------------------------------------: التوقيع
+                        &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+                        Date :-------------------------------: التاريخ
+                    </td>
+                </tr>
             </table>
         </div>
     </div>
 
     <script>
-        // ✅ الرابط الجديد
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz2RNWZ7ABzjqXBoxSXi-6eYyed1DTid0eNxJGRWtfJYbYvCfHij88PV6uuHoXxJUao/exec';
+        // ============================================================
+        // 1) بيانات الموظفين - تُحمَّل من ملف employees.json الخارجي
+        // ============================================================
         let employees = [];
 
-        // ✅ دالة جلب الموظفين (بتتنادى بس لما نضغط على الزرار)
+        const FALLBACK_EMPLOYEES = [
+            { code: "3763", name: "HAMADA ELSAYED ALI ELSAYED", title: "DRIVER", email: "moibrahim@ccc.Net", managerName: "محمد الحسن", managerEmail: "moibrahim@ccc.Net" },
+            { code: "3819", name: "IBRAHIM HASSAN ELSAYED FATOUH", title: "DRIVER", email: "moibrahim@ccc.Net", managerName: "محمد الحسن", managerEmail: "moibrahim@ccc.Net" },
+            { code: "3962", name: "AHMED ABDEL HAFIZ AHMED MOHAMED", title: "DRIVER", email: "moibrahim@ccc.Net", managerName: "أحمد علي", managerEmail: "moibrahim@ccc.Net" },
+            { code: "4022", name: "AHMED ABDEL HAMID MAHMOUD FARHOOD", title: "DRIVER", email: "moibrahim@ccc.Net", managerName: "أحمد علي", managerEmail: "moibrahim@ccc.Net" },
+            { code: "4151", name: "HAITHAM RAMADAN KAMAL BASYOUNI", title: "DRIVER", email: "moibrahim@ccc.Net", managerName: "محمد الحسن", managerEmail: "moibrahim@ccc.Net" },
+            { code: "4160", name: "MAHMOUD MAMDOUH MOHAMED MOUSTAFA", title: "DRIVER", email: "moibrahim@ccc.Net", managerName: "سالم عبدالله", managerEmail: "moibrahim@ccc.Net" },
+            { code: "4317", name: "YOUSSEF ALI YOUSSEF HASSAN AHMED", title: "DRIVER", email: "moibrahim@ccc.Net", managerName: "أحمد علي", managerEmail: "moibrahim@ccc.Net" },
+            { code: "3570", name: "MOHAMED SALAH BAKRY ABDEL HAFEZ", title: "DRIVER", email: "moibrahim@ccc.Net", managerName: "محمد الحسن", managerEmail: "moibrahim@ccc.Net" },
+            { code: "4402", name: "AMR ASHRAF SAYED MOHAMED KASSEM", title: "DRIVER", email: "moibrahim@ccc.Net", managerName: "سالم عبدالله", managerEmail: "moibrahim@ccc.Net" },
+            { code: "4555", name: "HASSAN MAHMOUD ABDEL AZIZ MOHAMED", title: "DRIVER", email: "moibrahim@ccc.Net", managerName: "محمد الحسن", managerEmail: "moibrahim@ccc.Net" },
+            { code: "5233", name: "AHMED ISMAIL AHMED MOHAMED", title: "DRIVER", email: "moibrahim@ccc.Net", managerName: "أحمد علي", managerEmail: "moibrahim@ccc.Net" },
+            { code: "5382", name: "AHMED MOHAMED TAHA MAHGOUB", title: "DRIVER", email: "moibrahim@ccc.Net", managerName: "سالم عبدالله", managerEmail: "moibrahim@ccc.Net" },
+            { code: "5383", name: "ABDEL AZIZ NAGY ROSHDY MOHAMED", title: "DRIVER", email: "moibrahim@ccc.Net", managerName: "محمد الحسن", managerEmail: "moibrahim@ccc.Net" }
+        ];
+
         async function loadEmployees() {
             try {
-                const response = await fetch(GOOGLE_SCRIPT_URL + '?action=getEmployees', {
-                    method: 'GET',
-                    cache: 'no-store'
-                });
-                if (!response.ok) throw new Error('HTTP ' + response.status);
-                const data = await response.json();
-                if (data.error) throw new Error(data.error);
-                employees = Array.isArray(data) ? data : [];
-                console.log('✅ تم تحميل ' + employees.length + ' موظف');
-                return true;
+                const res = await fetch('employees.json', { cache: 'no-store' });
+                if (!res.ok) throw new Error('الملف غير موجود');
+                employees = await res.json();
+                console.log('✅ تم تحميل الموظفين من employees.json:', employees.length);
             } catch (err) {
-                console.error('❌ خطأ:', err.message);
-                employees = [];
-                return false;
+                console.warn('⚠️ فشل تحميل employees.json - سيتم استخدام القائمة الاحتياطية');
+                employees = FALLBACK_EMPLOYEES;
             }
+            fillDatalist();
         }
 
+        function fillDatalist() {
+            const dl = document.getElementById('staffList');
+            if (!dl) return;
+            dl.innerHTML = employees.map(e =>
+                `<option value="${e.code}">${e.name} - ${e.title}</option>`
+            ).join('');
+        }
+
+        window.addEventListener('DOMContentLoaded', loadEmployees);
+
+        // ============================================================
+        // 2) دوال الحساب والعرض
+        // ============================================================
         function calculateDays() {
             const start = document.getElementById('startDate').value;
             const end = document.getElementById('endDate').value;
             if (start && end) {
-                const diffDays = Math.ceil((new Date(end) - new Date(start)) / 86400000) + 1;
+                const startDate = new Date(start);
+                const endDate = new Date(end);
+                const diffTime = endDate - startDate;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
                 if (diffDays >= 1) {
                     document.getElementById('totalDaysDisplay').innerText = diffDays;
                     document.getElementById('totalDaysBox').style.display = 'block';
                     document.getElementById('splitArea').style.display = 'block';
+                    document.getElementById('errorMsg').innerText = "";
+                } else {
+                    document.getElementById('errorMsg').innerText = "تاريخ النهاية يجب أن يكون بعد تاريخ البداية";
+                    document.getElementById('totalDaysBox').style.display = 'none';
+                    document.getElementById('splitArea').style.display = 'none';
                 }
             }
         }
 
         function formatDate(d) {
-            return String(d.getDate()).padStart(2,'0') + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + d.getFullYear();
+            const day = String(d.getDate()).padStart(2, '0');
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const year = d.getFullYear();
+            return day + '-' + month + '-' + year;
         }
-        function formatDayName(d) { return d.toLocaleDateString('en-US', { weekday: 'long' }); }
 
-        // ✅ دالة عرض النموذج (بقت async عشان تجيب البيانات وقت الضغط)
-        async function generateForm() {
+        function formatDayName(d) {
+            return d.toLocaleDateString('en-US', { weekday: 'long' });
+        }
+
+        // ============================================================
+        // 3) توليد النموذج
+        // ============================================================
+        function generateForm() {
             const start = document.getElementById('startDate').value;
             const end = document.getElementById('endDate').value;
             if (!start || !end) { alert("أدخل التواريخ"); return; }
 
-            const staffId = document.getElementById('staffId').value.trim();
-            if (!staffId) { alert("أدخل كود الموظف"); return; }
-
             const startDate = new Date(start);
             const endDate = new Date(end);
-            const totalDays = Math.ceil((endDate - startDate) / 86400000) + 1;
+            const totalDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
 
-            const types = ["annual","weekend","withoutPay","maternity","sick","injury","rr","compassionate","paternity"];
-            let sumDays = 0, daysObj = {};
+            const types = ["annual", "weekend", "withoutPay", "maternity", "sick", "injury", "rr", "compassionate", "paternity"];
+            let sumDays = 0;
+            let daysObj = {};
             types.forEach(t => {
                 let val = parseInt(document.getElementById('split_' + t).value) || 0;
                 daysObj[t] = val;
@@ -255,41 +764,43 @@
             });
 
             if (sumDays !== totalDays) {
-                document.getElementById('errorMsg').innerText = `خطأ: المجموع (${sumDays}) ≠ الإجمالي (${totalDays})`;
+                document.getElementById('errorMsg').innerText = `خطأ: مجموع الأيام الموزعة (${sumDays}) لا يساوي الإجمالي (${totalDays})`;
                 return;
             }
 
-            if (!window.hasSignatureDrawn()) { alert('⚠️ ارفع صورة التوقيع'); return; }
+            const staffId = document.getElementById('staffId').value.trim();
+            const employee = employees.find(emp => emp.code === staffId);
+            if (!employee) { alert("كود الموظف غير موجود"); return; }
 
-            // ✅ لو مفيش موظفين متحملين، نجيبهم دلوقتي
-            if (employees.length === 0) {
-                const btn = document.getElementById('btnGenerate');
-                btn.disabled = true; btn.innerText = '⏳ جاري تحميل البيانات...';
-                
-                const success = await loadEmployees();
-                
-                btn.disabled = false; btn.innerText = 'عرض النموذج';
-                
-                if (!success || employees.length === 0) {
-                    document.getElementById('errorMsg').innerText = '⚠️ فشل تحميل بيانات الموظفين. تأكد من إعدادات النشر والإنترنت.';
-                    return;
-                }
+            // تحقق من التوقيع
+            if (!window.hasSignatureDrawn || !window.hasSignatureDrawn()) {
+                alert('⚠️ رجاءً ارفع صورة التوقيع أولاً');
+                return;
             }
-
-            const employee = employees.find(emp => String(emp.code) === String(staffId));
-            if (!employee) { alert("كود الموظف غير موجود في Staff List"); return; }
 
             document.getElementById('outName').innerText = employee.name;
             document.getElementById('outTitle').innerText = employee.title;
             document.getElementById('outStaffId').innerText = employee.code;
+
             document.getElementById('outFromDayName').innerText = formatDayName(startDate);
             document.getElementById('outFromDate').innerText = formatDate(startDate);
             document.getElementById('outToDayName').innerText = formatDayName(endDate);
             document.getElementById('outToDate').innerText = formatDate(endDate);
-            document.getElementById('outResumeDate2').innerText = formatDate(new Date(endDate.getTime() + 86400000));
-            document.getElementById('outDate2').innerText = formatDate(new Date());
-            types.forEach(t => document.getElementById('days_' + t).innerText = daysObj[t] || 0);
-            document.getElementById('sigInForm').src = window.getSignatureDataURL();
+
+            const resumeDate = new Date(endDate.getTime() + 86400000);
+            document.getElementById('outResumeDate2').innerText = formatDate(resumeDate);
+
+            const today = new Date();
+            document.getElementById('outDate2').innerText = formatDate(today);
+
+            types.forEach(t => {
+                document.getElementById('days_' + t).innerText = daysObj[t] || 0;
+            });
+
+            // ضع التوقيع جوه النموذج (العرض ثابت من الـ CSS)
+            const sigData = window.getSignatureDataURL();
+            const sigImg = document.getElementById('sigInForm');
+            sigImg.src = sigData;
 
             document.getElementById('leaveForm').style.display = 'block';
             document.getElementById('btnPrint').style.display = 'inline-block';
@@ -298,102 +809,223 @@
             document.getElementById('errorMsg').innerText = "";
         }
 
+        // ============================================================
+        // 4) حفظ النموذج كصورة A4 (Landscape)
+        // ============================================================
         async function saveForm() {
             const source = document.getElementById('leaveForm');
-            if (!source || source.style.display === 'none') { alert('اعرض النموذج أولاً'); return; }
-            const filename = (document.getElementById('outName').innerText || 'Leave') + '_' + (document.getElementById('outStaffId').innerText || '0000') + '.png';
+            if (!source || source.style.display === 'none') {
+                alert('اعرض نموذج الإجازة أولاً');
+                return;
+            }
+
+            const name = document.getElementById('outName').innerText.trim() || 'Leave_Request';
+            const staffId = document.getElementById('outStaffId').innerText.trim() || '0000';
+            const filename = name + '_' + staffId + '.png';
+
+            // نسخة من النموذج عشان نصورها
             const clone = source.cloneNode(true);
-            clone.style.cssText = 'display:block;position:fixed;left:-100000px;top:0;width:1100px;background:#fff;padding:10px;font-family:Arial;font-size:10px;';
+            clone.id = 'leaveFormImgClone';
+            clone.style.display = 'block';
+            clone.style.position = 'fixed';
+            clone.style.left = '-100000px';
+            clone.style.top = '0';
+            clone.style.width = '1100px';
+            clone.style.maxWidth = '1100px';
+            clone.style.margin = '0';
+            clone.style.padding = '10px 12px';
+            clone.style.boxSizing = 'border-box';
+            clone.style.background = '#fff';
+            clone.style.border = 'none';
+            clone.style.fontFamily = 'Arial, sans-serif';
+            clone.style.fontSize = '10px';
+            clone.style.lineHeight = '1.05';
+
             document.body.appendChild(clone);
+
             try {
+                // انتظر تحميل كل الصور (اللوجو + التوقيع)
                 const imgs = Array.from(clone.querySelectorAll('img'));
-                await Promise.all(imgs.map(img => img.complete ? Promise.resolve() : new Promise(r => { img.onload = r; img.onerror = r; })));
-                const rendered = await html2canvas(clone, { scale: 2, useCORS: true, backgroundColor: '#fff' });
-                const a4 = document.createElement('canvas');
-                a4.width = 2480; a4.height = 1754;
-                const ctx = a4.getContext('2d');
-                ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, 2480, 1754);
-                const ratio = Math.min(2480 / rendered.width, 1754 / rendered.height);
-                const w = rendered.width * ratio, h = rendered.height * ratio;
-                ctx.drawImage(rendered, (2480 - w) / 2, (1754 - h) / 2, w, h);
-                a4.toBlob(blob => {
+                await Promise.all(imgs.map(img => {
+                    if (img.complete) return Promise.resolve();
+                    return new Promise(resolve => {
+                        img.onload = resolve;
+                        img.onerror = resolve;
+                    });
+                }));
+
+                // صور النموذج بدقة عالية
+                const rendered = await html2canvas(clone, {
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: '#ffffff',
+                    logging: false,
+                    width: clone.scrollWidth,
+                    height: clone.scrollHeight,
+                    windowWidth: clone.scrollWidth,
+                    windowHeight: clone.scrollHeight,
+                    scrollX: 0,
+                    scrollY: 0
+                });
+
+                // جهّز كانفس بمقاس A4 Landscape (دقة 210 DPI: 2480 × 1754)
+                const A4_W = 2480;
+                const A4_H = 1754;
+                const a4Canvas = document.createElement('canvas');
+                a4Canvas.width = A4_W;
+                a4Canvas.height = A4_H;
+                const ctx = a4Canvas.getContext('2d');
+
+                // خلفية بيضاء
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, A4_W, A4_H);
+
+                // احسب المقاس عشان النموذج يملا الـ A4 مع الحفاظ على النسبة
+                const ratio = Math.min(A4_W / rendered.width, A4_H / rendered.height);
+                const drawW = rendered.width * ratio;
+                const drawH = rendered.height * ratio;
+                const drawX = (A4_W - drawW) / 2;
+                const drawY = (A4_H - drawH) / 2;
+
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
+                ctx.drawImage(rendered, drawX, drawY, drawW, drawH);
+
+                // حوّل الكانفس لصورة PNG ونزّلها
+                a4Canvas.toBlob(function(blob) {
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
-                    a.href = url; a.download = filename;
-                    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+                    a.href = url;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
                     setTimeout(() => URL.revokeObjectURL(url), 1000);
-                }, 'image/png');
-            } catch (err) { alert('خطأ: ' + err.message); }
-            finally { clone.remove(); }
+                }, 'image/png', 1.0);
+
+            } catch (err) {
+                console.error(err);
+                alert('تعذر حفظ النموذج كصورة. تأكد من اتصال الإنترنت ثم حاول مرة أخرى.');
+            } finally {
+                clone.remove();
+            }
         }
 
+        // ============================================================
+        // 5) إرسال للمدير (يفتح Outlook Classic + ينزل صورة A4)
+        // ============================================================
         async function sendToManager() {
             const staffId = document.getElementById('staffId').value.trim();
-            const employee = employees.find(emp => String(emp.code) === String(staffId));
-            if (!employee) { alert('كود الموظف غير موجود'); return; }
-            if (!employee.managerEmail) { alert('لا يوجد بريد للمدير في Staff List'); return; }
-            if (!window.hasSignatureDrawn()) { alert('⚠️ ارفع صورة التوقيع'); return; }
+            const employee = employees.find(emp => emp.code === staffId);
+
+            if (!employee) {
+                alert('كود الموظف غير موجود');
+                return;
+            }
+
+            if (!employee.managerEmail) {
+                alert('لا يوجد بريد إلكتروني للمدير المسؤول. راجع ملف employees.json');
+                return;
+            }
+
+            if (!window.hasSignatureDrawn || !window.hasSignatureDrawn()) {
+                alert('⚠️ رجاءً ارفع صورة التوقيع أولاً');
+                return;
+            }
 
             const btn = document.getElementById('btnSend');
-            btn.disabled = true; btn.innerText = '⏳ جاري الإرسال...';
-
-            const types = ["annual","weekend","withoutPay","maternity","sick","injury","rr","compassionate","paternity"];
-            const typeLabels = {
-                annual: "Annual", weekend: "Weekend", withoutPay: "Without Pay",
-                maternity: "Maternity", sick: "Sick", injury: "Injury",
-                rr: "R&R", compassionate: "Compassionate", paternity: "Paternity"
-            };
-            let breakdown = [];
-            let mainType = "Annual";
-            let maxDays = 0;
-            types.forEach(t => {
-                const val = parseInt(document.getElementById('split_' + t).value) || 0;
-                if (val > 0) {
-                    breakdown.push(typeLabels[t] + ": " + val);
-                    if (val > maxDays) { maxDays = val; mainType = typeLabels[t]; }
-                }
-            });
+            btn.disabled = true;
+            btn.innerText = '⏳ جاري التحضير...';
 
             try {
-                const payload = {
-                    employeeName: document.getElementById('outName').innerText,
-                    staffId: staffId,
-                    title: employee.title,
-                    email: employee.email || '',
-                    fromDate: document.getElementById('outFromDate').innerText,
-                    toDate: document.getElementById('outToDate').innerText,
-                    returnDate: document.getElementById('outResumeDate2').innerText,
-                    totalDays: document.getElementById('totalDaysDisplay').innerText,
-                    type: mainType,
-                    reason: breakdown.join(' | '),
-                    managerEmail: employee.managerEmail,
-                    signature: window.getSignatureDataURL()
-                };
-                await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify(payload)
-                });
-                alert('✅ تم إرسال الطلب للمدير بنجاح!');
-            } catch (err) { alert('خطأ: ' + err.message); }
-            finally { btn.disabled = false; btn.innerText = '📤 إرسال للمدير'; }
+                // 1) نزّل الصورة A4
+                await saveForm();
+
+                // 2) جهّز النصوص
+                const name = document.getElementById('outName').innerText;
+                const fromDate = document.getElementById('outFromDate').innerText;
+                const toDate = document.getElementById('outToDate').innerText;
+                const resumeDate = document.getElementById('outResumeDate2').innerText;
+                const total = document.getElementById('totalDaysDisplay').innerText;
+
+                const subject = `طلب إجازة بانتظار موافقتك - ${name}`;
+
+                const body =
+                    `السلام عليكم ورحمة الله وبركاته،\n\n` +
+                    `لديك طلب إجازة جديد بانتظار موافقتك:\n\n` +
+                    `📋 بيانات الموظف:\n` +
+                    `• الاسم: ${name}\n` +
+                    `• الكود: ${staffId}\n` +
+                    `• الوظيفة: ${employee.title}\n\n` +
+                    `📅 بيانات الإجازة:\n` +
+                    `• من: ${fromDate}\n` +
+                    `• إلى: ${toDate}\n` +
+                    `• عدد الأيام: ${total}\n` +
+                    `• تاريخ العودة: ${resumeDate}\n\n` +
+                    `📎 برجاء إرفاق الصورة التي تم تحميلها على جهازك.\n\n` +
+                    `شكراً`;
+
+                // 3) افتح برنامج البريد الافتراضي
+                const mailto =
+                    `mailto:${employee.managerEmail}` +
+                    `?cc=${employee.email || ''}` +
+                    `&subject=${encodeURIComponent(subject)}` +
+                    `&body=${encodeURIComponent(body)}`;
+
+                window.location.href = mailto;
+
+                setTimeout(() => {
+                    alert(
+                        '📧 تم تحميل الصورة وفتح Outlook.\n\n' +
+                        '✅ الملف موجود في مجلد التنزيلات.\n' +
+                        '📎 بس أرفق الصورة في الإيميل ثم Send.'
+                    );
+                }, 1000);
+
+            } catch (err) {
+                console.error(err);
+                alert('حدث خطأ أثناء التحضير: ' + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = '📤 إرسال للمدير';
+            }
         }
 
+        // ============================================================
+        // 6) توقيع الموظف (رفع صورة)
+        // ============================================================
         let signatureDataUrl = "";
+
         document.addEventListener('DOMContentLoaded', function() {
             const fileInput = document.getElementById('signatureFile');
             if (!fileInput) return;
+
             fileInput.addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 if (!file) return;
-                if (!file.type.startsWith('image/')) { alert('اختر صورة'); return; }
-                if (file.size > 2 * 1024 * 1024) { alert('الصورة كبيرة'); return; }
+
+                // تحقق إن الملف صورة
+                if (!file.type.startsWith('image/')) {
+                    alert('رجاءً اختر صورة (PNG / JPG)');
+                    return;
+                }
+
+                // تحقق إن الحجم أقل من 2 ميجا
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('حجم الصورة كبير جداً. الحد الأقصى 2 ميجا');
+                    return;
+                }
+
                 const reader = new FileReader();
                 reader.onload = function(evt) {
                     signatureDataUrl = evt.target.result;
-                    document.getElementById('signaturePreview').src = signatureDataUrl;
-                    document.getElementById('signaturePreviewBox').style.display = 'block';
+
+                    // عرض المعاينة
+                    const preview = document.getElementById('signaturePreview');
+                    const box = document.getElementById('signaturePreviewBox');
+                    preview.src = signatureDataUrl;
+                    box.style.display = 'block';
                 };
                 reader.readAsDataURL(file);
             });
@@ -401,14 +1033,20 @@
 
         function clearSignature() {
             signatureDataUrl = "";
-            document.getElementById('signatureFile').value = '';
-            document.getElementById('signaturePreview').src = '';
-            document.getElementById('signaturePreviewBox').style.display = 'none';
-            document.getElementById('sigInForm').src = '';
+            const fileInput = document.getElementById('signatureFile');
+            const box = document.getElementById('signaturePreviewBox');
+            const preview = document.getElementById('signaturePreview');
+            const sigImg = document.getElementById('sigInForm');
+
+            if (fileInput) fileInput.value = '';
+            if (preview) preview.src = '';
+            if (box) box.style.display = 'none';
+            if (sigImg) { sigImg.src = ''; }
         }
 
         window.hasSignatureDrawn = () => !!signatureDataUrl;
         window.getSignatureDataURL = () => signatureDataUrl;
     </script>
+
 </body>
 </html>
