@@ -36,8 +36,6 @@
         #signaturePreviewBox { display: none; margin-top: 10px; text-align: center; }
         #signaturePreview { max-height: 120px; max-width: 100%; border: 1px solid #bfdbfe; border-radius: 6px; background: #fff; padding: 4px; }
         .btn-clear-sig { background: #f97316; color: white; margin-top: 8px; padding: 6px 14px; font-size: 13px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; }
-
-        /* ============ Leave Form Styles ============ */
         #leaveForm { display: none; background: white; border: 1px solid black; padding: 12px 14px; margin-top: 20px; font-family: Arial, sans-serif; font-size: 12px; }
         .header-table { width: 100%; border-collapse: collapse; margin-bottom: 3px; }
         .header-table td { text-align: center; font-weight: bold; vertical-align: middle; }
@@ -55,7 +53,6 @@
         .sig-slot { display: inline-block; width: 160px; height: 40px; vertical-align: middle; text-align: center; overflow: hidden; line-height: 38px; }
         .sig-slot img { max-width: 100%; max-height: 38px; vertical-align: middle; display: none; }
         .sig-slot img[src]:not([src=""]) { display: inline-block; }
-
         @media print {
             body * { visibility: hidden; }
             .container { visibility: visible; }
@@ -198,7 +195,6 @@
                 </tr>
             </table>
 
-            <!-- Signature row -->
             <table style="width: 100%; margin-top: 12px; border-collapse: collapse;">
                 <tr>
                     <td colspan="3" style="border: 1px solid white; height: 34px; font-size: 11px; text-align: left; vertical-align: middle; font-weight: bold; padding: 0px 5px;">
@@ -213,7 +209,6 @@
                 </tr>
             </table>
 
-            <!-- Approvals -->
             <table class="approvals" style="margin-top: 8px;">
                 <tr>
                     <td colspan="3" style="border: 1px solid black; font-size: 11px; background: #f9f9f9; font-weight: bold;">
@@ -488,12 +483,14 @@
             finally { clone.remove(); }
         }
 
+        // ✅ الإرسال باستخدام fetch مع no-cors
         async function sendToManager() {
             const staffId = document.getElementById('staffId').value.trim();
             const employee = employees.find(emp => String(emp.code) === String(staffId));
             if (!employee) { alert('كود الموظف غير موجود'); return; }
             if (!employee.managerEmail) { alert('لا يوجد بريد للمدير'); return; }
             if (!window.hasSignatureDrawn()) { alert('⚠️ ارفع صورة التوقيع'); return; }
+
             const btn = document.getElementById('btnSend');
             btn.disabled = true; btn.innerText = '⏳ جاري الإرسال...';
 
@@ -527,36 +524,24 @@
                 signature: window.getSignatureDataURL()
             };
 
-            const iframeName = 'submitFrame_' + Date.now();
-            const iframe = document.createElement('iframe');
-            iframe.name = iframeName;
-            iframe.style.display = 'none';
-            document.body.appendChild(iframe);
-            const form = document.createElement('form');
-            form.action = GOOGLE_SCRIPT_URL;
-            form.method = 'POST';
-            form.target = iframeName;
-            form.style.display = 'none';
-            for (const key in payload) {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = key;
-                input.value = payload[key];
-                form.appendChild(input);
+            console.log('📤 جاري إرسال الطلب...');
+            console.log('📏 حجم التوقيع: ' + Math.round(payload.signature.length / 1024) + ' KB');
+
+            try {
+                await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload)
+                });
+                console.log('✅ تم إرسال الطلب');
+                alert('✅ تم إرسال الطلب للمدير بنجاح!');
+            } catch (err) {
+                console.error('❌ خطأ في الإرسال:', err);
+                alert('❌ فشل الإرسال: ' + err.message);
+            } finally {
+                btn.disabled = false; btn.innerText = '📤 إرسال للمدير';
             }
-            document.body.appendChild(form);
-            iframe.onload = function() {
-                setTimeout(function() {
-                    try { document.body.removeChild(form); } catch(e) {}
-                    try { document.body.removeChild(iframe); } catch(e) {}
-                    alert('✅ تم إرسال الطلب للمدير بنجاح!');
-                    btn.disabled = false; btn.innerText = '📤 إرسال للمدير';
-                }, 500);
-            };
-            form.submit();
-            setTimeout(function() {
-                if (btn.disabled) { btn.disabled = false; btn.innerText = '📤 إرسال للمدير'; }
-            }, 20000);
         }
 
         let signatureDataUrl = "";
