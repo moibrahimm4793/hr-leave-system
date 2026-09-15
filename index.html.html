@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leave Request & Approval Form</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root { --primary-color: #2563eb; --bg-color: #f3f4f6; --input-bg: #ffffff; --border-color: #e5e7eb; --text-color: #1f2937; --secondary-text: #6b7280; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); margin: 0; padding: 20px 10px; color: var(--text-color); }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .input-panel { background: var(--input-bg); border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); padding: 16px 18px; margin-bottom: 20px; border: 1px solid var(--border-color); }
+        .input-panel h3 { margin-top: 0; margin-bottom: 14px; font-size: 17px; color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 8px; }
+        .input-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 14px; }
+        .form-field label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; color: var(--secondary-text); }
+        .form-field input, .form-field select { width: 100%; padding: 8px 10px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 14px; background-color: #f9fafb; box-sizing: border-box; outline: none; }
+        .form-field input:focus, .form-field select:focus { border-color: var(--primary-color); background-color: white; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+        .total-days-box { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 10px 12px; text-align: center; margin-bottom: 14px; font-size: 15px; font-weight: 600; }
+        .total-days-box span { color: var(--primary-color); font-size: 22px; font-weight: bold; }
+        .split-area { background: #f9fafb; border: 1px solid var(--border-color); border-radius: 8px; padding: 14px 16px; margin-bottom: 14px; }
+        .split-area h4 { margin-top: 0; margin-bottom: 12px; color: var(--text-color); font-size: 14px; }
+        .split-box { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
+        .type-input { background: white; padding: 8px 6px; border: 1px solid var(--border-color); border-radius: 8px; text-align: center; }
+        .type-input label { display: block; font-size: 11px; color: var(--secondary-text); margin-bottom: 4px; }
+        .type-input input { width: 60%; text-align: center; padding: 4px 2px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 15px; font-weight: bold; outline: none; }
+        button { padding: 10px 20px; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; }
+        #btnGenerate { background: var(--primary-color); color: white; width: 100%; }
+        #btnPrint { background: #10b981; color: white; width: 48%; margin-top: 8px; display: none; margin-right: 2%; }
+        #btnSave { background: #3b82f6; color: white; width: 48%; margin-top: 8px; display: none; }
+        #btnSend { background: #8b5cf6; color: white; width: 100%; margin-top: 8px; display: none; }
+        #btnSend:disabled { background: #9ca3af; cursor: not-allowed; }
+        .error-msg { color: #dc2626; font-weight: bold; margin-top: 8px; display: block; text-align: center; font-size: 14px; }
+        .signature-wrapper { margin-bottom: 14px; padding: 12px; background: #f0f9ff; border: 2px dashed #2563eb; border-radius: 10px; }
+        .signature-wrapper > label { display: block; font-size: 13px; font-weight: 700; color: #1e40af; margin-bottom: 8px; }
+        #signatureFile { width: 100%; padding: 8px; border: 2px dashed #2563eb; border-radius: 8px; background: #fff; cursor: pointer; font-size: 14px; box-sizing: border-box; }
+        #signaturePreviewBox { display: none; margin-top: 10px; text-align: center; }
+        #signaturePreview { max-height: 120px; max-width: 100%; border: 1px solid #bfdbfe; border-radius: 6px; background: #fff; padding: 4px; }
+        .btn-clear-sig { background: #f97316; color: white; margin-top: 8px; padding: 6px 14px; font-size: 13px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; }
+        #leaveForm { display: none; background: white; border: 1px solid black; padding: 12px 14px; margin-top: 20px; font-family: Arial, sans-serif; font-size: 12px; }
+        .header-table { width: 100%; border-collapse: collapse; margin-bottom: 3px; }
+        .header-table td { text-align: center; font-weight: bold; vertical-align: middle; }
+        .title-box { border: 1px solid black; padding: 4px 6px; font-size: 16px; }
+        .black-box { border: 1px solid black; padding: 4px 6px; font-size: 9px; text-align: center; margin-bottom: 6px; font-weight: bold; }
+        table.main-table { width: 100%; border-collapse: collapse; }
+        table.main-table td { padding: 3px 4px; vertical-align: top; }
+        .line { border-bottom: 1px solid black; min-width: 80px; display: inline-block; text-align: center; color: blue; font-weight: bold; }
+        .line.long { min-width: 160px; }
+        table.leaves { width: 100%; border-collapse: collapse; font-size: 10px; margin-top: 6px; }
+        table.leaves td { border: none; padding: 2px 4px; }
+        .num-days { color: blue; font-weight: bold; }
+        table.approvals { width: 100%; border-collapse: collapse; border: 1px solid black; margin-top: 10px; font-size: 11px; }
+        table.approvals td { border: 1px solid black; padding: 4px 6px; vertical-align: top; }
+        .sig-slot { display: inline-block; width: 160px; height: 40px; vertical-align: middle; border-bottom: 1px solid black; margin: 0 6px; text-align: center; overflow: hidden; line-height: 38px; }
+        .sig-slot img { max-width: 100%; max-height: 38px; vertical-align: middle; display: none; }
+        .sig-slot img[src]:not([src=""]) { display: inline-block; }
+        @media print {
+            body * { visibility: hidden; }
+            .container { visibility: visible; }
+            #leaveForm, #leaveForm * { visibility: visible; }
+            #leaveForm { position: absolute; top: 0; left: 0; width: 100%; border: 1px solid white; padding: 5px 8px; margin: 0; box-sizing: border-box; font-size: 10px; }
+            .input-panel { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="input-panel" id="inputPanel">
+            <h3>إدخال بيانات الإجازة</h3>
+            <div class="input-group">
+                <div class="form-field">
+                    <label>كود الموظف (Staff No)</label>
+                    <input type="text" id="staffId" placeholder="مثال: 5233" list="staffList">
+                    <datalist id="staffList"></datalist>
+                </div>
+                <div class="form-field">
+                    <label>تاريخ البداية (From)</label>
+                    <input type="date" id="startDate" onchange="calculateDays()">
+                </div>
+                <div class="form-field">
+                    <label>تاريخ النهاية (To)</label>
+                    <input type="date" id="endDate" onchange="calculateDays()">
+                </div>
+            </div>
+            <div class="total-days-box" id="totalDaysBox" style="display:none;">إجمالي الأيام: <span id="totalDaysDisplay">0</span> يوم</div>
+            <div class="split-area" id="splitArea" style="display:none;">
+                <h4>وزّع الأيام:</h4>
+                <div class="split-box">
+                    <div class="type-input"><label>سنوية</label><input type="number" id="split_annual" value="0" min="0"></div>
+                    <div class="type-input"><label>بدل أسبوعية</label><input type="number" id="split_weekend" value="0" min="0"></div>
+                    <div class="type-input"><label>بدون أجر</label><input type="number" id="split_withoutPay" value="0" min="0"></div>
+                    <div class="type-input"><label>مرضية</label><input type="number" id="split_sick" value="0" min="0"></div>
+                    <div class="type-input"><label>ولادة</label><input type="number" id="split_maternity" value="0" min="0"></div>
+                    <div class="type-input"><label>إصابة</label><input type="number" id="split_injury" value="0" min="0"></div>
+                    <div class="type-input"><label>بدل راحات</label><input type="number" id="split_rr" value="0" min="0"></div>
+                    <div class="type-input"><label>إضطرارية</label><input type="number" id="split_compassionate" value="0" min="0"></div>
+                    <div class="type-input"><label>أبوة</label><input type="number" id="split_paternity" value="0" min="0"></div>
+                </div>
+            </div>
+            <div class="signature-wrapper">
+                <label>✍️ توقيع الموظف - ارفع صورة التوقيع</label>
+                <input type="file" id="signatureFile" accept="image/*">
+                <div id="signaturePreviewBox">
+                    <img id="signaturePreview" src="" alt="preview"><br>
+                    <button type="button" class="btn-clear-sig" onclick="clearSignature()">🗑️ مسح</button>
+                </div>
+            </div>
+            <button id="btnGenerate" onclick="generateForm()">عرض النموذج</button>
+            <button id="btnPrint" onclick="window.print()">طباعة</button>
+            <button id="btnSave" onclick="saveForm()">🖼️ حفظ كصورة</button>
+            <button id="btnSend" onclick="sendToManager()">📤 إرسال للمدير</button>
+            <span id="errorMsg" class="error-msg"></span>
+        </div>
+
+        <div id="leaveForm">
+            <table class="header-table">
+                <tr>
+                    <td style="width:25%;"><img src="HAC.jpg" style="height:80px;"></td>
+                    <td style="width:50%;">
+                        <div class="title-box" style="background:#ffffcc;">HUB</div>
+                        <div>New Alamein City Projects</div>
+                        <div>HAC&CCC JV</div>
+                        <div style="font-size:11px;">نموذج طلب أجازة مع الموافقة</div>
+                        <div style="font-size:16px;font-weight:bold;">LEAVE REQUEST & APPROVAL FORM</div>
+                    </td>
+                    <td style="width:25%;"><img src="CCC.jpg" style="height:80px;"></td>
+                </tr>
+            </table>
+            <div class="black-box">TO BE COMPLETED BY EMPLOYEE, APPROVED BY DEPARTMENT HEAD</div>
+            <table class="main-table">
+                <tr>
+                    <td style="font-weight:bold;">Employee name :</td>
+                    <td><span class="line long" id="outName"></span></td>
+                    <td style="font-weight:bold;">اسم الموظف</td>
+                    <td style="font-weight:bold;">Title :</td>
+                    <td><span class="line" id="outTitle"></span></td>
+                    <td style="font-weight:bold;">المهنة</td>
+                    <td style="font-weight:bold;">Staff no:</td>
+                    <td><span class="line" id="outStaffId"></span></td>
+                    <td style="font-weight:bold;">رقم الموظف</td>
+                </tr>
+            </table>
+            <table class="main-table">
+                <tr>
+                    <td style="white-space:nowrap;">
+                        <span style="font-weight:bold;">I request leave from :</span>
+                        <span class="line" id="outFromDayName"></span>
+                        <span style="font-size:10px;font-weight:bold;">يوم</span>
+                        <span class="line" id="outFromDate"></span>
+                        <span style="font-size:10px;font-weight:bold;">تاريخ</span>
+                    </td>
+                    <td style="white-space:nowrap;padding-left:100px;">
+                        <span style="font-weight:bold;">To : -</span>
+                        <span class="line" id="outToDayName"></span>
+                        <span style="font-size:10px;font-weight:bold;">يوم</span>
+                        <span class="line" id="outToDate"></span>
+                        <span style="font-size:10px;font-weight:bold;">تاريخ</span>
+                    </td>
+                </tr>
+            </table>
+            <table class="leaves">
+                <tr>
+                    <td style="width:33%;">
+                        Days [<span class="num-days" id="days_annual">0</span>] Annual<br><br>
+                        Days [<span class="num-days" id="days_weekend">0</span>] Weekend<br><br>
+                        Days [<span class="num-days" id="days_withoutPay">0</span>] Without Pay
+                    </td>
+                    <td style="width:33%;">
+                        Days [<span class="num-days" id="days_maternity">0</span>] Maternity<br><br>
+                        Days [<span class="num-days" id="days_sick">0</span>] Sick<br><br>
+                        Days [<span class="num-days" id="days_injury">0</span>] Injury<br><br>
+                        Days [<span class="num-days" id="days_rr">0</span>] R&R
+                    </td>
+                    <td style="width:33%;">
+                        Days [<span class="num-days" id="days_compassionate">0</span>] Compassionate<br><br>
+                        Days [<span class="num-days" id="days_paternity">0</span>] Paternity
+                    </td>
+                </tr>
+            </table>
+            <table style="width:100%;margin-top:12px;">
+                <tr><td style="font-size:11px;font-weight:bold;">
+                    I shall resume duty on : <span id="outResumeDate2" style="color:blue;">---</span>
+                    &ensp;&ensp;&ensp; Signature : <span class="sig-slot"><img id="sigInForm" src=""></span>
+                    &ensp;&ensp;&ensp; Date : <span id="outDate2" style="color:blue;">---</span>
+                </td></tr>
+            </table>
+            <table class="approvals">
+                <tr><td colspan="3" style="background:#f9f9f9;font-weight:bold;">ENDORSEMENT BY DEPARTMENT HEAD</td></tr>
+                <tr><td colspan="3" style="height:34px;text-align:center;font-weight:bold;">Name: ______ Signature: ______ Date: ______</td></tr>
+                <tr><td style="width:50%;height:48px;text-align:center;font-weight:bold;">HAC Representative</td><td style="width:50%;height:48px;text-align:center;font-weight:bold;">CCC Representative</td></tr>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // ✅ الرابط الجديد
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz2RNWZ7ABzjqXBoxSXi-6eYyed1DTid0eNxJGRWtfJYbYvCfHij88PV6uuHoXxJUao/exec';
+        let employees = [];
+
+        async function loadEmployees() {
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL + '?action=getEmployees', {
+                    method: 'GET',
+                    cache: 'no-store'
+                });
+                if (!response.ok) throw new Error('HTTP ' + response.status);
+                const data = await response.json();
+                if (data.error) throw new Error(data.error);
+                employees = Array.isArray(data) ? data : [];
+                console.log('✅ تم تحميل ' + employees.length + ' موظف');
+            } catch (err) {
+                console.error('❌ خطأ:', err.message);
+                employees = [];
+                alert('⚠️ فشل تحميل الموظفين: ' + err.message);
+            }
+            fillDatalist();
+        }
+
+        function fillDatalist() {
+            const dl = document.getElementById('staffList');
+            if (!dl) return;
+            dl.innerHTML = employees.map(e =>
+                `<option value="${e.code}">${e.name} - ${e.title}</option>`
+            ).join('');
+        }
+
+        window.addEventListener('DOMContentLoaded', loadEmployees);
+
+        function calculateDays() {
+            const start = document.getElementById('startDate').value;
+            const end = document.getElementById('endDate').value;
+            if (start && end) {
+                const diffDays = Math.ceil((new Date(end) - new Date(start)) / 86400000) + 1;
+                if (diffDays >= 1) {
+                    document.getElementById('totalDaysDisplay').innerText = diffDays;
+                    document.getElementById('totalDaysBox').style.display = 'block';
+                    document.getElementById('splitArea').style.display = 'block';
+                }
+            }
+        }
+
+        function formatDate(d) {
+            return String(d.getDate()).padStart(2,'0') + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + d.getFullYear();
+        }
+        function formatDayName(d) { return d.toLocaleDateString('en-US', { weekday: 'long' }); }
+
+        function generateForm() {
+            const start = document.getElementById('startDate').value;
+            const end = document.getElementById('endDate').value;
+            if (!start || !end) { alert("أدخل التواريخ"); return; }
+
+            const startDate = new Date(start);
+            const endDate = new Date(end);
+            const totalDays = Math.ceil((endDate - startDate) / 86400000) + 1;
+
+            const types = ["annual","weekend","withoutPay","maternity","sick","injury","rr","compassionate","paternity"];
+            let sumDays = 0, daysObj = {};
+            types.forEach(t => {
+                let val = parseInt(document.getElementById('split_' + t).value) || 0;
+                daysObj[t] = val;
+                sumDays += val;
+            });
+
+            if (sumDays !== totalDays) {
+                document.getElementById('errorMsg').innerText = `خطأ: المجموع (${sumDays}) ≠ الإجمالي (${totalDays})`;
+                return;
+            }
+
+            const staffId = document.getElementById('staffId').value.trim();
+            const employee = employees.find(emp => String(emp.code) === String(staffId));
+            if (!employee) { alert("كود الموظف غير موجود"); return; }
+            if (!window.hasSignatureDrawn()) { alert('⚠️ ارفع صورة التوقيع'); return; }
+
+            document.getElementById('outName').innerText = employee.name;
+            document.getElementById('outTitle').innerText = employee.title;
+            document.getElementById('outStaffId').innerText = employee.code;
+            document.getElementById('outFromDayName').innerText = formatDayName(startDate);
+            document.getElementById('outFromDate').innerText = formatDate(startDate);
+            document.getElementById('outToDayName').innerText = formatDayName(endDate);
+            document.getElementById('outToDate').innerText = formatDate(endDate);
+            document.getElementById('outResumeDate2').innerText = formatDate(new Date(endDate.getTime() + 86400000));
+            document.getElementById('outDate2').innerText = formatDate(new Date());
+            types.forEach(t => document.getElementById('days_' + t).innerText = daysObj[t] || 0);
+            document.getElementById('sigInForm').src = window.getSignatureDataURL();
+
+            document.getElementById('leaveForm').style.display = 'block';
+            document.getElementById('btnPrint').style.display = 'inline-block';
+            document.getElementById('btnSave').style.display = 'inline-block';
+            document.getElementById('btnSend').style.display = 'inline-block';
+            document.getElementById('errorMsg').innerText = "";
+        }
+
+        async function saveForm() {
+            const source = document.getElementById('leaveForm');
+            if (!source || source.style.display === 'none') { alert('اعرض النموذج أولاً'); return; }
+            const filename = (document.getElementById('outName').innerText || 'Leave') + '_' + (document.getElementById('outStaffId').innerText || '0000') + '.png';
+            const clone = source.cloneNode(true);
+            clone.style.cssText = 'display:block;position:fixed;left:-100000px;top:0;width:1100px;background:#fff;padding:10px;font-family:Arial;font-size:10px;';
+            document.body.appendChild(clone);
+            try {
+                const imgs = Array.from(clone.querySelectorAll('img'));
+                await Promise.all(imgs.map(img => img.complete ? Promise.resolve() : new Promise(r => { img.onload = r; img.onerror = r; })));
+                const rendered = await html2canvas(clone, { scale: 2, useCORS: true, backgroundColor: '#fff' });
+                const a4 = document.createElement('canvas');
+                a4.width = 2480; a4.height = 1754;
+                const ctx = a4.getContext('2d');
+                ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, 2480, 1754);
+                const ratio = Math.min(2480 / rendered.width, 1754 / rendered.height);
+                const w = rendered.width * ratio, h = rendered.height * ratio;
+                ctx.drawImage(rendered, (2480 - w) / 2, (1754 - h) / 2, w, h);
+                a4.toBlob(blob => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url; a.download = filename;
+                    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+                    setTimeout(() => URL.revokeObjectURL(url), 1000);
+                }, 'image/png');
+            } catch (err) { alert('خطأ: ' + err.message); }
+            finally { clone.remove(); }
+        }
+
+        // ✅ sendToManager بعد التعديل - بتبعت تفاصيل كل أنواع الإجازات
+        async function sendToManager() {
+            const staffId = document.getElementById('staffId').value.trim();
+            const employee = employees.find(emp => String(emp.code) === String(staffId));
+            if (!employee) { alert('كود الموظف غير موجود'); return; }
+            if (!employee.managerEmail) { alert('لا يوجد بريد للمدير في Staff List'); return; }
+            if (!window.hasSignatureDrawn()) { alert('⚠️ ارفع صورة التوقيع'); return; }
+
+            const btn = document.getElementById('btnSend');
+            btn.disabled = true; btn.innerText = '⏳ جاري الإرسال...';
+
+            // تجميع تفاصيل أنواع الإجازات
+            const types = ["annual","weekend","withoutPay","maternity","sick","injury","rr","compassionate","paternity"];
+            const typeLabels = {
+                annual: "Annual", weekend: "Weekend", withoutPay: "Without Pay",
+                maternity: "Maternity", sick: "Sick", injury: "Injury",
+                rr: "R&R", compassionate: "Compassionate", paternity: "Paternity"
+            };
+            let breakdown = [];
+            let mainType = "Annual";
+            let maxDays = 0;
+            types.forEach(t => {
+                const val = parseInt(document.getElementById('split_' + t).value) || 0;
+                if (val > 0) {
+                    breakdown.push(typeLabels[t] + ": " + val);
+                    if (val > maxDays) { maxDays = val; mainType = typeLabels[t]; }
+                }
+            });
+
+            try {
+                const payload = {
+                    employeeName: document.getElementById('outName').innerText,
+                    staffId: staffId,
+                    title: employee.title,
+                    email: employee.email || '',
+                    fromDate: document.getElementById('outFromDate').innerText,
+                    toDate: document.getElementById('outToDate').innerText,
+                    returnDate: document.getElementById('outResumeDate2').innerText,
+                    totalDays: document.getElementById('totalDaysDisplay').innerText,
+                    type: mainType,
+                    reason: breakdown.join(' | '),
+                    managerEmail: employee.managerEmail,
+                    signature: window.getSignatureDataURL()
+                };
+                await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload)
+                });
+                alert('✅ تم إرسال الطلب للمدير بنجاح!');
+            } catch (err) { alert('خطأ: ' + err.message); }
+            finally { btn.disabled = false; btn.innerText = '📤 إرسال للمدير'; }
+        }
+
+        let signatureDataUrl = "";
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.getElementById('signatureFile');
+            if (!fileInput) return;
+            fileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                if (!file.type.startsWith('image/')) { alert('اختر صورة'); return; }
+                if (file.size > 2 * 1024 * 1024) { alert('الصورة كبيرة'); return; }
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    signatureDataUrl = evt.target.result;
+                    document.getElementById('signaturePreview').src = signatureDataUrl;
+                    document.getElementById('signaturePreviewBox').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+
+        function clearSignature() {
+            signatureDataUrl = "";
+            document.getElementById('signatureFile').value = '';
+            document.getElementById('signaturePreview').src = '';
+            document.getElementById('signaturePreviewBox').style.display = 'none';
+            document.getElementById('sigInForm').src = '';
+        }
+
+        window.hasSignatureDrawn = () => !!signatureDataUrl;
+        window.getSignatureDataURL = () => signatureDataUrl;
+    </script>
+</body>
+</html>
