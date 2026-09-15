@@ -2,7 +2,8 @@
 <html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="format-detection" content="telephone=no">
     <title>Leave Request & Approval Form</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
@@ -60,6 +61,67 @@
             #leaveForm { position: absolute; top: 0; left: 0; width: 100%; border: 1px solid white; padding: 5px 8px; margin: 0; box-sizing: border-box; font-size: 10px; }
             .input-panel { display: none !important; }
         }
+
+        /* ============================================================
+           ✅ wrapper الفورم + Zoom on Tap
+           ============================================================ */
+        .form-scaler {
+            position: relative;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-top: 15px;
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s ease;
+            cursor: zoom-in;
+        }
+        .form-scaler.zoomed {
+            cursor: zoom-out;
+            overflow-x: auto;
+            overflow-y: auto;
+        }
+        .form-scaler::after {
+            content: '🔍 اضغط على الفورم لتكبيرها';
+            display: none;
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(37, 99, 235, 0.9);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            z-index: 10;
+            white-space: nowrap;
+            pointer-events: none;
+            animation: fadeInOut 2s infinite;
+        }
+        @media (max-width: 768px) {
+            .form-scaler:not(.zoomed)::after {
+                display: block;
+            }
+        }
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* ============================================================
+           ✅ تحسين العرض على الموبايل
+           ============================================================ */
+        @media (max-width: 768px) {
+            body { padding: 10px 5px; }
+            .container { max-width: 100%; padding: 0 5px; }
+            .input-panel { padding: 12px 10px; border-radius: 8px; }
+            .input-panel h3 { font-size: 15px; }
+            .input-group { grid-template-columns: 1fr; gap: 10px; }
+            .form-field input, .form-field select { font-size: 15px; padding: 10px; }
+            .split-box { grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 6px; }
+            #btnGenerate, #btnPrint, #btnSave, #btnSend { font-size: 14px; padding: 12px 16px; }
+            #btnPrint, #btnSave { width: 100% !important; margin-right: 0 !important; margin-bottom: 6px; }
+        }
     </style>
 </head>
 <body>
@@ -110,7 +172,8 @@
             <span id="errorMsg" class="error-msg"></span>
         </div>
 
-        <!-- ==================== Leave Form ==================== -->
+        <!-- ✅ wrapper الفورم -->
+        <div class="form-scaler" id="formScaler">
         <div id="leaveForm">
             <table class="header-table">
                 <tr>
@@ -320,10 +383,11 @@
                 </tr>
             </table>
         </div>
+        </div>
     </div>
 
     <script>
-        // ✅ الرابط الجديد
+        // ✅ الرابط الحالي
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxTI6hbUsGdM5RDZUVuoE2HaprxTza7hzHIc-XyzCJUxV_cPAzCIPNc1SgBszcdB3C0/exec';
         const STAFF_SHEET_ID = '1awfrTyQYv3tJhTsBGagjYJgZdHsKlIvug6hvK_oCAR0';
         const STAFF_SHEET_NAME = 'Staff List';
@@ -453,6 +517,12 @@
             document.getElementById('btnSave').style.display = 'inline-block';
             document.getElementById('btnSend').style.display = 'inline-block';
             document.getElementById('errorMsg').innerText = "";
+
+            // ✅ بعد ما الفورم تظهر، عدّل الحجم
+            setTimeout(function() {
+                adjustFormScale();
+                setupZoomListener();
+            }, 200);
         }
 
         async function saveForm() {
@@ -573,6 +643,77 @@
 
         window.hasSignatureDrawn = () => !!signatureDataUrl;
         window.getSignatureDataURL = () => signatureDataUrl;
+
+        // ============================================================
+        //  ✅ تصغير الفورم + Zoom on Tap
+        // ============================================================
+        function adjustFormScale() {
+            const form = document.getElementById('leaveForm');
+            const scaler = document.getElementById('formScaler');
+            if (!form || !scaler) return;
+            
+            if (window.innerWidth <= 768) {
+                if (!scaler.classList.contains('zoomed')) {
+                    const formWidth = 1100;
+                    const availableWidth = scaler.offsetWidth - 4;
+                    const scale = availableWidth / formWidth;
+                    
+                    form.style.transform = 'scale(' + scale + ')';
+                    form.style.transformOrigin = 'top left';
+                    form.style.width = formWidth + 'px';
+                    form.style.position = 'relative';
+                    
+                    const formHeight = form.scrollHeight;
+                    scaler.style.height = (formHeight * scale + 20) + 'px';
+                    scaler.style.overflow = 'hidden';
+                }
+            } else {
+                form.style.transform = '';
+                form.style.transformOrigin = '';
+                form.style.width = '';
+                form.style.position = '';
+                scaler.style.height = '';
+                scaler.style.overflow = '';
+                scaler.classList.remove('zoomed');
+            }
+        }
+
+        function toggleZoom() {
+            const scaler = document.getElementById('formScaler');
+            const form = document.getElementById('leaveForm');
+            if (!scaler || !form) return;
+            if (window.innerWidth > 768) return;
+            
+            if (scaler.classList.contains('zoomed')) {
+                scaler.classList.remove('zoomed');
+                scaler.style.height = '';
+                scaler.style.overflow = 'hidden';
+                scaler.style.cursor = 'zoom-in';
+                adjustFormScale();
+                scaler.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                scaler.classList.add('zoomed');
+                form.style.transform = 'scale(1)';
+                form.style.width = '1100px';
+                scaler.style.height = 'auto';
+                scaler.style.overflowX = 'auto';
+                scaler.style.overflowY = 'auto';
+                scaler.style.cursor = 'zoom-out';
+            }
+        }
+
+        function setupZoomListener() {
+            const scaler = document.getElementById('formScaler');
+            if (!scaler || scaler.dataset.listenerAdded) return;
+            scaler.addEventListener('click', function(e) {
+                if (e.target.tagName === 'IMG' || e.target.tagName === 'BUTTON' || e.target.tagName === 'A') return;
+                toggleZoom();
+            });
+            scaler.dataset.listenerAdded = 'true';
+        }
+
+        window.addEventListener('load', adjustFormScale);
+        window.addEventListener('resize', adjustFormScale);
     </script>
 </body>
 </html>
