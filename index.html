@@ -960,11 +960,10 @@
     // ============================================================
     //  ⚙️ الإعدادات
     // ============================================================
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx3KcQQITvO58n_FMOaOznkM9Ztqt4S3MAX70QE2eFea_mzYBkiY9z2k64bQVNxa6Mo/exec';
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzb0OpsslLN8ae7OLQlLemrY3NNXkyTMCnUN7xacWhi7BsCSZYrYxlSJaUyr7qZXsAg/exec';
 
     let currentEmployee = null;
     let signatureDataUrl = "";
-    let employees = [];
 
     // ============================================================
     //  🖥️ التنقل بين الشاشات
@@ -974,15 +973,11 @@
         const target = document.getElementById('screen-' + name);
         if (target) target.classList.add('active');
         window.scrollTo({ top: 0, behavior: 'smooth' });
-        localStorage.setItem('currentScreen', name);
     }
 
     function goHome() {
-        localStorage.setItem('currentScreen', 'home');
         showScreen('home');
-        // إعادة تعيين شاشة الطلب
         resetForm();
-        // إعادة تعيين شاشة الاستعلام
         document.getElementById('queryResult').style.display = 'none';
         document.getElementById('queryStaffId').value = '';
         document.getElementById('queryError').innerText = '';
@@ -1205,8 +1200,12 @@
                 '&toDate=' + encodeURIComponent(toDate);
 
             jsonpRequest(url, function(res) {
-                resolve(res || { exists: false });
-            }, 10000);
+                if (res === null) {
+                    resolve({ error: true });
+                } else {
+                    resolve(res);
+                }
+            }, 15000);
         });
     }
 
@@ -1355,7 +1354,7 @@
             return;
         }
 
-        // فحص التكرار
+        // ===== فحص التكرار =====
         const btnGen = document.getElementById('btnGenerate');
         const originalText = btnGen.innerText;
         btnGen.disabled = true;
@@ -1365,13 +1364,27 @@
 
         const fromStr = formatDate(startDate);
         const toStr = formatDate(endDate);
+
+        console.log('🔍 فحص التكرار:', { staffId, fromStr, toStr });
+
         const isDuplicate = await checkDuplicate(staffId, fromStr, toStr);
+
+        console.log('📋 نتيجة الفحص:', isDuplicate);
 
         btnGen.disabled = false;
         btnGen.innerText = originalText;
 
+        // ⚠️ لو الاتصال فشل
+        if (isDuplicate.error) {
+            document.getElementById('errorMsg').innerText =
+                '⚠️ فشل الاتصال بالخادم — تحقق من الإنترنت وحاول تاني';
+            return;
+        }
+
+        // 🚫 لو فيه تكرار
         if (isDuplicate.exists) {
-            document.getElementById('errorMsg').innerText = '🚫 هذا الطلب تم تقديمه سابقاً — رقم الطلب: ' + isDuplicate.requestId;
+            document.getElementById('errorMsg').innerText =
+                '🚫 هذا الطلب تم تقديمه سابقاً — رقم الطلب: ' + isDuplicate.requestId;
             showDuplicateMessage(isDuplicate, staffId);
             return;
         }
@@ -1389,7 +1402,7 @@
         types.forEach(t => document.getElementById('days_' + t).innerText = daysObj[t] || 0);
         document.getElementById('sigInForm').src = signatureDataUrl;
 
-        // ✅ Entitlement + Balance
+        // Entitlement + Balance
         const entitlement = parseInt(currentEmployee.entitlement) || 0;
         const leaveBalance = parseInt(currentEmployee.leaveBalance) || 0;
         const annualDays = daysObj.annual || 0;
