@@ -383,7 +383,7 @@
     </div>
 
     <script>
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzToaASHxrlGlHlBrU8ToSsT6UZ2BcUqNuaL3ge29tTM7KuezCnGXo45z-JNMVSgVgm/exec';
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxnQbeF8SW3nLEzZsN4mEKeKVy5V-3Kf7bDEJYClqhGWsB67AiDda2KqIjNuNN5Q96Z/exec';
         const STAFF_SHEET_ID = '1awfrTyQYv3tJhTsBGagjYJgZdHsKlIvug6hvK_oCAR0';
         const STAFF_SHEET_NAME = 'Staff List';
         
@@ -1026,7 +1026,7 @@
             if (!staffId) { alert('كود الموظف مطلوب'); return; }
             
             const url = GOOGLE_SCRIPT_URL + '?viewEmployee=true&id=' + encodeURIComponent(staffId);
-            window.open(url, '_blank');
+            window.location.href = url;  // ✅ فتح في نفس التاب بدلاً من TAB جديد
         }
 
         let signatureDataUrl = "";
