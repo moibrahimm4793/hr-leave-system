@@ -383,7 +383,7 @@
     </div>
 
     <script>
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzgjxF-eYYDlgQhj8Id2HUbND7XGhP0ZAK53FHLR4En9oHAY00TMRda_74PlJMryDml/exec';
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyhTKNqm04F_GcTPGZIeqvEUQLxXFQ_rZ2j7H-iaQgxoKPF410lMRAF4c92Gq8f-QWH/exec';
         const STAFF_SHEET_ID = '1awfrTyQYv3tJhTsBGagjYJgZdHsKlIvug6hvK_oCAR0';
         const STAFF_SHEET_NAME = 'Staff List';
         
@@ -532,7 +532,6 @@
                 const startDate = new Date(start);
                 const endDate = new Date(end);
                 
-                // ✅ تحقق 1: تاريخ البداية ميكونش قبل 26 الشهر السابق
                 if (isDateBeforeMin(start)) {
                     errorEl.innerText = '⚠️ تاريخ البداية لا يمكن أن يكون قبل 26 من الشهر السابق';
                     document.getElementById('totalDaysBox').style.display = 'none';
@@ -540,7 +539,6 @@
                     return;
                 }
                 
-                // ✅ تحقق 2: تاريخ النهاية ميكونش قبل 26 الشهر السابق
                 if (isDateBeforeMin(end)) {
                     errorEl.innerText = '⚠️ تاريخ النهاية لا يمكن أن يكون قبل 26 من الشهر السابق';
                     document.getElementById('totalDaysBox').style.display = 'none';
@@ -548,7 +546,6 @@
                     return;
                 }
                 
-                // ✅ تحقق 3: تاريخ البداية ميكونش أكبر من النهاية
                 if (startDate > endDate) {
                     errorEl.innerText = '⚠️ خطأ: تاريخ البداية لا يمكن أن يكون بعد تاريخ النهاية';
                     document.getElementById('totalDaysBox').style.display = 'none';
@@ -734,10 +731,10 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // دالة مساعدة لعرض الإجازات
+        // دالة مساعدة لعرض الإجازات (في نفس التاب)
         function viewMyLeaves(staffId) {
             const url = GOOGLE_SCRIPT_URL + '?viewEmployee=true&id=' + encodeURIComponent(staffId);
-            window.open(url, '_blank');
+            window.location.href = url;
         }
 
         // ============================================================
@@ -761,21 +758,18 @@
             const startDate = new Date(start);
             const endDate = new Date(end);
             
-            // ✅ تحقق 1: تاريخ البداية ميكونش قبل 26 الشهر السابق
             if (isDateBeforeMin(start)) {
                 document.getElementById('errorMsg').innerText = 
                     '⚠️ تاريخ البداية لا يمكن أن يكون قبل 26 من الشهر السابق';
                 return;
             }
             
-            // ✅ تحقق 2: تاريخ النهاية ميكونش قبل 26 الشهر السابق
             if (isDateBeforeMin(end)) {
                 document.getElementById('errorMsg').innerText = 
                     '⚠️ تاريخ النهاية لا يمكن أن يكون قبل 26 من الشهر السابق';
                 return;
             }
             
-            // ✅ تحقق 3: تاريخ البداية ميكونش أكبر من النهاية
             if (startDate > endDate) {
                 document.getElementById('errorMsg').innerText = 
                     '⚠️ خطأ: تاريخ البداية لا يمكن أن يكون بعد تاريخ النهاية';
@@ -1021,12 +1015,13 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        // ✅ عرض بيانات الموظف (في نفس التاب)
         function loadEmployeeData() {
             const staffId = document.getElementById('trackStaffId').value.trim();
             if (!staffId) { alert('كود الموظف مطلوب'); return; }
             
             const url = GOOGLE_SCRIPT_URL + '?viewEmployee=true&id=' + encodeURIComponent(staffId);
-            window.open(url, '_blank');
+            window.location.href = url;
         }
 
         let signatureDataUrl = "";
