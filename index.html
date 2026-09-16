@@ -107,6 +107,10 @@
             from { transform: scale(0.7); opacity: 0; }
             to { transform: scale(1); opacity: 1; }
         }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
 
         @media (max-width: 768px) {
             body { padding: 10px 5px; }
@@ -382,7 +386,7 @@
     </div>
 
     <script>
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyWoxB0ra3Onreuan_POwgN1JZDBY77LLubuqLm5cOBkp--cBK94RO2RlY6Zw6ZBx4k/exec';
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwyS7dR2acmud2rSXwfonLMnmmOax5YP5ImhgueezsFEutOQKvbxDDVGN0jG9IONZhH/exec';
         const STAFF_SHEET_ID = '1awfrTyQYv3tJhTsBGagjYJgZdHsKlIvug6hvK_oCAR0';
         const STAFF_SHEET_NAME = 'Staff List';
         
@@ -681,7 +685,6 @@
             const container = document.getElementById('monthRequestsContainer');
             const btn = document.getElementById('btnMonth');
             
-            // ✅ لو الزر متملى، اقفل القسم
             if (container.innerHTML && container.innerHTML.trim() !== '') {
                 container.innerHTML = '';
                 btn.innerText = '📊 عرض إجازات الشهر';
