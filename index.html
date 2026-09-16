@@ -25,11 +25,12 @@
         .type-input label { display: block; font-size: 11px; color: var(--secondary-text); margin-bottom: 4px; }
         .type-input input { width: 60%; text-align: center; padding: 4px 2px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 15px; font-weight: bold; outline: none; }
         button { padding: 10px 20px; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; }
-        #btnGenerate { background: var(--primary-color); color: white; width: 100%; }
-        #btnPrint { background: #10b981; color: white; width: 48%; margin-top: 8px; display: none; margin-right: 2%; }
-        #btnSave { background: #3b82f6; color: white; width: 48%; margin-top: 8px; display: none; }
-        #btnSend { background: #8b5cf6; color: white; width: 100%; margin-top: 8px; display: none; }
+        #btnGenerate { background: var(--primary-color); color: white; }
+        #btnGenerate:disabled { background: #9ca3af; cursor: not-allowed; }
+        #btnSend { background: #8b5cf6; color: white; margin-top: 0; display: none; }
         #btnSend:disabled { background: #9ca3af; cursor: not-allowed; }
+        .btn-row { display: flex; gap: 10px; margin-top: 12px; }
+        .btn-row button { flex: 1; }
         .error-msg { color: #dc2626; font-weight: bold; margin-top: 8px; display: block; text-align: center; font-size: 14px; }
         .signature-wrapper { margin-bottom: 14px; padding: 12px; background: #f0f9ff; border: 2px dashed #2563eb; border-radius: 10px; }
         .signature-wrapper > label { display: block; font-size: 13px; font-weight: 700; color: #1e40af; margin-bottom: 8px; }
@@ -115,8 +116,7 @@
             .input-group { grid-template-columns: 1fr; gap: 10px; }
             .form-field input, .form-field select { font-size: 15px; padding: 10px; }
             .split-box { grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 6px; }
-            #btnGenerate, #btnPrint, #btnSave, #btnSend { font-size: 14px; padding: 12px 16px; }
-            #btnPrint, #btnSave { width: 100% !important; margin-right: 0 !important; margin-bottom: 6px; }
+            #btnGenerate, #btnSend { font-size: 14px; padding: 12px 16px; }
         }
     </style>
 </head>
@@ -161,10 +161,10 @@
                     <button type="button" class="btn-clear-sig" onclick="clearSignature()">🗑️ مسح</button>
                 </div>
             </div>
-            <button id="btnGenerate" onclick="generateForm()">عرض النموذج</button>
-            <button id="btnPrint" onclick="window.print()">طباعة</button>
-            <button id="btnSave" onclick="saveForm()">🖼️ حفظ كصورة</button>
-            <button id="btnSend" onclick="sendToManager()">📤 إرسال للمدير</button>
+            <div class="btn-row">
+                <button id="btnGenerate" onclick="generateForm()">عرض النموذج</button>
+                <button id="btnSend" onclick="sendToManager()">📤 إرسال للمدير</button>
+            </div>
             <span id="errorMsg" class="error-msg"></span>
         </div>
 
@@ -382,11 +382,12 @@
     </div>
 
     <script>
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxseQGUErS1WiqwGwhdnhQYWkgGPhaZOfZrCc0P_Z7DDDs_CkSb_DOW7m8ewK97P-2H/exec';
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyAlHI-Vb-XlwRJmMEvUIAjSG5dPRQm37ZI0IhlJddsRzl8wcWRiilO_2x9SXy7wCVk/exec';
         const STAFF_SHEET_ID = '1awfrTyQYv3tJhTsBGagjYJgZdHsKlIvug6hvK_oCAR0';
         const STAFF_SHEET_NAME = 'Staff List';
         
         let employees = [];
+        let currentRequestId = '';
 
         function loadEmployees() {
             return new Promise((resolve) => {
@@ -438,10 +439,6 @@
             });
         }
 
-        // ============================================================
-        //  📅 تحديد أقل تاريخ متاح لبداية الإجازة
-        //  (26 من الشهر اللي فات، أو 26 من الشهر الحالي لو عدّينا 26)
-        // ============================================================
         function setMinDate() {
             const startInput = document.getElementById('startDate');
             const endInput = document.getElementById('endDate');
@@ -454,10 +451,8 @@
             let minDate;
             
             if (todayDay >= 26) {
-                // لو إحنا بعد 26 من الشهر الحالي → min = 26 من الشهر الحالي
                 minDate = new Date(todayYear, todayMonth, 26);
             } else {
-                // لو إحنا قبل 26 من الشهر الحالي → min = 26 من الشهر اللي فات
                 const firstOfCurrentMonth = new Date(todayYear, todayMonth, 1);
                 const lastDayOfPrevMonth = new Date(firstOfCurrentMonth);
                 lastDayOfPrevMonth.setDate(0);
@@ -474,8 +469,6 @@
             
             startInput.min = minDateStr;
             endInput.min = minDateStr;
-            
-            console.log('📅 أقل تاريخ متاح: ' + minDateStr);
         }
 
         function calculateDays() {
@@ -546,45 +539,22 @@
             types.forEach(t => document.getElementById('days_' + t).innerText = daysObj[t] || 0);
             document.getElementById('sigInForm').src = window.getSignatureDataURL();
 
+            // ✅ احسب رقم الطلب
+            currentRequestId = staffId + '-' + startDate.getFullYear() + '-' +
+                              String(startDate.getMonth()+1).padStart(2,'0') + '-' +
+                              String(startDate.getDate()).padStart(2,'0') + '-TO-' +
+                              endDate.getFullYear() + '-' +
+                              String(endDate.getMonth()+1).padStart(2,'0') + '-' +
+                              String(endDate.getDate()).padStart(2,'0');
+
             document.getElementById('leaveForm').style.display = 'block';
-            document.getElementById('btnPrint').style.display = 'inline-block';
-            document.getElementById('btnSave').style.display = 'inline-block';
-            document.getElementById('btnSend').style.display = 'inline-block';
+            document.getElementById('btnSend').style.display = 'block';
             document.getElementById('errorMsg').innerText = "";
 
             setTimeout(function() {
                 adjustFormScale();
                 setupZoomListener();
             }, 200);
-        }
-
-        async function saveForm() {
-            const source = document.getElementById('leaveForm');
-            if (!source || source.style.display === 'none') { alert('اعرض النموذج أولاً'); return; }
-            const filename = (document.getElementById('outName').innerText || 'Leave') + '_' + (document.getElementById('outStaffId').innerText || '0000') + '.png';
-            const clone = source.cloneNode(true);
-            clone.style.cssText = 'display:block;position:fixed;left:-100000px;top:0;width:1200px;background:#fff;padding:10px;font-family:Arial;font-size:11px;';
-            document.body.appendChild(clone);
-            try {
-                const imgs = Array.from(clone.querySelectorAll('img'));
-                await Promise.all(imgs.map(img => img.complete ? Promise.resolve() : new Promise(r => { img.onload = r; img.onerror = r; })));
-                const rendered = await html2canvas(clone, { scale: 2, useCORS: true, backgroundColor: '#fff' });
-                const a4 = document.createElement('canvas');
-                a4.width = 2480; a4.height = 1754;
-                const ctx = a4.getContext('2d');
-                ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, 2480, 1754);
-                const ratio = Math.min(2480 / rendered.width, 1754 / rendered.height);
-                const w = rendered.width * ratio, h = rendered.height * ratio;
-                ctx.drawImage(rendered, (2480 - w) / 2, (1754 - h) / 2, w, h);
-                a4.toBlob(blob => {
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url; a.download = filename;
-                    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-                    setTimeout(() => URL.revokeObjectURL(url), 1000);
-                }, 'image/png');
-            } catch (err) { alert('خطأ: ' + err.message); }
-            finally { clone.remove(); }
         }
 
         async function sendToManager() {
@@ -596,6 +566,9 @@
 
             const btn = document.getElementById('btnSend');
             btn.disabled = true; btn.innerText = '⏳ جاري الإرسال...';
+
+            // ✅ disable زرار عرض النموذج
+            document.getElementById('btnGenerate').disabled = true;
 
             const types = ["annual","weekend","withoutPay","maternity","sick","injury","rr","compassionate","paternity"];
             const typeLabels = {
@@ -627,8 +600,6 @@
                 signature: window.getSignatureDataURL()
             };
 
-            console.log('📤 جاري إرسال الطلب...');
-
             try {
                 await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
@@ -637,94 +608,100 @@
                     body: JSON.stringify(payload)
                 });
                 console.log('✅ تم إرسال الطلب');
-                showThankYouPage();
+                showThankYouPage(currentRequestId);
             } catch (err) {
                 console.error('❌ خطأ في الإرسال:', err);
                 alert('❌ فشل الإرسال: ' + err.message);
                 btn.disabled = false; btn.innerText = '📤 إرسال للمدير';
+                document.getElementById('btnGenerate').disabled = false;
             }
         }
 
         // ============================================================
         //  ✅ صفحة الشكر بعد الإرسال
         // ============================================================
-        function showThankYouPage() {
-            document.getElementById('leaveForm').style.display = 'none';
-            document.getElementById('btnPrint').style.display = 'none';
-            document.getElementById('btnSave').style.display = 'none';
-            document.getElementById('btnSend').style.display = 'none';
-            document.getElementById('inputPanel').style.display = 'none';
-            
-            const scaler = document.getElementById('formScaler');
-            if (scaler) scaler.style.display = 'none';
-            
-            const thankYouDiv = document.createElement('div');
-            thankYouDiv.id = 'thankYouPage';
-            thankYouDiv.style.cssText = `
-                background: white;
-                border-radius: 16px;
-                padding: 60px 30px;
-                text-align: center;
-                box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-                margin: 40px auto;
-                max-width: 500px;
-                animation: scaleIn 0.4s ease;
+        function showThankYouPage(requestId) {
+            document.body.innerHTML = `
+                <div style="
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    background: #f3f4f6;
+                    min-height: 100vh;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin: 0;
+                    padding: 20px;
+                ">
+                    <div style="
+                        background: white;
+                        border-radius: 16px;
+                        padding: 50px 30px;
+                        text-align: center;
+                        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+                        max-width: 500px;
+                        width: 100%;
+                        animation: scaleIn 0.4s ease;
+                    ">
+                        <div style="font-size: 90px; margin-bottom: 15px;">✅</div>
+                        <h1 style="color: #10b981; font-size: 28px; margin: 0 0 15px;">تم الإرسال بنجاح!</h1>
+                        <p style="color: #6b7280; font-size: 16px; margin: 10px 0;">تم إرسال طلب الإجازة للمدير بنجاح</p>
+                        
+                        <div style="
+                            background: #eff6ff;
+                            border: 2px dashed #2563eb;
+                            border-radius: 10px;
+                            padding: 15px;
+                            margin: 20px 0;
+                        ">
+                            <p style="color: #1e40af; font-size: 13px; margin: 0 0 8px; font-weight: bold;">🆔 رقم الطلب</p>
+                            <p style="color: #1e3a8a; font-size: 18px; margin: 0; font-weight: bold; letter-spacing: 1px; word-break: break-all;">${requestId}</p>
+                        </div>
+                        
+                        <p style="color: #9ca3af; font-size: 13px; margin: 15px 0;">احتفظ برقم الطلب لتتبع حالة الطلب</p>
+                        
+                        <div style="display: flex; gap: 10px; margin-top: 25px; flex-wrap: wrap; justify-content: center;">
+                            <button onclick="trackRequest('${requestId}')" style="
+                                flex: 1;
+                                min-width: 140px;
+                                padding: 14px 20px;
+                                background: #8b5cf6;
+                                color: white;
+                                border: none;
+                                border-radius: 8px;
+                                font-size: 15px;
+                                font-weight: bold;
+                                cursor: pointer;
+                            ">📍 تتبع الطلب</button>
+                            <button onclick="location.reload()" style="
+                                flex: 1;
+                                min-width: 140px;
+                                padding: 14px 20px;
+                                background: #2563eb;
+                                color: white;
+                                border: none;
+                                border-radius: 8px;
+                                font-size: 15px;
+                                font-weight: bold;
+                                cursor: pointer;
+                            ">📝 تقديم طلب جديد</button>
+                        </div>
+                    </div>
+                </div>
+                <style>
+                    @keyframes scaleIn {
+                        from { transform: scale(0.7); opacity: 0; }
+                        to { transform: scale(1); opacity: 1; }
+                    }
+                </style>
             `;
-            thankYouDiv.innerHTML = `
-                <div style="font-size: 100px; margin-bottom: 20px;">✅</div>
-                <h1 style="color: #10b981; font-size: 32px; margin: 0 0 15px;">تم الإرسال بنجاح!</h1>
-                <p style="color: #6b7280; font-size: 18px; margin: 10px 0;">تم إرسال طلب الإجازة للمدير بنجاح</p>
-                <p style="color: #9ca3af; font-size: 14px; margin: 20px 0;">سيتم مراجعة الطلب والرد عليك قريباً</p>
-                <button onclick="resetFormForNewRequest()" style="
-                    margin-top: 30px;
-                    padding: 14px 40px;
-                    background: #2563eb;
-                    color: white;
-                    border: none;
-                    border-radius: 8px;
-                    font-size: 16px;
-                    font-weight: bold;
-                    cursor: pointer;
-                ">📝 تقديم طلب جديد</button>
-            `;
             
-            document.querySelector('.container').appendChild(thankYouDiv);
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function resetFormForNewRequest() {
-            const thankYou = document.getElementById('thankYouPage');
-            if (thankYou) thankYou.remove();
-            
-            document.getElementById('inputPanel').style.display = 'block';
-            const scaler = document.getElementById('formScaler');
-            if (scaler) scaler.style.display = '';
-            
-            document.getElementById('staffId').value = '';
-            document.getElementById('startDate').value = '';
-            document.getElementById('endDate').value = '';
-            document.getElementById('totalDaysBox').style.display = 'none';
-            document.getElementById('splitArea').style.display = 'none';
-            
-            const types = ["annual","weekend","withoutPay","maternity","sick","injury","rr","compassionate","paternity"];
-            types.forEach(t => {
-                const input = document.getElementById('split_' + t);
-                if (input) input.value = 0;
-            });
-            
-            clearSignature();
-            
-            const btn = document.getElementById('btnSend');
-            btn.disabled = false;
-            btn.innerText = '📤 إرسال للمدير';
-            
-            if (scaler) {
-                scaler.classList.remove('zoomed');
-                scaler.style.height = '';
-                scaler.style.overflow = '';
-            }
-            
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+        // ✅ فتح صفحة تتبع الطلب
+        function trackRequest(requestId) {
+            const url = GOOGLE_SCRIPT_URL + '?action=track&id=' + encodeURIComponent(requestId);
+            window.open(url, '_blank');
         }
 
         let signatureDataUrl = "";
