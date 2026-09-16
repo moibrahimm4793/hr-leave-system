@@ -131,7 +131,7 @@
                 </div>
                 <div class="form-field">
                     <label>تاريخ البداية (From)</label>
-                    <input type="date" id="startDate" onchange="calculateDays()" onfocus="setMinDate()">
+                    <input type="date" id="startDate" onchange="calculateDays(); updateEndDateMin()" onfocus="setMinDate()">
                 </div>
                 <div class="form-field">
                     <label>تاريخ النهاية (To)</label>
@@ -166,6 +166,7 @@
                 <button id="btnSend" onclick="sendToManager()">📤 إرسال للمدير</button>
             </div>
             <span id="errorMsg" class="error-msg"></span>
+            <div id="duplicateMsgBox" style="display:none; margin-top: 15px;"></div>
         </div>
 
         <div class="form-scaler" id="formScaler">
@@ -382,7 +383,7 @@
     </div>
 
     <script>
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwQLNlEAjPspj_3MWE-5S1eN5XOIygy_YnfNoWZ9EUaXqHQnC9drKaDxn74Vab9HMQM/exec';
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzgjxF-eYYDlgQhj8Id2HUbND7XGhP0ZAK53FHLR4En9oHAY00TMRda_74PlJMryDml/exec';
         const STAFF_SHEET_ID = '1awfrTyQYv3tJhTsBGagjYJgZdHsKlIvug6hvK_oCAR0';
         const STAFF_SHEET_NAME = 'Staff List';
         
@@ -438,6 +439,9 @@
             });
         }
 
+        // ============================================================
+        //  📅 تحديد أقل تاريخ مسموح (26 من الشهر الحالي أو اللي قبله)
+        // ============================================================
         function setMinDate() {
             const startInput = document.getElementById('startDate');
             const endInput = document.getElementById('endDate');
@@ -468,14 +472,93 @@
             
             startInput.min = minDateStr;
             endInput.min = minDateStr;
+            
+            return minDateStr;
         }
 
+        // ============================================================
+        //  🔍 التحقق: التاريخ ميكونش قبل 26 الشهر اللي قبله
+        // ============================================================
+        function isDateBeforeMin(dateStr) {
+            if (!dateStr) return false;
+            
+            const minDateStr = setMinDate();
+            const minDate = new Date(minDateStr);
+            const inputDate = new Date(dateStr);
+            
+            return inputDate < minDate;
+        }
+
+        // ============================================================
+        //  📅 تحديث الحد الأدنى لتاريخ النهاية
+        // ============================================================
+        function updateEndDateMin() {
+            const start = document.getElementById('startDate').value;
+            const endInput = document.getElementById('endDate');
+            const minDateStr = setMinDate();
+            
+            if (start) {
+                const startDate = new Date(start);
+                const minDate = new Date(minDateStr);
+                const finalMin = startDate > minDate ? startDate : minDate;
+                
+                const finalMinStr = finalMin.getFullYear() + '-' +
+                                    String(finalMin.getMonth() + 1).padStart(2, '0') + '-' +
+                                    String(finalMin.getDate()).padStart(2, '0');
+                
+                endInput.min = finalMinStr;
+                
+                if (endInput.value && endInput.value < finalMinStr) {
+                    endInput.value = '';
+                    document.getElementById('totalDaysBox').style.display = 'none';
+                    document.getElementById('splitArea').style.display = 'none';
+                    document.getElementById('errorMsg').innerText = 
+                        '⚠️ تم مسح تاريخ النهاية لأنه كان قبل التاريخ المسموح';
+                }
+            } else {
+                endInput.min = minDateStr;
+            }
+        }
+
+        // ============================================================
+        //  📊 حساب الأيام
+        // ============================================================
         function calculateDays() {
             const start = document.getElementById('startDate').value;
             const end = document.getElementById('endDate').value;
+            const errorEl = document.getElementById('errorMsg');
+            
             if (start && end) {
-                const diffDays = Math.ceil((new Date(end) - new Date(start)) / 86400000) + 1;
+                const startDate = new Date(start);
+                const endDate = new Date(end);
+                
+                // ✅ تحقق 1: تاريخ البداية ميكونش قبل 26 الشهر السابق
+                if (isDateBeforeMin(start)) {
+                    errorEl.innerText = '⚠️ تاريخ البداية لا يمكن أن يكون قبل 26 من الشهر السابق';
+                    document.getElementById('totalDaysBox').style.display = 'none';
+                    document.getElementById('splitArea').style.display = 'none';
+                    return;
+                }
+                
+                // ✅ تحقق 2: تاريخ النهاية ميكونش قبل 26 الشهر السابق
+                if (isDateBeforeMin(end)) {
+                    errorEl.innerText = '⚠️ تاريخ النهاية لا يمكن أن يكون قبل 26 من الشهر السابق';
+                    document.getElementById('totalDaysBox').style.display = 'none';
+                    document.getElementById('splitArea').style.display = 'none';
+                    return;
+                }
+                
+                // ✅ تحقق 3: تاريخ البداية ميكونش أكبر من النهاية
+                if (startDate > endDate) {
+                    errorEl.innerText = '⚠️ خطأ: تاريخ البداية لا يمكن أن يكون بعد تاريخ النهاية';
+                    document.getElementById('totalDaysBox').style.display = 'none';
+                    document.getElementById('splitArea').style.display = 'none';
+                    return;
+                }
+                
+                const diffDays = Math.ceil((endDate - startDate) / 86400000) + 1;
                 if (diffDays >= 1) {
+                    errorEl.innerText = '';
                     document.getElementById('totalDaysDisplay').innerText = diffDays;
                     document.getElementById('totalDaysBox').style.display = 'block';
                     document.getElementById('splitArea').style.display = 'block';
@@ -532,7 +615,7 @@
         }
 
         // ============================================================
-        //  🚫 رسالة الطلب المكرر
+        //  🚫 رسالة الطلب المكرر (تحت زرار عرض النموذج)
         // ============================================================
         function showDuplicateMessage(info, staffId) {
             let statusText = 'تحت التوقيع';
@@ -549,93 +632,161 @@
                 statusIcon = '⏳';
             }
 
-            document.getElementById('inputPanel').style.display = 'none';
+            document.getElementById('leaveForm').style.display = 'none';
+            document.getElementById('btnSend').style.display = 'none';
             document.getElementById('formScaler').style.display = 'none';
 
-            const container = document.querySelector('.container');
-            const msgBox = document.createElement('div');
-            msgBox.style.cssText = `
-                background: white;
-                border-radius: 16px;
-                padding: 50px 30px;
-                text-align: center;
-                box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-                max-width: 600px;
-                margin: 40px auto;
-                animation: scaleIn 0.4s ease;
-            `;
-            msgBox.innerHTML = `
-                <div style="font-size: 90px; margin-bottom: 15px;">🚫</div>
-                <h1 style="color: #ef4444; font-size: 26px; margin: 0 0 15px;">
-                    هذا الطلب تم تقديمه سابقاً
-                </h1>
-                <p style="color: #6b7280; font-size: 15px; margin: 10px 0 20px;">
-                    لا يمكن تقديم نفس الطلب مرتين
-                </p>
-
+            const box = document.getElementById('duplicateMsgBox');
+            box.style.display = 'block';
+            box.innerHTML = `
                 <div style="
-                    background: #f9fafb;
-                    border: 1px solid #e5e7eb;
-                    border-radius: 10px;
-                    padding: 20px;
-                    text-align: right;
-                    margin: 20px 0;
-                    font-size: 14px;
-                    line-height: 2;
+                    background: #fef2f2;
+                    border: 2px solid #ef4444;
+                    border-radius: 12px;
+                    padding: 25px 20px;
+                    text-align: center;
+                    animation: scaleIn 0.3s ease;
                 ">
-                    <div><strong>🆔 رقم الطلب:</strong> ${info.requestId || '-'}</div>
-                    <div><strong>📅 من:</strong> ${info.fromDate || '-'}</div>
-                    <div><strong>📅 إلى:</strong> ${info.toDate || '-'}</div>
-                    <div>
-                        <strong>📌 الحالة:</strong>
-                        <span style="color: ${statusColor}; font-weight: bold;">
-                            ${statusIcon} ${statusText}
-                        </span>
+                    <div style="font-size: 60px; margin-bottom: 10px;">🚫</div>
+                    <h3 style="color: #ef4444; font-size: 20px; margin: 0 0 10px;">
+                        هذا الطلب تم تقديمه سابقاً
+                    </h3>
+                    <p style="color: #6b7280; font-size: 14px; margin: 0 0 15px;">
+                        لا يمكن تقديم نفس الطلب مرتين
+                    </p>
+
+                    <div style="
+                        background: white;
+                        border: 1px solid #e5e7eb;
+                        border-radius: 8px;
+                        padding: 15px;
+                        text-align: right;
+                        margin: 15px 0;
+                        font-size: 13px;
+                        line-height: 2;
+                    ">
+                        <div><strong>🆔 رقم الطلب:</strong> ${info.requestId || '-'}</div>
+                        <div><strong>📅 من:</strong> ${info.fromDate || '-'}</div>
+                        <div><strong>📅 إلى:</strong> ${info.toDate || '-'}</div>
+                        <div>
+                            <strong>📌 الحالة:</strong>
+                            <span style="color: ${statusColor}; font-weight: bold;">
+                                ${statusIcon} ${statusText}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 15px;">
+                        <button onclick="viewMyLeaves('${staffId}')" style="
+                            padding: 10px 20px;
+                            background: #8b5cf6;
+                            color: white;
+                            border: none;
+                            border-radius: 8px;
+                            font-size: 14px;
+                            font-weight: bold;
+                            cursor: pointer;
+                        ">📊 عرض إجازاتي</button>
+
+                        <button onclick="resetForm()" style="
+                            padding: 10px 20px;
+                            background: #6b7280;
+                            color: white;
+                            border: none;
+                            border-radius: 8px;
+                            font-size: 14px;
+                            font-weight: bold;
+                            cursor: pointer;
+                        ">🔄 طلب جديد</button>
                     </div>
                 </div>
-
-                <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 25px;">
-                    <button onclick="viewMyLeaves('${staffId}')" style="
-                        padding: 12px 25px;
-                        background: #8b5cf6;
-                        color: white;
-                        border: none;
-                        border-radius: 8px;
-                        font-size: 15px;
-                        font-weight: bold;
-                        cursor: pointer;
-                    ">📊 عرض إجازاتي</button>
-
-                    <button onclick="location.reload()" style="
-                        padding: 12px 25px;
-                        background: #6b7280;
-                        color: white;
-                        border: none;
-                        border-radius: 8px;
-                        font-size: 15px;
-                        font-weight: bold;
-                        cursor: pointer;
-                    ">🔄 طلب جديد</button>
-                </div>
             `;
-            container.appendChild(msgBox);
+
+            box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // ============================================================
+        //  🔄 إعادة تعيين الفورم
+        // ============================================================
+        function resetForm() {
+            const box = document.getElementById('duplicateMsgBox');
+            box.style.display = 'none';
+            box.innerHTML = '';
+
+            document.getElementById('startDate').value = '';
+            document.getElementById('endDate').value = '';
+            document.getElementById('totalDaysBox').style.display = 'none';
+            document.getElementById('splitArea').style.display = 'none';
+            document.getElementById('errorMsg').innerText = '';
+
+            const types = ["annual","weekend","withoutPay","maternity","sick","injury","rr","compassionate","paternity"];
+            types.forEach(t => {
+                const el = document.getElementById('split_' + t);
+                if (el) el.value = 0;
+            });
+
+            if (typeof clearSignature === 'function') clearSignature();
+
+            document.getElementById('leaveForm').style.display = 'none';
+            document.getElementById('btnSend').style.display = 'none';
+            document.getElementById('formScaler').style.display = 'none';
+
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        // دالة مساعدة لعرض الإجازات
         function viewMyLeaves(staffId) {
             const url = GOOGLE_SCRIPT_URL + '?viewEmployee=true&id=' + encodeURIComponent(staffId);
             window.open(url, '_blank');
         }
 
+        // ============================================================
+        //  🎬 توليد النموذج
+        // ============================================================
         async function generateForm() {
             const start = document.getElementById('startDate').value;
             const end = document.getElementById('endDate').value;
-            if (!start || !end) { alert("أدخل التواريخ"); return; }
+            
+            if (!start || !end) { 
+                document.getElementById('errorMsg').innerText = '⚠️ أدخل التواريخ';
+                return; 
+            }
+            
             const staffId = document.getElementById('staffId').value.trim();
-            if (!staffId) { alert("أدخل كود الموظف"); return; }
+            if (!staffId) { 
+                document.getElementById('errorMsg').innerText = '⚠️ أدخل كود الموظف';
+                return; 
+            }
 
             const startDate = new Date(start);
             const endDate = new Date(end);
+            
+            // ✅ تحقق 1: تاريخ البداية ميكونش قبل 26 الشهر السابق
+            if (isDateBeforeMin(start)) {
+                document.getElementById('errorMsg').innerText = 
+                    '⚠️ تاريخ البداية لا يمكن أن يكون قبل 26 من الشهر السابق';
+                return;
+            }
+            
+            // ✅ تحقق 2: تاريخ النهاية ميكونش قبل 26 الشهر السابق
+            if (isDateBeforeMin(end)) {
+                document.getElementById('errorMsg').innerText = 
+                    '⚠️ تاريخ النهاية لا يمكن أن يكون قبل 26 من الشهر السابق';
+                return;
+            }
+            
+            // ✅ تحقق 3: تاريخ البداية ميكونش أكبر من النهاية
+            if (startDate > endDate) {
+                document.getElementById('errorMsg').innerText = 
+                    '⚠️ خطأ: تاريخ البداية لا يمكن أن يكون بعد تاريخ النهاية';
+                document.getElementById('totalDaysBox').style.display = 'none';
+                document.getElementById('splitArea').style.display = 'none';
+                document.getElementById('leaveForm').style.display = 'none';
+                document.getElementById('btnSend').style.display = 'none';
+                document.getElementById('formScaler').style.display = 'none';
+                return;
+            }
+
             const totalDays = Math.ceil((endDate - startDate) / 86400000) + 1;
 
             const types = ["annual","weekend","withoutPay","maternity","sick","injury","rr","compassionate","paternity"];
@@ -649,7 +800,10 @@
                 document.getElementById('errorMsg').innerText = `خطأ: المجموع (${sumDays}) ≠ الإجمالي (${totalDays})`;
                 return;
             }
-            if (!window.hasSignatureDrawn()) { alert('⚠️ ارفع صورة التوقيع'); return; }
+            if (!window.hasSignatureDrawn()) { 
+                document.getElementById('errorMsg').innerText = '⚠️ ارفع صورة التوقيع';
+                return; 
+            }
 
             if (employees.length === 0) {
                 const btn = document.getElementById('btnGenerate');
@@ -663,7 +817,10 @@
             }
 
             const employee = employees.find(emp => String(emp.code) === String(staffId));
-            if (!employee) { alert("كود الموظف غير موجود في Staff List"); return; }
+            if (!employee) { 
+                document.getElementById('errorMsg').innerText = '⚠️ كود الموظف غير موجود في Staff List';
+                return; 
+            }
 
             // ===== ✅ التحقق من الطلبات المكررة =====
             const btnGen = document.getElementById('btnGenerate');
@@ -671,6 +828,7 @@
             btnGen.disabled = true;
             btnGen.innerText = '⏳ جاري التحقق...';
             document.getElementById('errorMsg').innerText = '';
+            document.getElementById('duplicateMsgBox').style.display = 'none';
 
             const fromStr = formatDate(startDate);
             const toStr = formatDate(endDate);
@@ -681,6 +839,8 @@
             btnGen.innerText = originalText;
 
             if (isDuplicate.exists) {
+                document.getElementById('errorMsg').innerText = 
+                    '🚫 هذا الطلب تم تقديمه سابقاً — رقم الطلب: ' + isDuplicate.requestId;
                 showDuplicateMessage(isDuplicate, staffId);
                 return;
             }
@@ -708,6 +868,9 @@
             }, 200);
         }
 
+        // ============================================================
+        //  📤 إرسال الطلب للمدير
+        // ============================================================
         async function sendToManager() {
             const staffId = document.getElementById('staffId').value.trim();
             const employee = employees.find(emp => String(emp.code) === String(staffId));
@@ -858,7 +1021,6 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // ✅ عرض بيانات الموظف (في تاب جديدة)
         function loadEmployeeData() {
             const staffId = document.getElementById('trackStaffId').value.trim();
             if (!staffId) { alert('كود الموظف مطلوب'); return; }
