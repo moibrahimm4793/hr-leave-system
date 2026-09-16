@@ -382,7 +382,7 @@
     </div>
 
     <script>
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzD_vpf0OS260G3lHiJ9hIH69VL7GY1jjuzGaATzkCP15gbtQPnE3rvgUoQW5_oV7F_/exec';
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwQLNlEAjPspj_3MWE-5S1eN5XOIygy_YnfNoWZ9EUaXqHQnC9drKaDxn74Vab9HMQM/exec';
         const STAFF_SHEET_ID = '1awfrTyQYv3tJhTsBGagjYJgZdHsKlIvug6hvK_oCAR0';
         const STAFF_SHEET_NAME = 'Staff List';
         
@@ -488,6 +488,145 @@
         }
         function formatDayName(d) { return d.toLocaleDateString('en-US', { weekday: 'long' }); }
 
+        // ============================================================
+        //  🔍 التحقق من الطلب المكرر (عن طريق JSONP)
+        // ============================================================
+        function checkDuplicate(staffId, fromDate, toDate) {
+            return new Promise((resolve) => {
+                const callbackName = 'dupCb_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
+                const url = GOOGLE_SCRIPT_URL +
+                    '?action=checkDuplicate' +
+                    '&staffId=' + encodeURIComponent(staffId) +
+                    '&fromDate=' + encodeURIComponent(fromDate) +
+                    '&toDate=' + encodeURIComponent(toDate) +
+                    '&callback=' + callbackName;
+
+                const timeoutId = setTimeout(() => {
+                    cleanup();
+                    console.warn('⏱️ انتهت مهلة التحقق من التكرار — نكمل عادي');
+                    resolve({ exists: false });
+                }, 10000);
+
+                function cleanup() {
+                    const s = document.getElementById(callbackName);
+                    if (s) s.remove();
+                    try { delete window[callbackName]; } catch(e) {}
+                    clearTimeout(timeoutId);
+                }
+
+                window[callbackName] = function(response) {
+                    cleanup();
+                    resolve(response || { exists: false });
+                };
+
+                const script = document.createElement('script');
+                script.id = callbackName;
+                script.src = url;
+                script.onerror = function() {
+                    cleanup();
+                    console.warn('⚠️ فشل الاتصال بالتحقق — نكمل عادي');
+                    resolve({ exists: false });
+                };
+                document.body.appendChild(script);
+            });
+        }
+
+        // ============================================================
+        //  🚫 رسالة الطلب المكرر
+        // ============================================================
+        function showDuplicateMessage(info, staffId) {
+            let statusText = 'تحت التوقيع';
+            let statusColor = '#f59e0b';
+            let statusIcon = '⏳';
+
+            if (info.status === 'Approved') {
+                statusText = 'تمت الموافقة';
+                statusColor = '#10b981';
+                statusIcon = '✅';
+            } else if (info.status === 'Pending') {
+                statusText = 'تحت التوقيع';
+                statusColor = '#f59e0b';
+                statusIcon = '⏳';
+            }
+
+            document.getElementById('inputPanel').style.display = 'none';
+            document.getElementById('formScaler').style.display = 'none';
+
+            const container = document.querySelector('.container');
+            const msgBox = document.createElement('div');
+            msgBox.style.cssText = `
+                background: white;
+                border-radius: 16px;
+                padding: 50px 30px;
+                text-align: center;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+                max-width: 600px;
+                margin: 40px auto;
+                animation: scaleIn 0.4s ease;
+            `;
+            msgBox.innerHTML = `
+                <div style="font-size: 90px; margin-bottom: 15px;">🚫</div>
+                <h1 style="color: #ef4444; font-size: 26px; margin: 0 0 15px;">
+                    هذا الطلب تم تقديمه سابقاً
+                </h1>
+                <p style="color: #6b7280; font-size: 15px; margin: 10px 0 20px;">
+                    لا يمكن تقديم نفس الطلب مرتين
+                </p>
+
+                <div style="
+                    background: #f9fafb;
+                    border: 1px solid #e5e7eb;
+                    border-radius: 10px;
+                    padding: 20px;
+                    text-align: right;
+                    margin: 20px 0;
+                    font-size: 14px;
+                    line-height: 2;
+                ">
+                    <div><strong>🆔 رقم الطلب:</strong> ${info.requestId || '-'}</div>
+                    <div><strong>📅 من:</strong> ${info.fromDate || '-'}</div>
+                    <div><strong>📅 إلى:</strong> ${info.toDate || '-'}</div>
+                    <div>
+                        <strong>📌 الحالة:</strong>
+                        <span style="color: ${statusColor}; font-weight: bold;">
+                            ${statusIcon} ${statusText}
+                        </span>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 25px;">
+                    <button onclick="viewMyLeaves('${staffId}')" style="
+                        padding: 12px 25px;
+                        background: #8b5cf6;
+                        color: white;
+                        border: none;
+                        border-radius: 8px;
+                        font-size: 15px;
+                        font-weight: bold;
+                        cursor: pointer;
+                    ">📊 عرض إجازاتي</button>
+
+                    <button onclick="location.reload()" style="
+                        padding: 12px 25px;
+                        background: #6b7280;
+                        color: white;
+                        border: none;
+                        border-radius: 8px;
+                        font-size: 15px;
+                        font-weight: bold;
+                        cursor: pointer;
+                    ">🔄 طلب جديد</button>
+                </div>
+            `;
+            container.appendChild(msgBox);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function viewMyLeaves(staffId) {
+            const url = GOOGLE_SCRIPT_URL + '?viewEmployee=true&id=' + encodeURIComponent(staffId);
+            window.open(url, '_blank');
+        }
+
         async function generateForm() {
             const start = document.getElementById('startDate').value;
             const end = document.getElementById('endDate').value;
@@ -525,6 +664,27 @@
 
             const employee = employees.find(emp => String(emp.code) === String(staffId));
             if (!employee) { alert("كود الموظف غير موجود في Staff List"); return; }
+
+            // ===== ✅ التحقق من الطلبات المكررة =====
+            const btnGen = document.getElementById('btnGenerate');
+            const originalText = btnGen.innerText;
+            btnGen.disabled = true;
+            btnGen.innerText = '⏳ جاري التحقق...';
+            document.getElementById('errorMsg').innerText = '';
+
+            const fromStr = formatDate(startDate);
+            const toStr = formatDate(endDate);
+
+            const isDuplicate = await checkDuplicate(staffId, fromStr, toStr);
+
+            btnGen.disabled = false;
+            btnGen.innerText = originalText;
+
+            if (isDuplicate.exists) {
+                showDuplicateMessage(isDuplicate, staffId);
+                return;
+            }
+            // ===== نهاية التحقق =====
 
             document.getElementById('outName').innerText = employee.name;
             document.getElementById('outTitle').innerText = employee.title;
