@@ -117,9 +117,6 @@
             50% { transform: translateY(-10px); }
         }
 
-        /* ============================================================ */
-        /*  🏠 شاشة البداية (Landing Screen)                             */
-        /* ============================================================ */
         .landing-screen {
             min-height: calc(100vh - 40px);
             display: flex;
@@ -186,9 +183,7 @@
 <body>
     <div class="container">
 
-        <!-- ============================================================ -->
-        <!--  🏠 شاشة البداية (Landing Screen)                             -->
-        <!-- ============================================================ -->
+        <!-- 🏠 شاشة البداية -->
         <div id="landingScreen" class="landing-screen">
             <div class="landing-header">
                 <div class="landing-logo">🏢</div>
@@ -221,9 +216,7 @@
             </div>
         </div>
 
-        <!-- ============================================================ -->
-        <!--  📝 فورم طلب جديد                                              -->
-        <!-- ============================================================ -->
+        <!-- 📝 فورم طلب جديد -->
         <div class="input-panel" id="inputPanel">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                 <h3 style="margin: 0; border: none; padding: 0;">إدخال بيانات الإجازة</h3>
@@ -278,9 +271,7 @@
             <div id="duplicateMsgBox" style="display:none; margin-top: 15px;"></div>
         </div>
 
-        <!-- ============================================================ -->
-        <!--  📄 النموذج (Form)                                             -->
-        <!-- ============================================================ -->
+        <!-- 📄 النموذج -->
         <div class="form-scaler" id="formScaler">
         <div id="leaveForm">
             <table class="header-table">
@@ -495,15 +486,13 @@
     </div>
 
     <script>
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz7RQI8JFEbN5_5vhSe9qWYl2G71VHyoKVitYOZTy0pzl2QEbQGzpXFpmhOmBFMLXEQ/exec';
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzGEHqdUhafO1XsRPB-x_5WkBJUEx2qXuItd73hNueW6-FcRoDvH4id2HXMHaFjwX-_/exec';
         const STAFF_SHEET_ID = '1awfrTyQYv3tJhTsBGagjYJgZdHsKlIvug6hvK_oCAR0';
         const STAFF_SHEET_NAME = 'Staff List';
         
         let employees = [];
 
-        // ============================================================
-        //  🏠 التنقل بين الشاشات
-        // ============================================================
+        // 🏠 التنقل
         function showNewRequestForm() {
             const landing = document.getElementById('landingScreen');
             const inputPanel = document.getElementById('inputPanel');
@@ -580,9 +569,7 @@
             location.reload();
         }
 
-        // ============================================================
-        //  📊 تحميل الموظفين
-        // ============================================================
+        // 📊 تحميل الموظفين
         function loadEmployees() {
             return new Promise((resolve) => {
                 const callbackName = 'gvizCb_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
@@ -633,9 +620,7 @@
             });
         }
 
-        // ============================================================
-        //  📅 تحديد أقل تاريخ مسموح
-        // ============================================================
+        // 📅 أقل تاريخ مسموح
         function setMinDate() {
             const startInput = document.getElementById('startDate');
             const endInput = document.getElementById('endDate');
@@ -751,9 +736,7 @@
         }
         function formatDayName(d) { return d.toLocaleDateString('en-US', { weekday: 'long' }); }
 
-        // ============================================================
-        //  🔍 التحقق من الطلب المكرر/المتداخل
-        // ============================================================
+        // 🔍 فحص التكرار
         function checkDuplicate(staffId, fromDate, toDate) {
             return new Promise((resolve) => {
                 const callbackName = 'dupCb_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
@@ -895,9 +878,7 @@
             window.location.href = url;
         }
 
-        // ============================================================
-        //  🎬 توليد النموذج
-        // ============================================================
+        // 🎬 توليد النموذج
         async function generateForm() {
             const start = document.getElementById('startDate').value;
             const end = document.getElementById('endDate').value;
@@ -1019,9 +1000,7 @@
             }, 200);
         }
 
-        // ============================================================
-        //  📤 إرسال الطلب
-        // ============================================================
+        // 📤 إرسال الطلب
         async function sendToManager() {
             const staffId = document.getElementById('staffId').value.trim();
             const employee = employees.find(emp => String(emp.code) === String(staffId));
@@ -1080,9 +1059,7 @@
             }
         }
 
-        // ============================================================
-        //  ✅ صفحة الشكر
-        // ============================================================
+        // ✅ صفحة الشكر
         function showThankYouPage(staffId) {
             document.body.innerHTML = `
                 <div style="font-family:'Segoe UI',Tahoma,Arial,sans-serif;background:#f3f4f6;min-height:100vh;padding:20px;">
@@ -1120,9 +1097,7 @@
             window.location.href = url;
         }
 
-        // ============================================================
-        //  ✍️ التوقيع
-        // ============================================================
+        // ✍️ التوقيع
         let signatureDataUrl = "";
         document.addEventListener('DOMContentLoaded', function() {
             const fileInput = document.getElementById('signatureFile');
@@ -1153,9 +1128,7 @@
         window.hasSignatureDrawn = () => !!signatureDataUrl;
         window.getSignatureDataURL = () => signatureDataUrl;
 
-        // ============================================================
-        //  📱 Responsive Form
-        // ============================================================
+        // 📱 Responsive Form
         function adjustFormScale() {
             const form = document.getElementById('leaveForm');
             const scaler = document.getElementById('formScaler');
