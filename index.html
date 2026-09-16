@@ -38,6 +38,7 @@
         #signaturePreview { max-height: 120px; max-width: 100%; border: 1px solid #bfdbfe; border-radius: 6px; background: #fff; padding: 4px; }
         .btn-clear-sig { background: #f97316; color: white; margin-top: 8px; padding: 6px 14px; font-size: 13px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; }
         #leaveForm { display: none; background: white; border: none; padding: 12px 14px; margin-top: 20px; font-family: Arial, sans-serif; font-size: 12px; }
+        .header-table { width: 100%; border-collapse: collapse; margin-bottom: 3px; }
         .header-table td { text-align: center; font-weight: bold; vertical-align: middle; }
         .title-box { border: 1px solid black; padding: 4px 6px; font-size: 16px; }
         .black-box { border: 1px solid black; padding: 4px 6px; font-size: 9px; text-align: center; margin-bottom: 6px; font-weight: bold; line-height: 1.4; }
@@ -61,7 +62,6 @@
             .input-panel { display: none !important; }
         }
 
-        /* ✅ wrapper الفورم + Zoom on Tap */
         .form-scaler {
             position: relative;
             background: #fff;
@@ -96,9 +96,7 @@
             animation: fadeInOut 2s infinite;
         }
         @media (max-width: 768px) {
-            .form-scaler:not(.zoomed)::after {
-                display: block;
-            }
+            .form-scaler:not(.zoomed)::after { display: block; }
         }
         @keyframes fadeInOut {
             0%, 100% { opacity: 0.5; }
@@ -109,7 +107,6 @@
             to { transform: scale(1); opacity: 1; }
         }
 
-        /* ✅ تحسين العرض على الموبايل */
         @media (max-width: 768px) {
             body { padding: 10px 5px; }
             .container { max-width: 100%; padding: 0 5px; }
@@ -134,11 +131,11 @@
                 </div>
                 <div class="form-field">
                     <label>تاريخ البداية (From)</label>
-                    <input type="date" id="startDate" onchange="calculateDays()">
+                    <input type="date" id="startDate" onchange="calculateDays()" onfocus="setMinDate()">
                 </div>
                 <div class="form-field">
                     <label>تاريخ النهاية (To)</label>
-                    <input type="date" id="endDate" onchange="calculateDays()">
+                    <input type="date" id="endDate" onchange="calculateDays()" onfocus="setMinDate()">
                 </div>
             </div>
             <div class="total-days-box" id="totalDaysBox" style="display:none;">إجمالي الأيام: <span id="totalDaysDisplay">0</span> يوم</div>
@@ -385,7 +382,7 @@
     </div>
 
     <script>
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxnMAOZl5alAUwIdvGpUZ6ez4ODPZKQAQxyaPXDlXWN0h1njy5o_0NMKSXz6Hg4X50z/exec';
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxseQGUErS1WiqwGwhdnhQYWkgGPhaZOfZrCc0P_Z7DDDs_CkSb_DOW7m8ewK97P-2H/exec';
         const STAFF_SHEET_ID = '1awfrTyQYv3tJhTsBGagjYJgZdHsKlIvug6hvK_oCAR0';
         const STAFF_SHEET_NAME = 'Staff List';
         
@@ -439,6 +436,46 @@
                     }
                 }, 15000);
             });
+        }
+
+        // ============================================================
+        //  📅 تحديد أقل تاريخ متاح لبداية الإجازة
+        //  (26 من الشهر اللي فات، أو 26 من الشهر الحالي لو عدّينا 26)
+        // ============================================================
+        function setMinDate() {
+            const startInput = document.getElementById('startDate');
+            const endInput = document.getElementById('endDate');
+            
+            const today = new Date();
+            const todayDay = today.getDate();
+            const todayMonth = today.getMonth();
+            const todayYear = today.getFullYear();
+            
+            let minDate;
+            
+            if (todayDay >= 26) {
+                // لو إحنا بعد 26 من الشهر الحالي → min = 26 من الشهر الحالي
+                minDate = new Date(todayYear, todayMonth, 26);
+            } else {
+                // لو إحنا قبل 26 من الشهر الحالي → min = 26 من الشهر اللي فات
+                const firstOfCurrentMonth = new Date(todayYear, todayMonth, 1);
+                const lastDayOfPrevMonth = new Date(firstOfCurrentMonth);
+                lastDayOfPrevMonth.setDate(0);
+                minDate = new Date(
+                    lastDayOfPrevMonth.getFullYear(),
+                    lastDayOfPrevMonth.getMonth(),
+                    26
+                );
+            }
+            
+            const minDateStr = minDate.getFullYear() + '-' +
+                               String(minDate.getMonth() + 1).padStart(2, '0') + '-' +
+                               String(minDate.getDate()).padStart(2, '0');
+            
+            startInput.min = minDateStr;
+            endInput.min = minDateStr;
+            
+            console.log('📅 أقل تاريخ متاح: ' + minDateStr);
         }
 
         function calculateDays() {
@@ -612,7 +649,6 @@
         //  ✅ صفحة الشكر بعد الإرسال
         // ============================================================
         function showThankYouPage() {
-            // إخفاء الفورم والأزرار
             document.getElementById('leaveForm').style.display = 'none';
             document.getElementById('btnPrint').style.display = 'none';
             document.getElementById('btnSave').style.display = 'none';
@@ -622,7 +658,6 @@
             const scaler = document.getElementById('formScaler');
             if (scaler) scaler.style.display = 'none';
             
-            // إنشاء صفحة الشكر
             const thankYouDiv = document.createElement('div');
             thankYouDiv.id = 'thankYouPage';
             thankYouDiv.style.cssText = `
@@ -657,9 +692,6 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // ============================================================
-        //  ✅ إعادة تعيين الفورم لتقديم طلب جديد
-        // ============================================================
         function resetFormForNewRequest() {
             const thankYou = document.getElementById('thankYouPage');
             if (thankYou) thankYou.remove();
@@ -725,9 +757,6 @@
         window.hasSignatureDrawn = () => !!signatureDataUrl;
         window.getSignatureDataURL = () => signatureDataUrl;
 
-        // ============================================================
-        //  ✅ تصغير الفورم + Zoom on Tap
-        // ============================================================
         function adjustFormScale() {
             const form = document.getElementById('leaveForm');
             const scaler = document.getElementById('formScaler');
@@ -793,7 +822,10 @@
             scaler.dataset.listenerAdded = 'true';
         }
 
-        window.addEventListener('load', adjustFormScale);
+        window.addEventListener('load', function() {
+            adjustFormScale();
+            setMinDate();
+        });
         window.addEventListener('resize', adjustFormScale);
     </script>
 </body>
