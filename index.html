@@ -107,10 +107,6 @@
             from { transform: scale(0.7); opacity: 0; }
             to { transform: scale(1); opacity: 1; }
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
 
         @media (max-width: 768px) {
             body { padding: 10px 5px; }
@@ -386,7 +382,7 @@
     </div>
 
     <script>
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxbOPMXG9p0bt3h-hijNI3X34ggTZodT6zcG7gHXyrQL8UGGU2VkXXKCgWI3FEQ2hk/exec';
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzD_vpf0OS260G3lHiJ9hIH69VL7GY1jjuzGaATzkCP15gbtQPnE3rvgUoQW5_oV7F_/exec';
         const STAFF_SHEET_ID = '1awfrTyQYv3tJhTsBGagjYJgZdHsKlIvug6hvK_oCAR0';
         const STAFF_SHEET_NAME = 'Staff List';
         
@@ -702,77 +698,13 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // ✅ عرض بيانات الموظف (رصيد + إجازات)
+        // ✅ عرض بيانات الموظف (في تاب جديدة)
         function loadEmployeeData() {
             const staffId = document.getElementById('trackStaffId').value.trim();
-            const container = document.getElementById('employeeDataContainer');
-            const btn = document.getElementById('btnTrack');
-            
             if (!staffId) { alert('كود الموظف مطلوب'); return; }
             
-            // ✅ لو الزر متملى، اقفل القسم
-            if (container.innerHTML && container.innerHTML.trim() !== '') {
-                container.innerHTML = '';
-                btn.innerText = '📊 عرض إجازاتي';
-                return;
-            }
-            
-            btn.innerText = '⏳ جاري التحميل...';
-            
-            container.innerHTML = `
-                <div style="text-align:center;padding:30px;background:white;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.08);">
-                    <div style="border: 4px solid #e5e7eb; border-top: 4px solid #2563eb; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 15px;"></div>
-                    <p style="color:#6b7280;margin:0;">⏳ جاري تحميل البيانات...</p>
-                </div>
-            `;
-            
-            const iframeName = 'empFrame_' + Date.now();
-            const iframe = document.createElement('iframe');
-            iframe.name = iframeName;
-            iframe.style.display = 'none';
-            document.body.appendChild(iframe);
-            
-            iframe.onload = function() {
-                setTimeout(function() {
-                    try {
-                        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                        const resultHTML = iframeDoc.body.innerHTML;
-                        if (resultHTML && resultHTML.trim()) {
-                            container.innerHTML = resultHTML;
-                        }
-                    } catch (e) {
-                        console.error('Error:', e);
-                        container.innerHTML = '<div style="text-align:center;padding:20px;color:#ef4444;">❌ حدث خطأ</div>';
-                    }
-                    try { document.body.removeChild(iframe); } catch(e) {}
-                    btn.innerText = '🔼 إخفاء البيانات';
-                }, 500);
-            };
-            
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = GOOGLE_SCRIPT_URL;
-            form.target = iframeName;
-            form.style.display = 'none';
-            
-            const input1 = document.createElement('input');
-            input1.type = 'hidden';
-            input1.name = 'action';
-            input1.value = 'getEmployeeRequests';
-            form.appendChild(input1);
-            
-            const input2 = document.createElement('input');
-            input2.type = 'hidden';
-            input2.name = 'staffId';
-            input2.value = staffId;
-            form.appendChild(input2);
-            
-            document.body.appendChild(form);
-            form.submit();
-            
-            setTimeout(function() {
-                try { document.body.removeChild(form); } catch(e) {}
-            }, 1000);
+            const url = GOOGLE_SCRIPT_URL + '?viewEmployee=true&id=' + encodeURIComponent(staffId);
+            window.open(url, '_blank');
         }
 
         let signatureDataUrl = "";
