@@ -733,7 +733,7 @@
     // ============================================================
     //  ⚙️ الإعدادات
     // ============================================================
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby8huWlOB7TVe3fRmQxZ0C8s7SfAuAku2ed6ze5P2l3G_xrdNI1VeWJRNNgCA-K3TGe/exec';
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxEIateYxd_wkMl7byxg88hItX-ArTeD5Q-7Ps5-r8U4-a-rVz2lK4refiaR8Bz-xsB/exec';
 
     let currentEmployee = null;
     let signatureDataUrl = "";
@@ -976,7 +976,7 @@
         let statusColor = '#f59e0b';
         let statusIcon = '⏳';
 
-        if (info.status === 'Approved') {
+        if (info.status === 'Approved' || info.status === 'Approved (LWP)') {
             statusText = 'تمت الموافقة';
             statusColor = '#10b981';
             statusIcon = '✅';
@@ -984,6 +984,10 @@
             statusText = 'تحت التوقيع';
             statusColor = '#f59e0b';
             statusIcon = '⏳';
+        } else if (info.status === 'PendingHR') {
+            statusText = 'تحت مراجعة HR';
+            statusColor = '#2563eb';
+            statusIcon = '🔵';
         }
 
         document.getElementById('leaveForm').style.display = 'none';
