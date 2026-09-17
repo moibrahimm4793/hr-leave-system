@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <meta name="format-detection" content="telephone=no">
     <title>Leave Request & Approval Form</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
             --primary-color: #2563eb;
@@ -548,24 +547,6 @@
             .query-balance-inner { flex-direction: column; gap: 15px; }
             .query-balance-divider { display: none; }
         }
-
-        @media print {
-            body * { visibility: hidden; }
-            .container { visibility: visible; }
-            #leaveForm, #leaveForm * { visibility: visible; }
-            #leaveForm {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                border: 1px solid white;
-                padding: 5px 8px;
-                margin: 0;
-                box-sizing: border-box;
-                font-size: 10px;
-                display: block !important;
-            }
-        }
     </style>
 </head>
 <body>
@@ -700,213 +681,6 @@
             <span id="errorMsg" class="error-msg"></span>
             <div id="duplicateMsgBox" style="display:none; margin-top: 15px;"></div>
         </div>
-
-        <!-- الفورم -->
-        <div class="form-scaler" id="formScaler" style="display:none;">
-            <div id="leaveForm">
-                <table class="header-table">
-                    <tr>
-                        <td style="width: 25%;text-align: center;">
-                            <img src="https://moibrahimm4793.github.io/hr-leave-system/HAC.jpg" style="height: 80px; width: auto;">
-                        </td>
-                        <td style="width: 50%;">
-                            <div class="title-box" style="background: #ffffcc;">HUB</div>
-                            <div>New Alamein City Projects</div>
-                            <div>HAC&CCC JV</div>
-                            <div style="font-size: 11px;">نموذج طلب أجازة مع الموافقة</div>
-                            <div style="font-size: 16px; font-weight: bold;">LEAVE REQUEST & APPROVAL FORM</div>
-                        </td>
-                        <td style="width: 25%;text-align: center;">
-                            <img src="https://moibrahimm4793.github.io/hr-leave-system/CCC.jpg" style="height: 80px; width: auto;">
-                        </td>
-                    </tr>
-                </table>
-
-                <div class="black-box">
-                    TO BE COMPLETED BY EMPLOYEE , APPROVED BY THE DEPARTMENT HEAD AND PRESNTED TO PERSONNEL FOR APPROPRIATE ACTION<br>
-                    AND DISTRIBUTION WELL IN ADVANCE BEFORE COMMANCEMENT OF LEAVE, OR IMMEDIATELY UPON RETURN FROM SICK LEAVE
-                </div>
-
-                <table class="main-table">
-                    <tr>
-                        <td style="font-weight: bold;">Employee name :</td>
-                        <td><span class="line long" id="outName"></span></td>
-                        <td style="font-weight: bold;">اسم الموظف </td>
-                        <td style="font-weight: bold;">Title :</td>
-                        <td><span class="line" id="outTitle"></span></td>
-                        <td style="font-weight: bold;">المهنة </td>
-                        <td style="font-weight: bold;">Staff no:</td>
-                        <td><span class="line" id="outStaffId"></span></td>
-                        <td style="font-weight: bold;">رقم الموظف </td>
-                    </tr>
-                </table>
-
-                <table class="main-table" style="margin-top: 3px;">
-                    <tr>
-                        <td style="white-space: nowrap;">
-                            <span style="font-weight: bold;">I request leave from :</span>
-                            <span class="line" id="outFromDayName" style="min-width: 60px; margin-left: 4px;"></span>
-                            <span style="font-size: 10px;font-weight: bold;">يوم/Day</span>
-                            <span class="line" id="outFromDate" style="min-width: 80px; margin-left: 6px;"></span>
-                            <span style="font-size: 10px;font-weight: bold;">تاريخ/Date</span>
-                            <span style="margin-left: 6px; font-size: 10px;font-weight: bold;">: تاريخ بداية الاجازة من</span>
-                        </td>
-                        <td style="white-space: nowrap; text-align: left; padding-left: 100px;">
-                            <span style="font-weight: bold;">To : -</span>
-                            <span class="line" id="outToDayName" style="min-width: 60px; margin-left: 4px;"></span>
-                            <span style="font-size: 10px;font-weight: bold;">يوم/Day</span>
-                            <span class="line" id="outToDate" style="min-width: 80px; margin-left: 6px;"></span>
-                            <span style="font-size: 10px;font-weight: bold;">تاريخ/Date</span>
-                            <span style="margin-left: 6px; font-size: 10px;font-weight: bold;">: الي</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2" style="padding-top: 3px; font-weight: bold;">Leave requested :</td>
-                    </tr>
-                </table>
-
-                <table class="leaves">
-                    <tr>
-                        <td style="width: 33%;padding: 0 12px;">
-                            Days [ <span class="num-days" id="days_annual">0</span> ] Annual leave with pay / أجازة سنوية مدفوعة الأجر<br><br>
-                            Days [ <span class="num-days" id="days_weekend">0</span> ] Replace of weekends / بدل اجازه اسبوعيه<br><br>
-                            Days [ <span class="num-days" id="days_withoutPay">0</span> ] Leave Without Pay / اجازه بدون اجر
-                        </td>
-                        <td style="width: 33%; border-left: 1px solid white; border-right: 1px solid white; padding: 0 12px;">
-                            Days [ <span class="num-days" id="days_maternity">0</span> ] Maternity / أجازة ولادة<br><br>
-                            Days [ <span class="num-days" id="days_sick">0</span> ] Sick Leave / أجازة مرضية<br><br>
-                            Days [ <span class="num-days" id="days_injury">0</span> ] Industrial Injury/ أجازة اصابة عمل<br><br>
-                            Days [ <span class="num-days" id="days_rr">0</span> ] Replace&Rest(R&R) / بدل راحات
-                        </td>
-                        <td style="width: 33%;">
-                            Days [ <span class="num-days" id="days_compassionate">0</span> ] Compassionate leave with pay : reason /
-                            --------------------------<br><br>
-                            Days [ <span class="num-days" id="days_paternity">0</span> ] Paternity Leave
-                        </td>
-                    </tr>
-                </table>
-
-                <table style="width: 100%; margin-top: 12px; border-collapse: collapse;">
-                    <tr>
-                        <td colspan="3" style="border: 1px solid white; height: 34px; font-size: 11px; text-align: left; vertical-align: middle; font-weight: bold; padding: 0px 5px;">
-                            I shall resume duty on :  ------------  <span id="outResumeDate2" style="color: blue; font-weight: bold;"></span> ------------ : سأباشر عملى فى تاريخ
-                            &ensp;&ensp;&ensp;&ensp;&ensp;
-                            Signature : ------------
-                            <span class="sig-slot"><img id="sigInForm" src="" alt=""></span>
-                            ------------ : التوقيع
-                            &ensp;&ensp;&ensp;&ensp;&ensp;
-                            Date : ------------ <span id="outDate2" style="color: blue; font-weight: bold;"></span>  ------------  : التاريخ
-                        </td>
-                    </tr>
-                </table>
-
-                <table class="approvals" style="margin-top: 8px;">
-                    <tr>
-                        <td colspan="3" style="border: 1px solid black; font-size: 11px; background: #f9f9f9; font-weight: bold;">
-                            ENDORESEMENT BY DEPARTMENT HEAD
-                            <span style="margin-left: 16px;">- Request approved subject to verification of eligibility by Personnel Department موافقة الرئيس المباشر</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="3" style="border: 1px solid black; height: 34px; font-size: 11px; text-align: center; vertical-align: middle;font-weight: bold;">
-                            Name :--------------------------------------------------------------: الاسم
-                            &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
-                            Signature :-----------------------------------------------------------: التوقيع
-                            &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
-                            Date :-------------------------------: التاريخ
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="border: 1px solid black; width: 50%; height: 48px; text-align: center; vertical-align: middle; font-size: 11px;font-weight: bold;">
-                            HAC Representative---------------------------------------------------------------------
-                        </td>
-                        <td style="border: 1px solid black; width: 50%; height: 48px; text-align: center; vertical-align: middle; font-size: 11px;font-weight: bold;">
-                            CCC Representative---------------------------------------------------------------------
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="3" style="border-left: 1px solid black; border-right: 1px solid black; border-top: 1px solid black; border-bottom: 1px solid white; font-weight: bold; font-size: 11px;"><u>
-                                For Personnel Department Use Only : خاص بقسم شئون العاملين</u>
-                            <span style="float: right;">Annual leave entitlement per year ---[ <span id="outEntitlement">0</span> ]--- calendar / work days</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="3" style="border-left: 1px solid black; border-right: 1px solid black; border-top: 1px solid white; border-bottom: 1px solid white; font-size: 11px;font-weight: bold;text-decoration: underline;padding: 0px 5px;">Leave granted as shown :</td>
-                    </tr>
-                    <tr>
-                        <td colspan="3" style="border-left: 1px solid black; border-right: 1px solid black; border-top: 1px solid white; border-bottom: 1px solid white; font-size: 11px; text-align: right; padding: 0px 80px 0px;font-weight: bold;">Maternity leave ------------- Days</td>
-                    </tr>
-                    <tr>
-                        <td colspan="3" style="padding: 0; border-left: 1px solid black; border-right: 1px solid black; border-top: 1px solid white; border-bottom: 1px solid white;">
-                            <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
-                                <tr>
-                                    <td style="width: 33%; padding: 6px; vertical-align: top; border: none; font-weight: bold;">
-                                        Annual Leave with pay :<br><br>
-                                        <div style="margin-bottom: 10px;">
-                                            &nbsp;&nbsp;&nbsp; Day accumulated<br>
-                                            <div style="margin-top: 6px;">---------- as of -------------------</div>
-                                        </div>
-                                        <div style="margin-bottom: 10px;">
-                                            [ ------] Less days now granted<br>
-                                            <div style="margin-top: 8px; white-space: nowrap;">From <span class="line" style="width: 60px; min-width: 60px;"></span> to <span class="line" style="width: 60px; min-width: 60px;"></span></div>
-                                        </div>
-                                        <div style="margin-top: 8px;">
-                                            -----[ <span id="outBalance" style="color: blue;">0</span> ]----- Balance
-                                        </div>
-                                    </td>
-                                    <td style="width: 33%; padding: 6px; vertical-align: top; border: none; font-weight: bold;">
-                                        Leave without pay :<br><br>
-                                        <div style="white-space: nowrap;">
-                                            <span class="line" style="width: 70px; min-width: 70px;"></span> Days granted from
-                                            <span class="line" style="width: 70px; min-width: 70px;"></span> to
-                                            <span class="line" style="width: 70px; min-width: 70px;"></span>
-                                        </div>
-                                        <div style="height: 10px;"></div>
-                                        Rest and Recreation ( R&R) :<br><br>
-                                        <div style="white-space: nowrap;">
-                                            <span class="line" style="width: 70px; min-width: 70px;"></span> Days granted from
-                                            <span class="line" style="width: 70px; min-width: 70px;"></span> to
-                                            <span class="line" style="width: 70px; min-width: 70px;"></span>
-                                        </div>
-                                        <div style="height: 10px;"></div>
-                                        Compassionate Leave :<br><br>
-                                        <div style="white-space: nowrap;">
-                                            <span class="line" style="width: 70px; min-width: 70px;"></span> Days granted from
-                                            <span class="line" style="width: 70px; min-width: 70px;"></span> to
-                                            <span class="line" style="width: 70px; min-width: 70px;"></span>
-                                        </div>
-                                    </td>
-                                    <td style="width: 34%; padding: 6px; vertical-align: top; border: none; font-weight: bold;">
-                                        Sick Leave / Industrial Injury<br><br>
-                                        <div style="white-space: nowrap;">
-                                            <span class="line" style="width: 70px; min-width: 70px;"></span> Days @ full days<br><br>
-                                            <span class="line" style="width: 70px; min-width: 70px;"></span> Days @ 3/4 pay<br><br>
-                                            <span class="line" style="width: 70px; min-width: 70px;"></span> Days @ 1/2 pay<br><br>
-                                            <span class="line" style="width: 70px; min-width: 70px;"></span> Days @ 1/4 pay<br><br>
-                                            <span class="line" style="width: 70px; min-width: 70px;"></span> Days without pay
-                                        </div>
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="3" style="border-left: 1px solid black; border-right: 1px solid black; border-top: none; vertical-align: middle; height: 20px; font-size: 11px;">
-                            Comments : ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="3" style="border: 1px solid black; padding: 6px 8px; font-size: 11px; vertical-align: middle; text-align: center; font-weight: bold; height: 40px;">
-                            Name :--------------------------------------------------------------: الاسم
-                            &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
-                            Signature :-----------------------------------------------------------: التوقيع
-                            &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
-                            Date :-------------------------------: التاريخ
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </div>
     </div>
 
     <!-- ============================================================ -->
@@ -955,12 +729,11 @@
     </div>
 
 </div>
-
 <script>
     // ============================================================
     //  ⚙️ الإعدادات
     // ============================================================
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzKgAvzXtgLWc0xt1k3TZN5Hp4wW9ME8eNP1qQhSFxfSDprVVLMgoC7bQM3zMFtWFXb/exec';
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby8huWlOB7TVe3fRmQxZ0C8s7SfAuAku2ed6ze5P2l3G_xrdNI1VeWJRNNgCA-K3TGe/exec';
 
     let currentEmployee = null;
     let signatureDataUrl = "";
@@ -983,7 +756,6 @@
         document.getElementById('queryError').innerText = '';
     }
 
-    // عند التحميل → Home دايمًا (Refresh → Home)
     window.addEventListener('load', function() {
         showScreen('home');
         setMinDate();
@@ -1009,11 +781,7 @@
             const firstOfCurrentMonth = new Date(todayYear, todayMonth, 1);
             const lastDayOfPrevMonth = new Date(firstOfCurrentMonth);
             lastDayOfPrevMonth.setDate(0);
-            minDate = new Date(
-                lastDayOfPrevMonth.getFullYear(),
-                lastDayOfPrevMonth.getMonth(),
-                26
-            );
+            minDate = new Date(lastDayOfPrevMonth.getFullYear(), lastDayOfPrevMonth.getMonth(), 26);
         }
 
         const minDateStr = minDate.getFullYear() + '-' +
@@ -1042,19 +810,15 @@
             const startDate = new Date(start);
             const minDate = new Date(minDateStr);
             const finalMin = startDate > minDate ? startDate : minDate;
-
             const finalMinStr = finalMin.getFullYear() + '-' +
                                 String(finalMin.getMonth() + 1).padStart(2, '0') + '-' +
                                 String(finalMin.getDate()).padStart(2, '0');
-
             endInput.min = finalMinStr;
-
             if (endInput.value && endInput.value < finalMinStr) {
                 endInput.value = '';
                 document.getElementById('totalDaysBox').style.display = 'none';
                 document.getElementById('splitArea').style.display = 'none';
-                document.getElementById('errorMsg').innerText =
-                    '⚠️ تم مسح تاريخ النهاية لأنه كان قبل التاريخ المسموح';
+                document.getElementById('errorMsg').innerText = '⚠️ تم مسح تاريخ النهاية';
             }
         } else {
             endInput.min = minDateStr;
@@ -1127,8 +891,7 @@
         errorCard.style.display = 'none';
         balanceCard.style.display = 'none';
 
-        jsonpRequest(GOOGLE_SCRIPT_URL +
-            '?action=getBalance&staffId=' + encodeURIComponent(staffId),
+        jsonpRequest(GOOGLE_SCRIPT_URL + '?action=getBalance&staffId=' + encodeURIComponent(staffId),
             function(res) {
                 if (!res || !res.found) {
                     errorCard.style.display = 'block';
@@ -1138,7 +901,6 @@
                 }
 
                 currentEmployee = res;
-
                 document.getElementById('empName').innerText = res.name || '-';
                 document.getElementById('empTitle').innerText = res.title || '-';
                 document.getElementById('empBalance').innerText = res.leaveBalance || 0;
@@ -1283,7 +1045,6 @@
         document.getElementById('leaveForm').style.display = 'none';
         document.getElementById('btnSend').style.display = 'none';
         document.getElementById('formScaler').style.display = 'none';
-
         document.getElementById('balanceCard').style.display = 'none';
         document.getElementById('staffError').style.display = 'none';
         document.getElementById('datesGroup').style.display = 'none';
@@ -1303,12 +1064,7 @@
         }
 
         const staffId = document.getElementById('staffId').value.trim();
-        if (!staffId) {
-            document.getElementById('errorMsg').innerText = '⚠️ أدخل كود الموظف';
-            return;
-        }
-
-        if (!currentEmployee) {
+        if (!staffId || !currentEmployee) {
             document.getElementById('errorMsg').innerText = '⚠️ كود الموظف غير صحيح';
             return;
         }
@@ -1316,21 +1072,12 @@
         const startDate = new Date(start);
         const endDate = new Date(end);
 
-        if (isDateBeforeMin(start)) {
-            document.getElementById('errorMsg').innerText = '⚠️ تاريخ البداية لا يمكن أن يكون قبل 26 من الشهر السابق';
-            return;
-        }
-        if (isDateBeforeMin(end)) {
-            document.getElementById('errorMsg').innerText = '⚠️ تاريخ النهاية لا يمكن أن يكون قبل 26 من الشهر السابق';
+        if (isDateBeforeMin(start) || isDateBeforeMin(end)) {
+            document.getElementById('errorMsg').innerText = '⚠️ التاريخ قبل 26 من الشهر السابق';
             return;
         }
         if (startDate > endDate) {
-            document.getElementById('errorMsg').innerText = '⚠️ خطأ: تاريخ البداية لا يمكن أن يكون بعد تاريخ النهاية';
-            document.getElementById('totalDaysBox').style.display = 'none';
-            document.getElementById('splitArea').style.display = 'none';
-            document.getElementById('leaveForm').style.display = 'none';
-            document.getElementById('btnSend').style.display = 'none';
-            document.getElementById('formScaler').style.display = 'none';
+            document.getElementById('errorMsg').innerText = '⚠️ تاريخ البداية بعد النهاية';
             return;
         }
 
@@ -1354,91 +1101,41 @@
             return;
         }
 
-        // ===== فحص التكرار =====
+        // فحص التكرار
         const btnGen = document.getElementById('btnGenerate');
         const originalText = btnGen.innerText;
         btnGen.disabled = true;
         btnGen.innerText = '⏳ جاري التحقق...';
-        document.getElementById('errorMsg').innerText = '';
-        document.getElementById('duplicateMsgBox').style.display = 'none';
 
         const fromStr = formatDate(startDate);
         const toStr = formatDate(endDate);
-
-        console.log('🔍 فحص التكرار:', { staffId, fromStr, toStr });
-
         const isDuplicate = await checkDuplicate(staffId, fromStr, toStr);
-
-        console.log('📋 نتيجة الفحص:', isDuplicate);
 
         btnGen.disabled = false;
         btnGen.innerText = originalText;
 
-        // ⚠️ لو الاتصال فشل
         if (isDuplicate.error) {
-            document.getElementById('errorMsg').innerText =
-                '⚠️ فشل الاتصال بالخادم — تحقق من الإنترنت وحاول تاني';
+            document.getElementById('errorMsg').innerText = '⚠️ فشل الاتصال بالخادم — حاول تاني';
             return;
         }
 
-        // 🚫 لو فيه تكرار
         if (isDuplicate.exists) {
-            document.getElementById('errorMsg').innerText =
-                '🚫 هذا الطلب تم تقديمه سابقاً — رقم الطلب: ' + isDuplicate.requestId;
+            document.getElementById('errorMsg').innerText = '🚫 هذا الطلب تم تقديمه سابقاً — رقم الطلب: ' + isDuplicate.requestId;
             showDuplicateMessage(isDuplicate, staffId);
             return;
         }
 
-        // تعبئة الفورم
-        document.getElementById('outName').innerText = currentEmployee.name;
-        document.getElementById('outTitle').innerText = currentEmployee.title;
-        document.getElementById('outStaffId').innerText = currentEmployee.code;
-        document.getElementById('outFromDayName').innerText = formatDayName(startDate);
-        document.getElementById('outFromDate').innerText = formatDate(startDate);
-        document.getElementById('outToDayName').innerText = formatDayName(endDate);
-        document.getElementById('outToDate').innerText = formatDate(endDate);
-        document.getElementById('outResumeDate2').innerText = formatDate(new Date(endDate.getTime() + 86400000));
-        document.getElementById('outDate2').innerText = formatDate(new Date());
-        types.forEach(t => document.getElementById('days_' + t).innerText = daysObj[t] || 0);
-        document.getElementById('sigInForm').src = signatureDataUrl;
-
-        // Entitlement + Balance
-        const entitlement = parseInt(currentEmployee.entitlement) || 0;
-        const leaveBalance = parseInt(currentEmployee.leaveBalance) || 0;
-        const annualDays = daysObj.annual || 0;
-        const balanceAfter = leaveBalance - annualDays;
-
-        document.getElementById('outEntitlement').innerText = entitlement;
-        document.getElementById('outBalance').innerText = balanceAfter;
-
-        document.getElementById('leaveForm').style.display = 'block';
-        document.getElementById('formScaler').style.display = 'block';
-        document.getElementById('btnSend').style.display = 'block';
-        document.getElementById('errorMsg').innerText = "";
-
-        setTimeout(function() {
-            adjustFormScale();
-            setupZoomListener();
-        }, 200);
+        // إرسال للمدير مباشرة
+        sendToManager(staffId, daysObj, startDate, endDate, totalDays);
     }
 
     // ============================================================
     //  📤 إرسال الطلب
     // ============================================================
-    async function sendToManager() {
-        if (!currentEmployee) {
-            alert('كود الموظف غير صحيح');
-            return;
-        }
-        if (!signatureDataUrl) {
-            alert('⚠️ ارفع صورة التوقيع');
-            return;
-        }
-
-        const btn = document.getElementById('btnSend');
+    async function sendToManager(staffId, daysObj, startDate, endDate, totalDays) {
+        const btn = document.getElementById('btnGenerate');
         btn.disabled = true;
         btn.innerText = '⏳ جاري الإرسال...';
-        document.getElementById('btnGenerate').disabled = true;
 
         const types = ["annual","weekend","withoutPay","maternity","sick","injury","rr","compassionate","paternity"];
         const typeLabels = {
@@ -1448,22 +1145,24 @@
         };
         let breakdown = [], mainType = "Annual", maxDays = 0;
         types.forEach(t => {
-            const val = parseInt(document.getElementById('split_' + t).value) || 0;
+            const val = daysObj[t] || 0;
             if (val > 0) {
                 breakdown.push(typeLabels[t] + ": " + val);
                 if (val > maxDays) { maxDays = val; mainType = typeLabels[t]; }
             }
         });
 
+        const returnDate = new Date(endDate.getTime() + 86400000);
+
         const payload = {
-            employeeName: document.getElementById('outName').innerText,
+            employeeName: currentEmployee.name,
             staffId: currentEmployee.code,
             title: currentEmployee.title,
             email: currentEmployee.email || '',
-            fromDate: document.getElementById('outFromDate').innerText,
-            toDate: document.getElementById('outToDate').innerText,
-            returnDate: document.getElementById('outResumeDate2').innerText,
-            totalDays: document.getElementById('totalDaysDisplay').innerText,
+            fromDate: formatDate(startDate),
+            toDate: formatDate(endDate),
+            returnDate: formatDate(returnDate),
+            totalDays: totalDays,
             type: mainType,
             reason: breakdown.join(' | '),
             managerEmail: currentEmployee.managerEmail,
@@ -1483,8 +1182,7 @@
             console.error('❌ خطأ في الإرسال:', err);
             alert('❌ فشل الإرسال: ' + err.message);
             btn.disabled = false;
-            btn.innerText = '📤 إرسال للمدير';
-            document.getElementById('btnGenerate').disabled = false;
+            btn.innerText = 'عرض النموذج';
         }
     }
 
@@ -1506,8 +1204,7 @@
         resultEl.innerHTML = '<div style="text-align:center;padding:30px;color:#6b7280;">⏳ جاري التحميل...</div>';
         resultEl.style.display = 'block';
 
-        jsonpRequest(GOOGLE_SCRIPT_URL +
-            '?action=getEmployeeLeaves&staffId=' + encodeURIComponent(staffId),
+        jsonpRequest(GOOGLE_SCRIPT_URL + '?action=getEmployeeLeaves&staffId=' + encodeURIComponent(staffId),
             function(res) {
                 if (!res || !res.found) {
                     resultEl.innerHTML = `
@@ -1550,7 +1247,7 @@
                                 <tbody>
                                     ${requests.map((r, idx) => {
                                         let statusColor, statusText, statusIcon;
-                                        if (r.status === 'Approved') {
+                                        if (r.status === 'Approved' || r.status === 'Approved (LWP)') {
                                             statusColor = '#10b981';
                                             statusText = 'تمت الموافقة';
                                             statusIcon = '✅';
@@ -1558,6 +1255,10 @@
                                             statusColor = '#ef4444';
                                             statusText = 'مرفوض';
                                             statusIcon = '❌';
+                                        } else if (r.status === 'PendingHR') {
+                                            statusColor = '#2563eb';
+                                            statusText = 'تحت مراجعة HR';
+                                            statusIcon = '🔵';
                                         } else {
                                             statusColor = '#f59e0b';
                                             statusText = 'تحت التوقيع';
@@ -1653,78 +1354,9 @@
         document.getElementById('signatureFile').value = '';
         document.getElementById('signaturePreview').src = '';
         document.getElementById('signaturePreviewBox').style.display = 'none';
-        document.getElementById('sigInForm').src = '';
     }
 
-    // ============================================================
-    //  📱 التكبير للموبايل
-    // ============================================================
-    function adjustFormScale() {
-        const form = document.getElementById('leaveForm');
-        const scaler = document.getElementById('formScaler');
-        if (!form || !scaler) return;
-
-        if (window.innerWidth <= 768) {
-            if (!scaler.classList.contains('zoomed')) {
-                const formWidth = 1100;
-                const availableWidth = scaler.offsetWidth - 4;
-                const scale = availableWidth / formWidth;
-
-                form.style.transform = 'scale(' + scale + ')';
-                form.style.transformOrigin = 'top left';
-                form.style.width = formWidth + 'px';
-                form.style.position = 'relative';
-
-                const formHeight = form.scrollHeight;
-                scaler.style.height = (formHeight * scale + 20) + 'px';
-                scaler.style.overflow = 'hidden';
-            }
-        } else {
-            form.style.transform = '';
-            form.style.transformOrigin = '';
-            form.style.width = '';
-            form.style.position = '';
-            scaler.style.height = '';
-            scaler.style.overflow = '';
-            scaler.classList.remove('zoomed');
-        }
-    }
-
-    function toggleZoom() {
-        const scaler = document.getElementById('formScaler');
-        const form = document.getElementById('leaveForm');
-        if (!scaler || !form) return;
-        if (window.innerWidth > 768) return;
-
-        if (scaler.classList.contains('zoomed')) {
-            scaler.classList.remove('zoomed');
-            scaler.style.height = '';
-            scaler.style.overflow = 'hidden';
-            scaler.style.cursor = 'zoom-in';
-            adjustFormScale();
-            scaler.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        } else {
-            scaler.classList.add('zoomed');
-            form.style.transform = 'scale(1)';
-            form.style.width = '1100px';
-            scaler.style.height = 'auto';
-            scaler.style.overflowX = 'auto';
-            scaler.style.overflowY = 'auto';
-            scaler.style.cursor = 'zoom-out';
-        }
-    }
-
-    function setupZoomListener() {
-        const scaler = document.getElementById('formScaler');
-        if (!scaler || scaler.dataset.listenerAdded) return;
-        scaler.addEventListener('click', function(e) {
-            if (e.target.tagName === 'IMG' || e.target.tagName === 'BUTTON' || e.target.tagName === 'A') return;
-            toggleZoom();
-        });
-        scaler.dataset.listenerAdded = 'true';
-    }
-
-    window.addEventListener('resize', adjustFormScale);
+    window.addEventListener('resize', function() {});
 </script>
 </body>
 </html>
