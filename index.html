@@ -24,13 +24,16 @@ body {
     to { transform: scale(1); opacity: 1; }
 }
 
-/* Home */
+/* ============ HOME ============ */
 .home-screen {
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
     min-height: 70vh; text-align: center;
 }
-.home-logo { display: flex; gap: 20px; margin-bottom: 30px; flex-wrap: wrap; justify-content: center; }
+.home-logo {
+    display: flex; gap: 20px; margin-bottom: 30px;
+    flex-wrap: wrap; justify-content: center;
+}
 .home-logo img {
     height: 70px; background: white; padding: 8px;
     border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);
@@ -44,13 +47,14 @@ body {
     color: white; min-width: 220px;
     display: flex; flex-direction: column; align-items: center; gap: 10px;
     transition: transform 0.2s;
+    font-family: inherit;
 }
 .home-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(0,0,0,0.15); }
 .home-btn .icon { font-size: 38px; }
 .home-btn.new { background: linear-gradient(135deg, #2563eb, #1e40af); }
 .home-btn.query { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
 
-/* ============ Header الموحد ============ */
+/* ============ HEADER ============ */
 .rv-header {
     background: linear-gradient(135deg, #2563eb, #1e40af);
     color: white; border-radius: 14px;
@@ -66,23 +70,17 @@ body {
 }
 .rv-header h1 { margin: 0 0 6px; font-size: 22px; }
 .rv-header p { margin: 3px 0; font-size: 14px; opacity: 0.95; }
-.rv-header .emp-info {
-    background: rgba(255,255,255,0.15);
-    border-radius: 10px; padding: 10px 15px; margin-top: 12px;
-    display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;
-}
-.rv-header .emp-info div { font-size: 13px; }
-.rv-header .emp-info strong { font-size: 15px; }
 
 /* Back Button */
 .btn-back {
     background: #6b7280; color: white; padding: 10px 20px;
     font-size: 14px; border: none; border-radius: 8px;
     cursor: pointer; font-weight: 600; margin-bottom: 12px;
+    font-family: inherit;
 }
 .btn-back:hover { background: #4b5563; }
 
-/* Edit Card */
+/* ============ EDIT CARD ============ */
 .edit-card {
     background: white; border-radius: 14px;
     box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
@@ -101,6 +99,7 @@ body {
     gap: 12px;
     margin-bottom: 18px;
 }
+.info-row:last-child { margin-bottom: 0; }
 .info-field label {
     display: block; font-size: 12px; font-weight: 600;
     color: #6b7280; margin-bottom: 5px;
@@ -126,7 +125,6 @@ body {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 12px;
-    margin-bottom: 18px;
 }
 .date-field {
     background: #f0f9ff; border: 2px solid #bfdbfe;
@@ -209,7 +207,7 @@ body {
 .sig-section {
     background: #f0f9ff; border: 2px dashed #2563eb;
     border-radius: 12px; padding: 15px;
-    text-align: center; margin-bottom: 15px;
+    text-align: center;
 }
 .sig-section label {
     display: block; font-size: 13px;
@@ -232,6 +230,7 @@ body {
     padding: 6px 14px; font-size: 12px;
     border: none; border-radius: 6px;
     cursor: pointer; font-weight: bold;
+    font-family: inherit;
 }
 
 /* Buttons */
@@ -246,12 +245,14 @@ body {
     transition: all 0.2s;
     font-family: inherit;
 }
-.action-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+.action-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
 .action-btn:disabled { background: #9ca3af !important; cursor: not-allowed; }
 .action-btn.primary { background: linear-gradient(135deg, #2563eb, #1e40af); }
 .action-btn.approve { background: linear-gradient(135deg, #10b981, #059669); }
 .action-btn.reject { background: linear-gradient(135deg, #ef4444, #dc2626); }
-.action-btn.forward { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
 .action-btn.cancel { background: #6b7280; }
 
 .status-msg {
@@ -269,11 +270,11 @@ body {
 .alert.success { background: #f0fdf4; border: 2px solid #10b981; color: #10b981; }
 .alert.info { background: #eff6ff; border: 2px solid #2563eb; color: #1e40af; }
 
-/* Query */
+/* ============ QUERY ============ */
 .input-panel {
     background: white; border-radius: 12px;
     box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
-    padding: 16px 18px; margin-bottom: 20px;
+    padding: 20px; margin-bottom: 20px;
     border: 1px solid #e5e7eb;
 }
 .input-panel h3 {
@@ -286,8 +287,8 @@ body {
     font-weight: 600; margin-bottom: 5px; color: #6b7280;
 }
 .form-field input {
-    width: 100%; padding: 10px 12px;
-    border: 1px solid #e5e7eb; border-radius: 8px;
+    width: 100%; padding: 12px;
+    border: 2px solid #e5e7eb; border-radius: 8px;
     font-size: 14px; background: #f9fafb;
     outline: none; font-family: inherit;
 }
@@ -337,7 +338,7 @@ body {
 }
 .empty-state .icon { font-size: 60px; margin-bottom: 10px; }
 
-/* Thanks */
+/* ============ THANKS ============ */
 .thanks-box {
     background: white; border-radius: 16px;
     padding: 50px 30px; text-align: center;
@@ -353,14 +354,17 @@ body {
     justify-content: center; flex-wrap: wrap;
 }
 
-/* Mobile */
+/* ============ MOBILE ============ */
 @media (max-width: 600px) {
     body { padding: 10px 5px; }
     .rv-header { padding: 16px; }
     .rv-header h1 { font-size: 18px; }
     .home-btn { min-width: 100%; padding: 20px 30px; }
     .edit-card { padding: 15px; }
-    .days-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; }
+    .days-grid {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 8px;
+    }
     .day-item { padding: 8px 5px; }
     .action-btn { min-width: 100%; padding: 12px 20px; }
     .query-balance-inner { flex-direction: column; gap: 15px; }
@@ -371,7 +375,9 @@ body {
 <body>
 <div class="container">
 
-    <!-- ============ HOME ============ -->
+    <!-- ============================================ -->
+    <!-- 🏠 HOME                                       -->
+    <!-- ============================================ -->
     <div id="screen-home" class="screen active">
         <div class="home-screen">
             <div class="home-logo">
@@ -393,7 +399,9 @@ body {
         </div>
     </div>
 
-    <!-- ============ NEW REQUEST ============ -->
+    <!-- ============================================ -->
+    <!-- 🆕 NEW REQUEST                                -->
+    <!-- ============================================ -->
     <div id="screen-new" class="screen">
         <button class="btn-back" onclick="goHome()">🏠 الرئيسية</button>
 
@@ -498,7 +506,9 @@ body {
         <div class="status-msg" id="statusMsg"></div>
     </div>
 
-    <!-- ============ QUERY ============ -->
+    <!-- ============================================ -->
+    <!-- 🔍 QUERY                                      -->
+    <!-- ============================================ -->
     <div id="screen-query" class="screen">
         <button class="btn-back" onclick="goHome()">🏠 الرئيسية</button>
 
@@ -515,7 +525,9 @@ body {
         <div id="queryResult" style="display:none;"></div>
     </div>
 
-    <!-- ============ THANKS ============ -->
+    <!-- ============================================ -->
+    <!-- 🎉 THANKS                                     -->
+    <!-- ============================================ -->
     <div id="screen-thanks" class="screen">
         <div class="thanks-box">
             <div class="icon">✅</div>
@@ -531,7 +543,7 @@ body {
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxxiEhXGWQCNNbYGXxM2TC2FtOcCUgXca4aYczOfFHE7FiuYBAyNFLVgZEQN5jUIZXX/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxDXJH8NqMp9QYPhldR6i0i5IkAc6yPXMfIRYud0PLnTsG7UrzlhEsP5ZVRfQ9X_dl-/exec';
 
 let currentEmployee = null;
 let signatureDataUrl = '';
@@ -559,21 +571,27 @@ function showAlert(msg, type) {
 }
 function hideAlert() { document.getElementById('alertBox').style.display = 'none'; }
 
-// ============ Min Date ============
+// ============ Min Date (26 rule) ============
 function getMinDate() {
     const today = new Date();
-    if (today.getDate() >= 26) return new Date(today.getFullYear(), today.getMonth(), 26);
+    if (today.getDate() >= 26) {
+        return new Date(today.getFullYear(), today.getMonth(), 26);
+    }
     const first = new Date(today.getFullYear(), today.getMonth(), 1);
     const last = new Date(first); last.setDate(0);
     return new Date(last.getFullYear(), last.getMonth(), 26);
 }
 function toInputDate(d) {
-    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+    return d.getFullYear() + '-' +
+           String(d.getMonth() + 1).padStart(2, '0') + '-' +
+           String(d.getDate()).padStart(2, '0');
 }
 function formatSheet(dateStr) {
     if (!dateStr) return '';
     const d = new Date(dateStr);
-    return String(d.getDate()).padStart(2,'0') + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + d.getFullYear();
+    return String(d.getDate()).padStart(2, '0') + '-' +
+           String(d.getMonth() + 1).padStart(2, '0') + '-' +
+           d.getFullYear();
 }
 function getDayName(dateStr) {
     if (!dateStr) return '';
@@ -592,28 +610,35 @@ function fetchEmployee() {
         currentEmployee = null;
         return;
     }
-    nameEl.innerText = '⏳ جاري...'; titleEl.innerText = '⏳'; balEl.innerText = '⏳';
+    nameEl.innerText = '⏳ جاري...';
+    titleEl.innerText = '⏳';
+    balEl.innerText = '⏳';
 
-    jsonp(SCRIPT_URL + '?action=getBalance&staffId=' + encodeURIComponent(staffId), function(res) {
-        if (!res || !res.found) {
-            nameEl.innerText = '❌ غير موجود'; titleEl.innerText = '❌'; balEl.innerText = '❌';
-            currentEmployee = null;
-            showAlert('❌ كود الموظف غير موجود', 'error');
-            return;
+    jsonp(SCRIPT_URL + '?action=getBalance&staffId=' + encodeURIComponent(staffId),
+        function(res) {
+            if (!res || !res.found) {
+                nameEl.innerText = '❌ غير موجود';
+                titleEl.innerText = '❌';
+                balEl.innerText = '❌';
+                currentEmployee = null;
+                showAlert('❌ كود الموظف غير موجود', 'error');
+                return;
+            }
+            currentEmployee = res;
+            nameEl.innerText = res.name || '-';
+            titleEl.innerText = res.title || '-';
+            balEl.innerText = (res.leaveBalance || 0) + ' يوم';
+            hideAlert();
+            showAlert('✅ ' + res.name + ' | الرصيد: ' + res.leaveBalance + ' يوم', 'success');
         }
-        currentEmployee = res;
-        nameEl.innerText = res.name || '-';
-        titleEl.innerText = res.title || '-';
-        balEl.innerText = (res.leaveBalance || 0) + ' يوم';
-        hideAlert();
-        showAlert('✅ ' + res.name + ' | الرصيد: ' + res.leaveBalance + ' يوم', 'success');
-    });
+    );
 }
 
-// ============ Recalculate All ============
+// ============ Recalculate ============
 function recalcAll() {
     const f = document.getElementById('fromDate').value;
     const t = document.getElementById('toDate').value;
+
     document.getElementById('fromDay').innerText = getDayName(f) || '--';
     document.getElementById('toDay').innerText = getDayName(t) || '--';
 
@@ -634,7 +659,8 @@ function recalcAll() {
 }
 
 function updateTotals() {
-    const ids = ['annual','weekend','withoutPay','sick','maternity','injury','rr','compassionate','paternity'];
+    const ids = ['annual','weekend','withoutPay','sick','maternity',
+                 'injury','rr','compassionate','paternity'];
     let sum = 0;
     ids.forEach(id => sum += parseInt(document.getElementById(id).value) || 0);
     document.getElementById('allocatedDisplay').innerText = sum;
@@ -650,7 +676,8 @@ function updateTotals() {
 document.addEventListener('DOMContentLoaded', function() {
     const fi = document.getElementById('signatureFile');
     if (fi) fi.addEventListener('change', function(e) {
-        const f = e.target.files[0]; if (!f) return;
+        const f = e.target.files[0];
+        if (!f) return;
         if (!f.type.startsWith('image/')) { alert('اختر صورة'); return; }
         if (f.size > 2 * 1024 * 1024) { alert('الصورة كبيرة (2MB)'); return; }
         const r = new FileReader();
@@ -662,14 +689,16 @@ document.addEventListener('DOMContentLoaded', function() {
         r.readAsDataURL(f);
     });
 
-    const min = getMinDate(), minStr = toInputDate(min);
+    const min = getMinDate();
+    const minStr = toInputDate(min);
     document.getElementById('fromDate').min = minStr;
     document.getElementById('toDate').min = minStr;
 
     const today = new Date();
     document.getElementById('todayDisplay').innerText =
-        String(today.getDate()).padStart(2,'0') + '-' +
-        String(today.getMonth()+1).padStart(2,'0') + '-' + today.getFullYear();
+        String(today.getDate()).padStart(2, '0') + '-' +
+        String(today.getMonth() + 1).padStart(2, '0') + '-' +
+        today.getFullYear();
 });
 
 function clearSignature() {
@@ -709,23 +738,43 @@ async function submitForm() {
     };
     const sum = Object.values(types).reduce((a, b) => a + b, 0);
 
-    if (sum !== totalDays) { showAlert('⚠️ مجموع الأيام (' + sum + ') ≠ الإجمالي (' + totalDays + ')', 'error'); return; }
+    if (sum !== totalDays) {
+        showAlert('⚠️ مجموع الأيام (' + sum + ') ≠ الإجمالي (' + totalDays + ')', 'error');
+        return;
+    }
     if (!signatureDataUrl) { showAlert('⚠️ ارفع صورة التوقيع', 'error'); return; }
 
     const btn = document.getElementById('btnSubmit');
     const statusEl = document.getElementById('statusMsg');
-    btn.disabled = true; statusEl.innerText = '⏳ جاري التحقق من التكرار...';
+    btn.disabled = true;
+    statusEl.innerText = '⏳ جاري التحقق من التكرار...';
 
     try {
         const dup = await checkDup(staffId, formatSheet(f), formatSheet(t));
-        if (dup.error) { showAlert('⚠️ فشل الاتصال', 'error'); btn.disabled = false; statusEl.innerText = ''; return; }
-        if (dup.exists) { showAlert('🚫 هذا الطلب تم تقديمه سابقاً — ' + dup.requestId, 'error'); btn.disabled = false; statusEl.innerText = ''; return; }
+        if (dup.error) {
+            showAlert('⚠️ فشل الاتصال — حاول تاني', 'error');
+            btn.disabled = false;
+            statusEl.innerText = '';
+            return;
+        }
+        if (dup.exists) {
+            showAlert('🚫 هذا الطلب تم تقديمه سابقاً — ' + dup.requestId, 'error');
+            btn.disabled = false;
+            statusEl.innerText = '';
+            return;
+        }
 
         const returnDate = new Date(td); returnDate.setDate(returnDate.getDate() + 1);
 
-        const labels = { annual:'Annual', weekend:'Weekend', withoutPay:'Without Pay', sick:'Sick', maternity:'Maternity', injury:'Injury', rr:'R&R', compassionate:'Compassionate', paternity:'Paternity' };
+        const labels = {
+            annual: 'Annual', weekend: 'Weekend', withoutPay: 'Without Pay',
+            sick: 'Sick', maternity: 'Maternity', injury: 'Injury',
+            rr: 'R&R', compassionate: 'Compassionate', paternity: 'Paternity'
+        };
         const breakdown = [];
-        Object.keys(types).forEach(k => { if (types[k] > 0) breakdown.push(labels[k] + ': ' + types[k]); });
+        Object.keys(types).forEach(k => {
+            if (types[k] > 0) breakdown.push(labels[k] + ': ' + types[k]);
+        });
 
         const payload = {
             action: 'employeeSubmit',
@@ -747,7 +796,8 @@ async function submitForm() {
 
         statusEl.innerText = '⏳ جاري الإرسال...';
         await fetch(SCRIPT_URL, {
-            method: 'POST', mode: 'no-cors',
+            method: 'POST',
+            mode: 'no-cors',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify(payload)
         });
@@ -757,14 +807,17 @@ async function submitForm() {
     } catch (err) {
         showAlert('❌ فشل: ' + err.message, 'error');
     } finally {
-        btn.disabled = false; statusEl.innerText = '';
+        btn.disabled = false;
+        statusEl.innerText = '';
     }
 }
 
 function checkDup(staffId, fromDate, toDate) {
     return new Promise(resolve => {
-        const url = SCRIPT_URL + '?action=checkDuplicate&staffId=' + encodeURIComponent(staffId) +
-            '&fromDate=' + encodeURIComponent(fromDate) + '&toDate=' + encodeURIComponent(toDate);
+        const url = SCRIPT_URL +
+            '?action=checkDuplicate&staffId=' + encodeURIComponent(staffId) +
+            '&fromDate=' + encodeURIComponent(fromDate) +
+            '&toDate=' + encodeURIComponent(toDate);
         jsonp(url, res => resolve(res === null ? { error: true } : res));
     });
 }
@@ -783,7 +836,8 @@ function resetForm() {
     document.getElementById('totalDisplay').innerText = '0';
     document.getElementById('allocatedDisplay').innerText = '0';
     document.getElementById('checkStatus').innerHTML = '⚪';
-    ['annual','weekend','withoutPay','sick','maternity','injury','rr','compassionate','paternity']
+    ['annual','weekend','withoutPay','sick','maternity',
+     'injury','rr','compassionate','paternity']
         .forEach(id => document.getElementById(id).value = 0);
     clearSignature();
     currentEmployee = null;
@@ -792,16 +846,19 @@ function resetForm() {
 
 // ============ JSONP ============
 function jsonp(url, cb, timeout = 15000) {
-    const name = 'jsonpCb_' + Date.now() + '_' + Math.floor(Math.random()*1000);
+    const name = 'jsonpCb_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
     const sep = url.indexOf('?') === -1 ? '?' : '&';
     const tid = setTimeout(() => { cleanup(); cb(null); }, timeout);
+
     function cleanup() {
         const s = document.getElementById(name);
         if (s) s.remove();
-        try { delete window[name]; } catch(e) {}
+        try { delete window[name]; } catch (e) {}
         clearTimeout(tid);
     }
+
     window[name] = res => { cleanup(); cb(res); };
+
     const s = document.createElement('script');
     s.id = name;
     s.src = url + sep + 'callback=' + name;
@@ -821,43 +878,74 @@ function queryEmployee() {
     resEl.innerHTML = '<div style="text-align:center;padding:30px;color:#6b7280;">⏳ جاري التحميل...</div>';
     resEl.style.display = 'block';
 
-    jsonp(SCRIPT_URL + '?action=getEmployeeLeaves&staffId=' + encodeURIComponent(staffId), function(res) {
-        if (!res || !res.found) {
-            resEl.innerHTML = '<div style="background:white;border-radius:12px;padding:40px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.08);">' +
-                '<div style="font-size:80px;margin-bottom:15px;">❌</div>' +
-                '<h2 style="color:#ef4444;margin:0 0 10px;font-size:22px;">كود الموظف غير موجود</h2></div>';
-            return;
-        }
-        const requests = res.requests || [];
-        const months = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
-        const today = new Date();
-        const mName = months[today.getMonth()], year = today.getFullYear();
+    jsonp(SCRIPT_URL + '?action=getEmployeeLeaves&staffId=' + encodeURIComponent(staffId),
+        function(res) {
+            if (!res || !res.found) {
+                resEl.innerHTML =
+                    '<div style="background:white;border-radius:12px;padding:40px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.08);">' +
+                    '<div style="font-size:80px;margin-bottom:15px;">❌</div>' +
+                    '<h2 style="color:#ef4444;margin:0 0 10px;font-size:22px;">كود الموظف غير موجود</h2>' +
+                    '<p style="color:#6b7280;margin:0;">تأكد من الكود وحاول تاني</p>' +
+                    '</div>';
+                return;
+            }
 
-        let tableHTML = '';
-        if (requests.length === 0) {
-            tableHTML = '<div class="empty-state"><div class="icon">📭</div><p>مفيش إجازات في شهر ' + mName + ' ' + year + '</p></div>';
-        } else {
-            tableHTML = '<div style="overflow-x:auto;"><table class="leaves-table"><thead><tr><th>من</th><th>إلى</th><th>الأيام</th><th>الحالة</th></tr></thead><tbody>';
-            requests.forEach((r, i) => {
-                let c, txt, ic;
-                if (r.status === 'Approved' || r.status === 'Approved (LWP)') { c = '#10b981'; txt = 'موافق'; ic = '✅'; }
-                else if (r.status === 'Reject' || r.status === 'Rejected') { c = '#ef4444'; txt = 'مرفوض'; ic = '❌'; }
-                else if (r.status === 'PendingHR') { c = '#2563eb'; txt = 'HR Manager'; ic = '🔵'; }
-                else { c = '#f59e0b'; txt = 'تحت المراجعة'; ic = '⏳'; }
-                tableHTML += '<tr style="background:' + (i%2===0?'#fff':'#f9fafb') + ';"><td>' + parseDate(r.fromDate) + '</td><td>' + parseDate(r.toDate) + '</td><td>' + r.totalDays + '</td><td style="color:' + c + ';font-weight:bold;">' + ic + ' ' + txt + '</td></tr>';
-            });
-            tableHTML += '</tbody></table></div>';
-        }
+            const requests = res.requests || [];
+            const months = ['يناير','فبراير','مارس','أبريل','مايو','يونيو',
+                            'يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+            const today = new Date();
+            const mName = months[today.getMonth()];
+            const year = today.getFullYear();
 
-        resEl.innerHTML =
-            '<div class="query-balance-card"><div class="query-balance-inner">' +
-            '<div><p class="query-balance-label">💰 الرصيد</p><p class="query-balance-num">' + res.balance + '</p><p class="query-balance-sub">يوم</p></div>' +
-            '<div class="query-balance-divider"></div>' +
-            '<div><p class="query-balance-label">📋 الاستحقاق</p><p class="query-balance-num">' + res.entitlement + '</p><p class="query-balance-sub">يوم</p></div>' +
-            '</div></div>' +
-            '<div class="leaves-table-wrap"><h2>📊 إجازات شهر ' + mName + ' ' + year + '</h2>' +
-            '<p class="count">إجمالي: ' + requests.length + ' طلب</p>' + tableHTML + '</div>';
-    });
+            let tableHTML = '';
+            if (requests.length === 0) {
+                tableHTML =
+                    '<div class="empty-state">' +
+                    '<div class="icon">📭</div>' +
+                    '<p>مفيش إجازات في شهر ' + mName + ' ' + year + '</p>' +
+                    '</div>';
+            } else {
+                tableHTML =
+                    '<div style="overflow-x:auto;">' +
+                    '<table class="leaves-table">' +
+                    '<thead><tr><th>من</th><th>إلى</th><th>الأيام</th><th>الحالة</th></tr></thead>' +
+                    '<tbody>';
+                requests.forEach((r, i) => {
+                    let c, txt, ic;
+                    if (r.status === 'Approved' || r.status === 'Approved (LWP)') {
+                        c = '#10b981'; txt = 'موافق'; ic = '✅';
+                    } else if (r.status === 'Reject' || r.status === 'Rejected') {
+                        c = '#ef4444'; txt = 'مرفوض'; ic = '❌';
+                    } else if (r.status === 'PendingHR') {
+                        c = '#2563eb'; txt = 'HR Manager'; ic = '🔵';
+                    } else {
+                        c = '#f59e0b'; txt = 'تحت المراجعة'; ic = '⏳';
+                    }
+                    tableHTML +=
+                        '<tr style="background:' + (i % 2 === 0 ? '#fff' : '#f9fafb') + ';">' +
+                        '<td>' + parseDate(r.fromDate) + '</td>' +
+                        '<td>' + parseDate(r.toDate) + '</td>' +
+                        '<td>' + r.totalDays + '</td>' +
+                        '<td style="color:' + c + ';font-weight:bold;">' + ic + ' ' + txt + '</td>' +
+                        '</tr>';
+                });
+                tableHTML += '</tbody></table></div>';
+            }
+
+            resEl.innerHTML =
+                '<div class="query-balance-card">' +
+                '<div class="query-balance-inner">' +
+                '<div><p class="query-balance-label">💰 الرصيد</p><p class="query-balance-num">' + res.balance + '</p><p class="query-balance-sub">يوم</p></div>' +
+                '<div class="query-balance-divider"></div>' +
+                '<div><p class="query-balance-label">📋 الاستحقاق</p><p class="query-balance-num">' + res.entitlement + '</p><p class="query-balance-sub">يوم</p></div>' +
+                '</div></div>' +
+                '<div class="leaves-table-wrap">' +
+                '<h2>📊 إجازات شهر ' + mName + ' ' + year + '</h2>' +
+                '<p class="count">إجمالي: ' + requests.length + ' طلب</p>' +
+                tableHTML +
+                '</div>';
+        }
+    );
 }
 
 function parseDate(v) {
@@ -869,10 +957,15 @@ function parseDate(v) {
     try {
         const d = new Date(v);
         if (isNaN(d.getTime())) return String(v);
-        return String(d.getDate()).padStart(2,'0') + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + d.getFullYear();
-    } catch (e) { return String(v); }
+        return String(d.getDate()).padStart(2, '0') + '-' +
+               String(d.getMonth() + 1).padStart(2, '0') + '-' +
+               d.getFullYear();
+    } catch (e) {
+        return String(v);
+    }
 }
 
+// ============ Init ============
 window.addEventListener('load', () => showScreen('home'));
 </script>
 </body>
