@@ -31,7 +31,6 @@
         }
         .container { max-width: 1100px; margin: 0 auto; }
 
-        /* ============ الشاشات ============ */
         .screen { display: none; animation: fadeIn 0.3s ease; }
         .screen.active { display: block; }
         @keyframes fadeIn {
@@ -42,11 +41,7 @@
             from { transform: scale(0.7); opacity: 0; }
             to { transform: scale(1); opacity: 1; }
         }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
 
-        /* ============ الشاشة الرئيسية ============ */
         .home-screen {
             display: flex;
             flex-direction: column;
@@ -111,7 +106,6 @@
         .home-btn.new { background: linear-gradient(135deg, #2563eb, #1e40af); }
         .home-btn.query { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
 
-        /* ============ لوحة الإدخال ============ */
         .input-panel {
             background: var(--input-bg);
             border-radius: 12px;
@@ -162,7 +156,6 @@
             box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
         }
 
-        /* ============ بطاقة الرصيد ============ */
         .balance-card {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -198,7 +191,6 @@
             animation: scaleIn 0.3s ease;
         }
 
-        /* ============ الأيام ============ */
         .total-days-box {
             background: #eff6ff;
             border: 1px solid #bfdbfe;
@@ -256,7 +248,6 @@
             outline: none;
         }
 
-        /* ============ الأزرار ============ */
         button {
             padding: 10px 20px;
             border: none;
@@ -297,7 +288,6 @@
             font-size: 14px;
         }
 
-        /* ============ التوقيع ============ */
         .signature-wrapper {
             margin-bottom: 14px;
             padding: 12px;
@@ -343,7 +333,6 @@
             font-weight: 600;
         }
 
-        /* ============ الفورم ============ */
         #leaveForm {
             display: none;
             background: white;
@@ -413,7 +402,6 @@
         }
         .mgr-sig-slot img { max-height: 38px; max-width: 148px; vertical-align: middle; object-fit: contain; }
 
-        /* ============ صفحة الشكر ============ */
         .thanks-box {
             background: white;
             border-radius: 16px;
@@ -428,7 +416,6 @@
         .thanks-box h1 { color: var(--success-color); font-size: 28px; margin: 0 0 15px; }
         .thanks-box p { color: var(--secondary-text); font-size: 16px; margin: 10px 0; }
 
-        /* ============ شاشة الاستعلام ============ */
         .query-balance-card {
             background: linear-gradient(135deg, #10b981, #059669);
             border-radius: 12px;
@@ -456,7 +443,6 @@
         .empty-state { text-align: center; padding: 40px 20px; color: var(--secondary-text); }
         .empty-state .icon { font-size: 60px; margin-bottom: 10px; }
 
-        /* ============ شاشات HR / Manager / HR Manager (كروت) ============ */
         .dash-header {
             background: white;
             border-radius: 12px;
@@ -547,7 +533,6 @@
             font-size: 13px;
         }
 
-        /* ============ Modal ============ */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -582,7 +567,6 @@
         }
         .modal-content h3 { margin-top: 0; color: var(--primary-color); }
 
-        /* ============ Mobile ============ */
         @media (max-width: 768px) {
             body { padding: 10px 5px; }
             .input-group { grid-template-columns: 1fr; gap: 10px; }
@@ -600,9 +584,7 @@
 <body>
 <div class="container">
 
-    <!-- ============================================================ -->
-    <!--  🏠 الشاشة الرئيسية (الموظف)                                  -->
-    <!-- ============================================================ -->
+    <!-- 🏠 الشاشة الرئيسية -->
     <div id="screen-home" class="screen active">
         <div class="home-screen">
             <div class="home-logo">
@@ -611,7 +593,6 @@
             </div>
             <h1 class="home-title">نظام طلبات الإجازات</h1>
             <p class="home-subtitle">Leave Request & Approval System</p>
-
             <div class="home-buttons">
                 <button class="home-btn new" onclick="showScreen('new')">
                     <span class="icon">🆕</span>
@@ -625,25 +606,20 @@
         </div>
     </div>
 
-    <!-- ============================================================ -->
-    <!--  🆕 شاشة طلب جديد                                            -->
-    <!-- ============================================================ -->
+    <!-- 🆕 شاشة طلب جديد -->
     <div id="screen-new" class="screen">
         <div class="back-row">
             <h3>🆕 طلب إجازة جديد</h3>
             <button class="btn-back" onclick="goHome()">🏠 الرئيسية</button>
         </div>
-
         <div class="input-panel">
             <h3>إدخال بيانات الإجازة</h3>
-
             <div class="input-group">
                 <div class="form-field">
                     <label>كود الموظف (Staff No)</label>
                     <input type="text" id="staffId" placeholder="مثال: 5233" onblur="fetchEmployeeBalance()">
                 </div>
             </div>
-
             <div class="balance-card" id="balanceCard" style="display:none;">
                 <div class="balance-item">
                     <span class="balance-label">👤 الاسم</span>
@@ -667,11 +643,9 @@
                     <span class="balance-value" id="todayDate">-</span>
                 </div>
             </div>
-
             <div class="error-card" id="staffError" style="display:none;">
                 ❌ كود الموظف غير موجود في قاعدة البيانات
             </div>
-
             <div class="input-group" id="datesGroup" style="display:none;">
                 <div class="form-field">
                     <label>تاريخ البداية (From)</label>
@@ -682,11 +656,9 @@
                     <input type="date" id="endDate" onchange="calculateDays()" onfocus="setMinDate()">
                 </div>
             </div>
-
             <div class="total-days-box" id="totalDaysBox" style="display:none;">
                 إجمالي الأيام: <span id="totalDaysDisplay">0</span> يوم
             </div>
-
             <div class="split-area" id="splitArea" style="display:none;">
                 <h4>وزّع الأيام:</h4>
                 <div class="split-box">
@@ -701,7 +673,6 @@
                     <div class="type-input"><label>أبوة</label><input type="number" id="split_paternity" value="0" min="0"></div>
                 </div>
             </div>
-
             <div class="signature-wrapper">
                 <label>✍️ توقيع الموظف - ارفع صورة التوقيع</label>
                 <input type="file" id="signatureFile" accept="image/*">
@@ -710,7 +681,6 @@
                     <button type="button" class="btn-clear-sig" onclick="clearSignature()">🗑️ مسح</button>
                 </div>
             </div>
-
             <div class="btn-row">
                 <button class="btn-primary" id="btnGenerate" onclick="generateForm()">📤 إرسال الطلب</button>
             </div>
@@ -719,15 +689,12 @@
         </div>
     </div>
 
-    <!-- ============================================================ -->
-    <!--  🔍 شاشة الاستعلام                                            -->
-    <!-- ============================================================ -->
+    <!-- 🔍 شاشة الاستعلام -->
     <div id="screen-query" class="screen">
         <div class="back-row">
             <h3>🔍 الاستعلام عن الرصيد والإجازات</h3>
             <button class="btn-back" onclick="goHome()">🏠 الرئيسية</button>
         </div>
-
         <div class="input-panel">
             <h3>أدخل كود الموظف</h3>
             <div class="input-group">
@@ -741,13 +708,10 @@
             </div>
             <span id="queryError" class="error-msg"></span>
         </div>
-
         <div id="queryResult" style="display:none;"></div>
     </div>
 
-    <!-- ============================================================ -->
-    <!--  🎉 شاشة الشكر                                                -->
-    <!-- ============================================================ -->
+    <!-- 🎉 شاشة الشكر -->
     <div id="screen-thanks" class="screen">
         <div class="thanks-box">
             <div class="icon">✅</div>
@@ -760,15 +724,12 @@
         </div>
     </div>
 
-    <!-- ============================================================ -->
-    <!--  🟡 شاشة HR Site                                              -->
-    <!-- ============================================================ -->
+    <!-- 🟡 شاشة HR Site -->
     <div id="screen-hrsite" class="screen">
         <div class="dash-header" style="border-top: 4px solid var(--hr-color);">
             <h1 style="color: var(--hr-color);">🟡 HR Site Dashboard</h1>
             <p>مراجعة طلبات الإجازات</p>
         </div>
-
         <div class="input-panel" id="hrLoginPanel">
             <h3>🔐 تسجيل الدخول</h3>
             <div class="input-group">
@@ -786,7 +747,6 @@
             </div>
             <span id="hrLoginError" class="error-msg"></span>
         </div>
-
         <div id="hrDashboard" style="display:none;">
             <div class="btn-row" style="margin-bottom: 15px;">
                 <button class="btn-back" onclick="hrSiteLogout()">🚪 خروج</button>
@@ -796,15 +756,12 @@
         </div>
     </div>
 
-    <!-- ============================================================ -->
-    <!--  🟠 شاشة المدير                                              -->
-    <!-- ============================================================ -->
+    <!-- 🟠 شاشة المدير -->
     <div id="screen-manager" class="screen">
         <div class="dash-header" style="border-top: 4px solid var(--mgr-color);">
             <h1 style="color: var(--mgr-color);">🟠 Manager Dashboard</h1>
             <p>مراجعة واعتماد الطلبات</p>
         </div>
-
         <div class="input-panel" id="mgrLoginPanel">
             <h3>🔐 تسجيل الدخول</h3>
             <div class="input-group">
@@ -822,7 +779,6 @@
             </div>
             <span id="mgrLoginError" class="error-msg"></span>
         </div>
-
         <div id="mgrDashboard" style="display:none;">
             <div class="btn-row" style="margin-bottom: 15px;">
                 <button class="btn-back" onclick="managerLogout()">🚪 خروج</button>
@@ -832,15 +788,12 @@
         </div>
     </div>
 
-    <!-- ============================================================ -->
-    <!--  🔴 شاشة HR Manager                                          -->
-    <!-- ============================================================ -->
+    <!-- 🔴 شاشة HR Manager -->
     <div id="screen-hrmanager" class="screen">
         <div class="dash-header" style="border-top: 4px solid var(--hrmgr-color);">
             <h1 style="color: var(--hrmgr-color);">🔴 HR Manager Dashboard</h1>
             <p>مراجعة طلبات الاستلاف (Borrow)</p>
         </div>
-
         <div class="input-panel" id="hrmgrLoginPanel">
             <h3>🔐 تسجيل الدخول</h3>
             <div class="input-group">
@@ -858,7 +811,6 @@
             </div>
             <span id="hrmgrLoginError" class="error-msg"></span>
         </div>
-
         <div id="hrmgrDashboard" style="display:none;">
             <div class="btn-row" style="margin-bottom: 15px;">
                 <button class="btn-back" onclick="hrMgrLogout()">🚪 خروج</button>
@@ -868,15 +820,12 @@
         </div>
     </div>
 
-    <!-- ============================================================ -->
-    <!--  🔧 شاشة Admin (Login + Dashboard)                            -->
-    <!-- ============================================================ -->
+    <!-- 🔧 شاشة Admin -->
     <div id="screen-admin" class="screen">
         <div class="dash-header" style="border-top: 4px solid var(--admin-color);">
             <h1 style="color: var(--admin-color);">🔧 Admin Panel</h1>
             <p>لوحة تحكم الأدمن</p>
         </div>
-
         <div class="login-card" id="adminLoginPanel">
             <div class="icon">🔐</div>
             <h2>تسجيل دخول الأدمن</h2>
@@ -887,7 +836,6 @@
             <button class="btn-primary" style="width:100%;padding:14px;" onclick="adminLogin()">🔓 دخول</button>
             <span id="adminLoginError" class="error-msg"></span>
         </div>
-
         <div id="adminDashboard" style="display:none;">
             <div class="input-panel">
                 <h3>🔍 بحث وفلترة</h3>
@@ -914,21 +862,18 @@
 
 </div>
 
-<!-- ============================================================ -->
-<!--  🪟 Modal لعرض الطلب                                          -->
-<!-- ============================================================ -->
+<!-- 🪟 Modal -->
 <div class="modal-overlay" id="modalOverlay">
     <div class="modal-content">
         <button class="modal-close" onclick="closeModal()">✕</button>
         <div id="modalBody"></div>
     </div>
 </div>
-
 <script>
     // ============================================================
     //  ⚙️ الإعدادات
     // ============================================================
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz8YlGJ22-U25o8WTL3p-T-MR1o6G229-vhsiqOAt0J4Ifj7BjIcJKe3RzJReQDmVED/exec';
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbylvZhTJJNKm8bkL5dzG6uQ-keeaYJHkYPWidclev-3POVMhZg762gLBsXUDN9xZeDq/exec';
 
     let currentEmployee = null;
     let signatureDataUrl = "";
@@ -961,25 +906,32 @@
     }
 
     // ============================================================
-    //  🚀 تحديد الشاشة الافتراضية حسب ?action=
+    //  🚀 تحديد الشاشة حسب ?action=
     // ============================================================
-    window.addEventListener('load', function() {
-        const params = new URLSearchParams(window.location.search);
-        const action = params.get('action');
-
-        if (action === 'hrsite') {
-            showScreen('hrsite');
-        } else if (action === 'manager') {
-            showScreen('manager');
-        } else if (action === 'hrmanager') {
-            showScreen('hrmanager');
-        } else if (action === 'admin') {
-            showScreen('admin');
-        } else {
-            showScreen('home');
-        }
-
+    function initApp(action) {
+        if (action === 'hrsite') showScreen('hrsite');
+        else if (action === 'manager') showScreen('manager');
+        else if (action === 'hrmanager') showScreen('hrmanager');
+        else if (action === 'admin') showScreen('admin');
+        else showScreen('home');
         setMinDate();
+    }
+
+    window.addEventListener('load', function() {
+        try {
+            if (typeof google !== 'undefined' && google.script && google.script.url) {
+                google.script.url.getLocation(function(location) {
+                    const action = (location.parameter && location.parameter.action) || '';
+                    initApp(action);
+                });
+            } else {
+                const params = new URLSearchParams(window.location.search);
+                initApp(params.get('action') || '');
+            }
+        } catch (e) {
+            const params = new URLSearchParams(window.location.search);
+            initApp(params.get('action') || '');
+        }
     });
 
     // ============================================================
@@ -1046,9 +998,6 @@
         }
     }
 
-    // ============================================================
-    //  📊 حساب الأيام
-    // ============================================================
     function calculateDays() {
         const start = document.getElementById('startDate').value;
         const end = document.getElementById('endDate').value;
@@ -1119,9 +1068,7 @@
                 document.getElementById('empTitle').innerText = res.title || '-';
                 document.getElementById('empBalance').innerText = res.leaveBalance || 0;
                 document.getElementById('empEntitlement').innerText = res.entitlement || 0;
-
-                const today = new Date();
-                document.getElementById('todayDate').innerText = formatDate(today);
+                document.getElementById('todayDate').innerText = formatDate(new Date());
 
                 balanceCard.style.display = 'grid';
                 datesGroup.style.display = 'grid';
@@ -1203,7 +1150,6 @@
 
         if (typeof clearSignature === 'function') clearSignature();
 
-        document.getElementById('leaveForm').style.display = 'none';
         document.getElementById('balanceCard').style.display = 'none';
         document.getElementById('staffError').style.display = 'none';
         document.getElementById('datesGroup').style.display = 'none';
@@ -1286,9 +1232,6 @@
         await sendToServer(staffId, daysObj, startDate, endDate, totalDays);
     }
 
-    // ============================================================
-    //  📤 إرسال للسيرفر
-    // ============================================================
     async function sendToServer(staffId, daysObj, startDate, endDate, totalDays) {
         const btn = document.getElementById('btnGenerate');
         btn.disabled = true;
@@ -1367,9 +1310,6 @@
         }
     }
 
-    // ============================================================
-    //  🚫 رسالة الطلب المكرر
-    // ============================================================
     function showDuplicateMessage(info, staffId) {
         let statusText = 'تحت التوقيع';
         let statusColor = '#f59e0b';
@@ -1440,12 +1380,7 @@
                 const requests = res.requests || [];
                 let tableHTML = '';
                 if (requests.length === 0) {
-                    tableHTML = `
-                        <div class="empty-state">
-                            <div class="icon">📭</div>
-                            <p>مفيش إجازات في الفترة الحالية</p>
-                        </div>
-                    `;
+                    tableHTML = `<div class="empty-state"><div class="icon">📭</div><p>مفيش إجازات في الفترة الحالية</p></div>`;
                 } else {
                     tableHTML = `
                         <div style="overflow-x:auto;">
@@ -1461,7 +1396,6 @@
                                         else if (r.status === 'HRSiteApproved') { statusColor = '#ea580c'; statusText = '🟠 مدير'; }
                                         else if (r.status === 'ManagerApproved') { statusColor = '#dc2626'; statusText = '🔴 HR Manager'; }
                                         else { statusColor = '#f59e0b'; statusText = '⏳ HR Site'; }
-
                                         return `<tr style="background:${idx % 2 === 0 ? '#fff' : '#f9fafb'};">
                                             <td>${r.fromDate}</td>
                                             <td>${r.toDate}</td>
@@ -1554,7 +1488,6 @@
                     errEl.innerText = '❌ فشل الاتصال';
                     return;
                 }
-                // نتحقق من التوكن عبر أول طلب
                 errEl.innerText = '';
                 document.getElementById('hrLoginPanel').style.display = 'none';
                 document.getElementById('hrDashboard').style.display = 'block';
@@ -1744,7 +1677,6 @@
             if (!res) return;
             renderAdminRequests(res.requests || []);
 
-            // Fill periods select
             const periodSel = document.getElementById('adminPeriod');
             const currentVal = periodSel.value;
             const periods = res.periods || [];
@@ -1764,7 +1696,7 @@
     }
 
     // ============================================================
-    //  🎴 رسم كارت الطلب (مشترك)
+    //  🎴 رسم كارت الطلب
     // ============================================================
     function renderRequestCard(r, role) {
         let statusClass = 'status-pending';
@@ -1829,90 +1761,189 @@
     }
 
     // ============================================================
-    //  🔘 Modal لاتخاذ القرار
+    //  🔘 Modal لاتخاذ القرار (مع تعديل الأيام لـ HR Site)
     // ============================================================
     function openDecisionModal(requestId, role) {
         const isReject = role.endsWith('-reject');
         const roleName = role.replace('-reject', '');
         const roleColors = { hrsite: '#0891b2', manager: '#ea580c', hrmgr: '#dc2626' };
 
-        let extraFields = '';
-        if (roleName === 'hrsite') {
-            extraFields = `
-                <div class="form-field">
-                    <label>📝 تعليق HR Site (اختياري)</label>
-                    <textarea id="hrSiteComment" rows="3" placeholder="اكتب تعليق..."></textarea>
-                </div>
-            `;
-        } else if (roleName === 'hrmgr') {
-            extraFields = `
-                <div class="form-field">
-                    <label>📝 تعليق HR Manager (اختياري)</label>
-                    <textarea id="hrMgrComment" rows="3" placeholder="اكتب تعليق..."></textarea>
-                </div>
-            `;
-        } else if (roleName === 'manager') {
-            extraFields = `
-                <div class="signature-wrapper">
-                    <label>✍️ توقيع المدير</label>
-                    <input type="file" id="mgrSigFile" accept="image/*">
-                    <div class="signature-preview-box" id="mgrSigPreviewBox">
-                        <img id="mgrSigPreview" src=""><br>
+        // جلب بيانات الطلب الأول
+        jsonpRequest(GOOGLE_SCRIPT_URL + '?action=getRequestById&reqId=' + encodeURIComponent(requestId),
+            function(reqData) {
+                if (!reqData || !reqData.found) {
+                    alert('فشل تحميل بيانات الطلب');
+                    return;
+                }
+
+                // استخراج الأيام
+                const reasonStr = reqData.reason || '';
+                const daysMap = parseReasonLocal(reasonStr);
+
+                let fieldsHTML = '';
+
+                // HR Site: يعرض/يعدل التواريخ والأيام
+                if (roleName === 'hrsite') {
+                    fieldsHTML = `
+                        <div style="background:#f0f9ff;border:2px solid #0891b2;border-radius:8px;padding:14px;margin-bottom:15px;">
+                            <h4 style="margin:0 0 12px;color:#0891b2;">📅 التواريخ</h4>
+                            <div class="input-group">
+                                <div class="form-field">
+                                    <label>من (From)</label>
+                                    <input type="date" id="editFromDate" value="${toISODate(reqData.fromDate)}">
+                                </div>
+                                <div class="form-field">
+                                    <label>إلى (To)</label>
+                                    <input type="date" id="editToDate" value="${toISODate(reqData.toDate)}">
+                                </div>
+                            </div>
+                        </div>
+                        <div style="background:#f0f9ff;border:2px solid #0891b2;border-radius:8px;padding:14px;margin-bottom:15px;">
+                            <h4 style="margin:0 0 12px;color:#0891b2;">✏️ توزيع الأيام</h4>
+                            <div class="split-box">
+                                <div class="type-input"><label>سنوية</label><input type="number" id="edit_annual" value="${daysMap.annual}" min="0"></div>
+                                <div class="type-input"><label>بدل أسبوعية</label><input type="number" id="edit_weekend" value="${daysMap.weekend}" min="0"></div>
+                                <div class="type-input"><label>بدون أجر</label><input type="number" id="edit_withoutPay" value="${daysMap.withoutPay}" min="0"></div>
+                                <div class="type-input"><label>مرضية</label><input type="number" id="edit_sick" value="${daysMap.sick}" min="0"></div>
+                                <div class="type-input"><label>ولادة</label><input type="number" id="edit_maternity" value="${daysMap.maternity}" min="0"></div>
+                                <div class="type-input"><label>إصابة</label><input type="number" id="edit_injury" value="${daysMap.injury}" min="0"></div>
+                                <div class="type-input"><label>بدل راحات</label><input type="number" id="edit_rr" value="${daysMap.rr}" min="0"></div>
+                                <div class="type-input"><label>إضطرارية</label><input type="number" id="edit_compassionate" value="${daysMap.compassionate}" min="0"></div>
+                                <div class="type-input"><label>أبوة</label><input type="number" id="edit_paternity" value="${daysMap.paternity}" min="0"></div>
+                            </div>
+                        </div>
+                        <div class="form-field">
+                            <label>📝 تعليق HR Site (اختياري)</label>
+                            <textarea id="hrSiteComment" rows="3" placeholder="اكتب تعليق..."></textarea>
+                        </div>
+                    `;
+                } else if (roleName === 'hrmgr') {
+                    fieldsHTML = `
+                        <div class="form-field">
+                            <label>📝 تعليق HR Manager (اختياري)</label>
+                            <textarea id="hrMgrComment" rows="3" placeholder="اكتب تعليق..."></textarea>
+                        </div>
+                    `;
+                } else if (roleName === 'manager') {
+                    fieldsHTML = `
+                        <div class="signature-wrapper">
+                            <label>✍️ توقيع المدير</label>
+                            <input type="file" id="mgrSigFile" accept="image/*">
+                            <div class="signature-preview-box" id="mgrSigPreviewBox">
+                                <img id="mgrSigPreview" src=""><br>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                const actionTitle = isReject ? '❌ رفض الطلب' : '✅ موافقة على الطلب';
+                const actionBtn = isReject ? 'btn-danger' : 'btn-success';
+
+                document.getElementById('modalBody').innerHTML = `
+                    <h3 style="color:${roleColors[roleName]};">${actionTitle}</h3>
+                    <div style="background:#f9fafb;border-radius:8px;padding:12px;margin-bottom:15px;font-size:13px;">
+                        <strong>🆔 رقم الطلب:</strong> ${requestId}
                     </div>
-                </div>
-            `;
-        }
+                    ${fieldsHTML}
+                    <div class="btn-row">
+                        <button class="${actionBtn}" id="confirmDecisionBtn">${isReject ? '❌ تأكيد الرفض' : '✅ تأكيد الموافقة'}</button>
+                        <button class="btn-back" onclick="closeModal()">🔙 رجوع</button>
+                    </div>
+                    <div id="decisionStatus" class="error-msg"></div>
+                `;
 
-        const actionTitle = isReject ? '❌ رفض الطلب' : '✅ موافقة على الطلب';
-        const actionColor = isReject ? '#ef4444' : '#10b981';
-        const actionBtn = isReject ? 'btn-danger' : 'btn-success';
+                // Signature handler
+                const sigFile = document.getElementById('mgrSigFile');
+                let mgrSigDataUrl = '';
+                if (sigFile) {
+                    sigFile.addEventListener('change', function(e) {
+                        const file = e.target.files[0];
+                        if (!file) return;
+                        const reader = new FileReader();
+                        reader.onload = function(evt) {
+                            mgrSigDataUrl = evt.target.result;
+                            document.getElementById('mgrSigPreview').src = mgrSigDataUrl;
+                            document.getElementById('mgrSigPreviewBox').style.display = 'block';
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                }
 
-        document.getElementById('modalBody').innerHTML = `
-            <h3 style="color:${roleColors[roleName]};">${actionTitle}</h3>
-            <div style="background:#f9fafb;border-radius:8px;padding:12px;margin-bottom:15px;font-size:13px;">
-                <strong>🆔 رقم الطلب:</strong> ${requestId}
-            </div>
-            ${extraFields}
-            <div class="btn-row">
-                <button class="${actionBtn}" id="confirmDecisionBtn">${isReject ? '❌ تأكيد الرفض' : '✅ تأكيد الموافقة'}</button>
-                <button class="btn-back" onclick="closeModal()">🔙 رجوع</button>
-            </div>
-            <div id="decisionStatus" class="error-msg"></div>
-        `;
+                document.getElementById('confirmDecisionBtn').onclick = function() {
+                    const commentEl = document.getElementById('hrSiteComment') || document.getElementById('hrMgrComment');
+                    const comment = commentEl ? commentEl.value : '';
 
-        // Signature handler
-        const sigFile = document.getElementById('mgrSigFile');
-        let mgrSigDataUrl = '';
-        if (sigFile) {
-            sigFile.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onload = function(evt) {
-                    mgrSigDataUrl = evt.target.result;
-                    document.getElementById('mgrSigPreview').src = mgrSigDataUrl;
-                    document.getElementById('mgrSigPreviewBox').style.display = 'block';
+                    if (roleName === 'manager' && !isReject && !mgrSigDataUrl) {
+                        document.getElementById('decisionStatus').innerText = '⚠️ ارفع صورة توقيعك أولاً';
+                        return;
+                    }
+
+                    let editedTypes = null;
+                    let editedFrom = '';
+                    let editedTo = '';
+
+                    if (roleName === 'hrsite') {
+                        editedTypes = {
+                            annual: parseInt(document.getElementById('edit_annual').value) || 0,
+                            weekend: parseInt(document.getElementById('edit_weekend').value) || 0,
+                            withoutPay: parseInt(document.getElementById('edit_withoutPay').value) || 0,
+                            sick: parseInt(document.getElementById('edit_sick').value) || 0,
+                            maternity: parseInt(document.getElementById('edit_maternity').value) || 0,
+                            injury: parseInt(document.getElementById('edit_injury').value) || 0,
+                            rr: parseInt(document.getElementById('edit_rr').value) || 0,
+                            compassionate: parseInt(document.getElementById('edit_compassionate').value) || 0,
+                            paternity: parseInt(document.getElementById('edit_paternity').value) || 0
+                        };
+                        editedFrom = fromISODate(document.getElementById('editFromDate').value);
+                        editedTo = fromISODate(document.getElementById('editToDate').value);
+                    }
+
+                    submitDecision(requestId, role, comment, mgrSigDataUrl, editedTypes, editedFrom, editedTo);
                 };
-                reader.readAsDataURL(file);
-            });
-        }
 
-        document.getElementById('confirmDecisionBtn').onclick = function() {
-            const commentEl = document.getElementById('hrSiteComment') || document.getElementById('hrMgrComment');
-            const comment = commentEl ? commentEl.value : '';
-
-            if (roleName === 'manager' && !isReject && !mgrSigDataUrl) {
-                document.getElementById('decisionStatus').innerText = '⚠️ ارفع صورة توقيعك أولاً';
-                return;
+                document.getElementById('modalOverlay').classList.add('active');
             }
-
-            submitDecision(requestId, role, comment, mgrSigDataUrl);
-        };
-
-        document.getElementById('modalOverlay').classList.add('active');
+        );
     }
 
-    async function submitDecision(requestId, role, comment, mgrSig) {
+    function parseReasonLocal(reasonStr) {
+        const result = { annual: 0, weekend: 0, withoutPay: 0, sick: 0, maternity: 0, injury: 0, rr: 0, compassionate: 0, paternity: 0 };
+        if (!reasonStr) return result;
+        const map = {
+            'Annual': 'annual', 'Weekend': 'weekend', 'Without Pay': 'withoutPay',
+            'Maternity': 'maternity', 'Sick': 'sick', 'Injury': 'injury',
+            'R&R': 'rr', 'Compassionate': 'compassionate', 'Paternity': 'paternity'
+        };
+        reasonStr.split('|').forEach(part => {
+            const m = part.trim().match(/^(.+?):\s*(\d+)/);
+            if (m) {
+                const key = m[1].trim();
+                const val = parseInt(m[2]);
+                if (map[key]) result[map[key]] = val;
+            }
+        });
+        return result;
+    }
+
+    function toISODate(dateStr) {
+        if (!dateStr) return '';
+        const parts = String(dateStr).split('-');
+        if (parts.length === 3 && parts[0].length <= 2) {
+            return parts[2] + '-' + parts[1].padStart(2,'0') + '-' + parts[0].padStart(2,'0');
+        }
+        return dateStr;
+    }
+
+    function fromISODate(isoStr) {
+        if (!isoStr) return '';
+        const parts = isoStr.split('-');
+        if (parts.length === 3) {
+            return parts[2] + '-' + parts[1].padStart(2,'0') + '-' + parts[0].padStart(2,'0');
+        }
+        return isoStr;
+    }
+
+    async function submitDecision(requestId, role, comment, mgrSig, editedTypes, editedFrom, editedTo) {
         const isReject = role.endsWith('-reject');
         const roleName = role.replace('-reject', '');
         const statusEl = document.getElementById('decisionStatus');
@@ -1931,9 +1962,12 @@
             action: actionName,
             requestId: requestId,
             action_type: isReject ? 'reject' : 'approve',
-            comment: comment,
+            comment: comment || '',
             signature: mgrSig || '',
-            formImage: ''
+            formImage: '',
+            editedTypes: editedTypes ? JSON.stringify(editedTypes) : '',
+            editedFrom: editedFrom || '',
+            editedTo: editedTo || ''
         };
 
         try {
@@ -1965,7 +1999,6 @@
                     try { document.body.removeChild(postForm); } catch(e) {}
                     closeModal();
 
-                    // Reload current list
                     if (roleName === 'hrsite') loadHRSiteRequests();
                     else if (roleName === 'manager') loadManagerRequests();
                     else if (roleName === 'hrmgr') loadHRMgrRequests();
