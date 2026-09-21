@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <meta name="format-detection" content="telephone=no">
-    <title>Leave Request & Approval Form</title>
+    <title>Leave Request & Approval System</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
             --primary-color: #2563eb;
@@ -17,6 +18,10 @@
             --danger-color: #ef4444;
             --warning-color: #f59e0b;
             --purple-color: #8b5cf6;
+            --hrsite-color: #0891b2;
+            --manager-color: #ea580c;
+            --hrmgr-color: #dc2626;
+            --admin-color: #7c3aed;
         }
         * { box-sizing: border-box; }
         body {
@@ -104,6 +109,8 @@
         .home-btn .icon { font-size: 38px; }
         .home-btn.new { background: linear-gradient(135deg, #2563eb, #1e40af); }
         .home-btn.query { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+        .home-btn.borrow { background: linear-gradient(135deg, #0891b2, #0e7490); }
+        .home-btn.exit { background: linear-gradient(135deg, #6b7280, #4b5563); }
 
         /* ============ لوحة الإدخال ============ */
         .input-panel {
@@ -263,8 +270,8 @@
         }
         #btnGenerate { background: var(--primary-color); color: white; }
         #btnGenerate:disabled { background: #9ca3af; cursor: not-allowed; }
-        #btnSend { background: var(--purple-color); color: white; display: none; }
-        #btnSend:disabled { background: #9ca3af; cursor: not-allowed; }
+        #btnSubmit { background: var(--success-color); color: white; display: none; }
+        #btnSubmit:disabled { background: #9ca3af; cursor: not-allowed; }
         .btn-row { display: flex; gap: 10px; margin-top: 12px; }
         .btn-row button { flex: 1; }
         .btn-back {
@@ -351,12 +358,6 @@
             margin-top: 15px;
             border: 1px solid #e5e7eb;
             transition: all 0.3s ease;
-            cursor: zoom-in;
-        }
-        .form-scaler.zoomed {
-            cursor: zoom-out;
-            overflow-x: auto;
-            overflow-y: auto;
         }
         #leaveForm {
             display: none;
@@ -431,6 +432,120 @@
             display: none;
         }
         .sig-slot img[src]:not([src=""]) { display: inline-block; }
+        .mgr-sig-slot {
+            display: inline-block;
+            width: 150px;
+            height: 40px;
+            vertical-align: middle;
+            text-align: center;
+            overflow: hidden;
+        }
+        .mgr-sig-slot img {
+            max-height: 38px;
+            max-width: 148px;
+            vertical-align: middle;
+            object-fit: contain;
+        }
+        .reject-watermark {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-size: 200px; font-weight: bold; color: #ef4444;
+            opacity: 0.35; letter-spacing: 20px;
+            pointer-events: none; z-index: 10; white-space: nowrap;
+            font-family: Arial, sans-serif;
+            border: 15px solid #ef4444; border-radius: 20px;
+            padding: 20px 50px;
+        }
+
+        /* ============ Choice Box ============ */
+        .choice-box {
+            background: #fef3c7;
+            border: 2px solid #f59e0b;
+            border-radius: 10px;
+            padding: 16px;
+            margin: 15px 0;
+            text-align: left;
+        }
+        .choice-box h4 { margin: 0 0 12px; color: #92400e; font-size: 15px; }
+        .choice-option {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 14px;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .choice-option:hover { border-color: #2563eb; background: #f0f9ff; }
+        .choice-option.selected { border-color: #2563eb; background: #dbeafe; }
+        .choice-option input[type="radio"] { width: 20px; height: 20px; cursor: pointer; }
+        .choice-option label { cursor: pointer; font-size: 14px; font-weight: 600; flex: 1; }
+        .comment-box {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            min-height: 70px;
+            outline: none;
+            resize: vertical;
+            box-sizing: border-box;
+        }
+        .comment-box:focus { border-color: #2563eb; }
+
+        /* ============ صف الطلب ============ */
+        .request-row {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            border-left: 5px solid var(--warning-color);
+            transition: all 0.2s;
+        }
+        .request-row:hover {
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        .request-row.pending { border-left-color: var(--warning-color); }
+        .request-row.hrsite-approved { border-left-color: var(--hrsite-color); }
+        .request-row.manager-approved { border-left-color: var(--manager-color); }
+        .request-row.approved { border-left-color: var(--success-color); }
+        .request-row.rejected { border-left-color: var(--danger-color); }
+        .request-row-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .request-row-id {
+            font-size: 13px;
+            font-weight: bold;
+            color: var(--primary-color);
+            word-break: break-all;
+        }
+        .request-row-body {
+            font-size: 13px;
+            line-height: 1.8;
+            color: var(--text-color);
+        }
+        .request-row-body strong { color: var(--secondary-text); font-weight: 600; }
+        .request-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status-pending { background: #fef3c7; color: #92400e; }
+        .status-hrsite { background: #cffafe; color: #155e75; }
+        .status-manager { background: #ffedd5; color: #9a3412; }
+        .status-approved { background: #d1fae5; color: #065f46; }
+        .status-rejected { background: #fee2e2; color: #991b1b; }
 
         /* ============ صفحة الشكر ============ */
         .thanks-box {
@@ -529,6 +644,38 @@
         }
         .empty-state .icon { font-size: 60px; margin-bottom: 10px; }
 
+        /* ============ Admin Panel ============ */
+        .admin-header {
+            text-align: center;
+            margin-bottom: 25px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        .admin-header h1 { color: var(--admin-color); font-size: 22px; margin: 0 0 8px; }
+        .admin-header p { color: #6b7280; margin: 0; font-size: 14px; }
+        .admin-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .admin-info-box {
+            background: #eff6ff;
+            border: 2px solid #bfdbfe;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+        .admin-info-box strong { color: #1e40af; }
+
         /* ============ Mobile ============ */
         @media (max-width: 768px) {
             body { padding: 10px 5px; }
@@ -539,7 +686,7 @@
             .form-field input,
             .form-field select { font-size: 15px; padding: 10px; }
             .split-box { grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 6px; }
-            #btnGenerate, #btnSend { font-size: 14px; padding: 12px 16px; }
+            #btnGenerate, #btnSubmit { font-size: 14px; padding: 12px 16px; }
             .home-btn { min-width: 100%; padding: 20px 30px; font-size: 16px; }
             .home-btn .icon { font-size: 32px; }
             .balance-card { grid-template-columns: 1fr; }
@@ -547,8 +694,29 @@
             .query-balance-inner { flex-direction: column; gap: 15px; }
             .query-balance-divider { display: none; }
         }
+
+        @media print {
+            body * { visibility: hidden; }
+            #leaveForm, #leaveForm * { visibility: visible; }
+            #leaveForm {
+                position: absolute;
+                top: 0; left: 0;
+                width: 100%;
+                border: 1px solid white;
+                padding: 5px 8px;
+                margin: 0;
+                box-sizing: border-box;
+                font-size: 10px;
+                display: block !important;
+            }
+        }
     </style>
 </head>
+<body>
+<!-- Body هيتم في الجزء 2 -->
+</body>
+</html>
+
 <body>
 <div class="container">
 
@@ -565,121 +733,11 @@
             <p class="home-subtitle">Leave Request & Approval System</p>
 
             <div class="home-buttons">
-                <button class="home-btn new" onclick="showScreen('new')">
-                    <span class="icon">🆕</span>
-                    <span>طلب جديد</span>
-                </button>
                 <button class="home-btn query" onclick="showScreen('query')">
                     <span class="icon">🔍</span>
-                    <span>الاستعلام عن الرصيد</span>
+                    <span>استعلام / طلب جديد</span>
                 </button>
             </div>
-        </div>
-    </div>
-
-    <!-- ============================================================ -->
-    <!--  🆕 شاشة طلب جديد                                            -->
-    <!-- ============================================================ -->
-    <div id="screen-new" class="screen">
-        <div class="back-row">
-            <h3>🆕 طلب إجازة جديد</h3>
-            <button class="btn-back" onclick="goHome()">🏠 الرئيسية</button>
-        </div>
-
-        <div class="input-panel">
-            <h3>إدخال بيانات الإجازة</h3>
-
-            <div class="input-group">
-                <div class="form-field">
-                    <label>كود الموظف (Staff No)</label>
-                    <input type="text" id="staffId" placeholder="مثال: 5233"
-                           onblur="fetchEmployeeBalance()">
-                </div>
-            </div>
-
-            <!-- بطاقة الرصيد -->
-            <div class="balance-card" id="balanceCard" style="display:none;">
-                <div class="balance-item">
-                    <span class="balance-label">👤 الاسم</span>
-                    <span class="balance-value" id="empName">-</span>
-                </div>
-                <div class="balance-item">
-                    <span class="balance-label">💼 الوظيفة</span>
-                    <span class="balance-value" id="empTitle">-</span>
-                </div>
-                <div class="balance-item highlight">
-                    <span class="balance-label">💰 الرصيد المتاح</span>
-                    <span class="balance-value big" id="empBalance">0</span>
-                    <span class="balance-label">يوم</span>
-                </div>
-                <div class="balance-item">
-                    <span class="balance-label">📋 الاستحقاق السنوي</span>
-                    <span class="balance-value" id="empEntitlement">0</span>
-                </div>
-                <div class="balance-item">
-                    <span class="balance-label">📅 تاريخ اليوم</span>
-                    <span class="balance-value" id="todayDate">-</span>
-                </div>
-            </div>
-
-            <!-- رسالة خطأ الكود -->
-            <div class="error-card" id="staffError" style="display:none;">
-                ❌ كود الموظف غير موجود في قاعدة البيانات
-            </div>
-
-            <!-- التواريخ -->
-            <div class="input-group" id="datesGroup" style="display:none;">
-                <div class="form-field">
-                    <label>تاريخ البداية (From)</label>
-                    <input type="date" id="startDate"
-                           onchange="calculateDays(); updateEndDateMin()"
-                           onfocus="setMinDate()">
-                </div>
-                <div class="form-field">
-                    <label>تاريخ النهاية (To)</label>
-                    <input type="date" id="endDate"
-                           onchange="calculateDays()"
-                           onfocus="setMinDate()">
-                </div>
-            </div>
-
-            <!-- إجمالي الأيام -->
-            <div class="total-days-box" id="totalDaysBox" style="display:none;">
-                إجمالي الأيام: <span id="totalDaysDisplay">0</span> يوم
-            </div>
-
-            <!-- توزيع الأيام -->
-            <div class="split-area" id="splitArea" style="display:none;">
-                <h4>وزّع الأيام:</h4>
-                <div class="split-box">
-                    <div class="type-input"><label>سنوية</label><input type="number" id="split_annual" value="0" min="0"></div>
-                    <div class="type-input"><label>بدل أسبوعية</label><input type="number" id="split_weekend" value="0" min="0"></div>
-                    <div class="type-input"><label>بدون أجر</label><input type="number" id="split_withoutPay" value="0" min="0"></div>
-                    <div class="type-input"><label>مرضية</label><input type="number" id="split_sick" value="0" min="0"></div>
-                    <div class="type-input"><label>ولادة</label><input type="number" id="split_maternity" value="0" min="0"></div>
-                    <div class="type-input"><label>إصابة</label><input type="number" id="split_injury" value="0" min="0"></div>
-                    <div class="type-input"><label>بدل راحات</label><input type="number" id="split_rr" value="0" min="0"></div>
-                    <div class="type-input"><label>إضطرارية</label><input type="number" id="split_compassionate" value="0" min="0"></div>
-                    <div class="type-input"><label>أبوة</label><input type="number" id="split_paternity" value="0" min="0"></div>
-                </div>
-            </div>
-
-            <!-- التوقيع -->
-            <div class="signature-wrapper">
-                <label>✍️ توقيع الموظف - ارفع صورة التوقيع</label>
-                <input type="file" id="signatureFile" accept="image/*">
-                <div id="signaturePreviewBox">
-                    <img id="signaturePreview" src="" alt="preview"><br>
-                    <button type="button" class="btn-clear-sig" onclick="clearSignature()">🗑️ مسح</button>
-                </div>
-            </div>
-
-            <div class="btn-row">
-                <button id="btnGenerate" onclick="generateForm()">عرض النموذج</button>
-                <button id="btnSend" onclick="sendToManager()">📤 إرسال للمدير</button>
-            </div>
-            <span id="errorMsg" class="error-msg"></span>
-            <div id="duplicateMsgBox" style="display:none; margin-top: 15px;"></div>
         </div>
     </div>
 
@@ -710,33 +768,657 @@
     </div>
 
     <!-- ============================================================ -->
+    <!--  📊 نتيجة الاستعلام + خيارات                                  -->
+    <!-- ============================================================ -->
+    <div id="screen-result" class="screen">
+        <div class="back-row">
+            <h3>📊 نتيجة الاستعلام</h3>
+            <button class="btn-back" onclick="goHome()">🏠 الرئيسية</button>
+        </div>
+
+        <div id="resultContent"></div>
+
+        <div class="home-buttons" style="margin-top: 25px;">
+            <button class="home-btn new" onclick="openLeaveForm()">
+                <span class="icon">🆕</span>
+                <span>طلب إجازة</span>
+            </button>
+            <button class="home-btn borrow" id="btnBorrowOption" onclick="openBorrowForm()" style="display:none;">
+                <span class="icon">💼</span>
+                <span>طلب استلاف</span>
+            </button>
+            <button class="home-btn exit" onclick="exitSession()">
+                <span class="icon">🚪</span>
+                <span>خروج</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!--  🆕 شاشة طلب إجازة جديد                                      -->
+    <!-- ============================================================ -->
+    <div id="screen-new" class="screen">
+        <div class="back-row">
+            <h3>🆕 طلب إجازة جديد</h3>
+            <button class="btn-back" onclick="backToResult()">🔙 رجوع</button>
+        </div>
+
+        <div class="input-panel">
+            <h3>إدخال بيانات الإجازة</h3>
+
+            <!-- بطاقة الرصيد -->
+            <div class="balance-card" id="balanceCard" style="display:none;">
+                <div class="balance-item">
+                    <span class="balance-label">👤 الاسم</span>
+                    <span class="balance-value" id="empName">-</span>
+                </div>
+                <div class="balance-item">
+                    <span class="balance-label">💼 الوظيفة</span>
+                    <span class="balance-value" id="empTitle">-</span>
+                </div>
+                <div class="balance-item highlight">
+                    <span class="balance-label">💰 الرصيد المتاح</span>
+                    <span class="balance-value big" id="empBalance">0</span>
+                    <span class="balance-label">يوم</span>
+                </div>
+                <div class="balance-item">
+                    <span class="balance-label">📋 الاستحقاق السنوي</span>
+                    <span class="balance-value" id="empEntitlement">0</span>
+                </div>
+                <div class="balance-item">
+                    <span class="balance-label">🏢 المشروع</span>
+                    <span class="balance-value" id="empProject">-</span>
+                </div>
+                <div class="balance-item">
+                    <span class="balance-label">📅 تاريخ اليوم</span>
+                    <span class="balance-value" id="todayDate">-</span>
+                </div>
+            </div>
+
+            <!-- التواريخ -->
+            <div class="input-group" id="datesGroup">
+                <div class="form-field">
+                    <label>تاريخ البداية (From)</label>
+                    <input type="date" id="startDate"
+                           onchange="calculateDays(); updateEndDateMin()"
+                           onfocus="setMinDate()">
+                </div>
+                <div class="form-field">
+                    <label>تاريخ النهاية (To)</label>
+                    <input type="date" id="endDate"
+                           onchange="calculateDays()"
+                           onfocus="setMinDate()">
+                </div>
+            </div>
+
+            <!-- إجمالي الأيام -->
+            <div class="total-days-box" id="totalDaysBox" style="display:none;">
+                إجمالي الأيام: <span id="totalDaysDisplay">0</span> يوم
+            </div>
+
+            <!-- توزيع الأيام -->
+            <div class="split-area" id="splitArea" style="display:none;">
+                <h4>وزّع الأيام:</h4>
+                <div class="split-box">
+                    <div class="type-input"><label>سنوية</label><input type="number" id="split_annual" value="0" min="0" oninput="checkSplit()"></div>
+                    <div class="type-input"><label>بدل أسبوعية</label><input type="number" id="split_weekend" value="0" min="0" oninput="checkSplit()"></div>
+                    <div class="type-input"><label>بدون أجر</label><input type="number" id="split_withoutPay" value="0" min="0" oninput="checkSplit()"></div>
+                    <div class="type-input"><label>مرضية</label><input type="number" id="split_sick" value="0" min="0" oninput="checkSplit()"></div>
+                    <div class="type-input"><label>ولادة</label><input type="number" id="split_maternity" value="0" min="0" oninput="checkSplit()"></div>
+                    <div class="type-input"><label>إصابة</label><input type="number" id="split_injury" value="0" min="0" oninput="checkSplit()"></div>
+                    <div class="type-input"><label>بدل راحات</label><input type="number" id="split_rr" value="0" min="0" oninput="checkSplit()"></div>
+                    <div class="type-input"><label>إضطرارية</label><input type="number" id="split_compassionate" value="0" min="0" oninput="checkSplit()"></div>
+                    <div class="type-input"><label>أبوة</label><input type="number" id="split_paternity" value="0" min="0" oninput="checkSplit()"></div>
+                </div>
+                <div style="margin-top: 10px; text-align: center; font-weight: bold;">
+                    المجموع: <span id="splitSum">0</span> / <span id="splitTotal">0</span>
+                </div>
+            </div>
+
+            <!-- التوقيع -->
+            <div class="signature-wrapper">
+                <label>✍️ توقيع الموظف - ارفع صورة التوقيع</label>
+                <input type="file" id="signatureFile" accept="image/*">
+                <div id="signaturePreviewBox">
+                    <img id="signaturePreview" src="" alt="preview"><br>
+                    <button type="button" class="btn-clear-sig" onclick="clearSignature()">🗑️ مسح</button>
+                </div>
+            </div>
+
+            <div class="btn-row">
+                <button id="btnGenerate" onclick="previewForm()">📄 عرض النموذج</button>
+            </div>
+            <span id="errorMsg" class="error-msg"></span>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!--  💼 شاشة طلب استلاف                                          -->
+    <!-- ============================================================ -->
+    <div id="screen-borrow" class="screen">
+        <div class="back-row">
+            <h3>💼 طلب استلاف</h3>
+            <button class="btn-back" onclick="backToResult()">🔙 رجوع</button>
+        </div>
+
+        <div class="input-panel">
+            <h3>بيانات طلب الاستلاف</h3>
+
+            <!-- بطاقة الرصيد -->
+            <div class="balance-card" id="borrowBalanceCard" style="display:none;">
+                <div class="balance-item">
+                    <span class="balance-label">👤 الاسم</span>
+                    <span class="balance-value" id="borrowEmpName">-</span>
+                </div>
+                <div class="balance-item">
+                    <span class="balance-label">💼 الوظيفة</span>
+                    <span class="balance-value" id="borrowEmpTitle">-</span>
+                </div>
+                <div class="balance-item highlight">
+                    <span class="balance-label">💰 الرصيد الحالي</span>
+                    <span class="balance-value big" id="borrowEmpBalance">0</span>
+                    <span class="balance-label">يوم</span>
+                </div>
+                <div class="balance-item">
+                    <span class="balance-label">📋 الاستحقاق السنوي</span>
+                    <span class="balance-value" id="borrowEmpEntitlement">0</span>
+                </div>
+            </div>
+
+            <!-- التواريخ -->
+            <div class="input-group">
+                <div class="form-field">
+                    <label>تاريخ البداية (From)</label>
+                    <input type="date" id="borrowStartDate"
+                           onchange="calculateBorrowDays(); updateBorrowEndDateMin()"
+                           onfocus="setBorrowMinDate()">
+                </div>
+                <div class="form-field">
+                    <label>تاريخ النهاية (To)</label>
+                    <input type="date" id="borrowEndDate"
+                           onchange="calculateBorrowDays()"
+                           onfocus="setBorrowMinDate()">
+                </div>
+            </div>
+
+            <!-- عدد الأيام -->
+            <div class="total-days-box" id="borrowDaysBox" style="display:none;">
+                عدد الأيام المستلفة: <span id="borrowDaysDisplay">0</span> يوم
+            </div>
+
+            <!-- Comment -->
+            <div class="input-group">
+                <div class="form-field" style="grid-column: 1 / -1;">
+                    <label>✍️ سبب الطلب (Comment)</label>
+                    <textarea id="borrowComment" class="comment-box" placeholder="اكتب سبب طلب الاستلاف..."></textarea>
+                </div>
+            </div>
+
+            <!-- التوقيع -->
+            <div class="signature-wrapper">
+                <label>✍️ توقيع الموظف - ارفع صورة التوقيع</label>
+                <input type="file" id="borrowSignatureFile" accept="image/*">
+                <div id="borrowSignaturePreviewBox">
+                    <img id="borrowSignaturePreview" src="" alt="preview"><br>
+                    <button type="button" class="btn-clear-sig" onclick="clearBorrowSignature()">🗑️ مسح</button>
+                </div>
+            </div>
+
+            <div class="btn-row">
+                <button id="btnBorrowGenerate" onclick="previewBorrowForm()">📄 عرض النموذج</button>
+            </div>
+            <span id="borrowErrorMsg" class="error-msg"></span>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!--  📄 شاشة معاينة النموذج                                      -->
+    <!-- ============================================================ -->
+    <div id="screen-preview" class="screen">
+        <div class="back-row">
+            <h3>📄 معاينة النموذج</h3>
+            <button class="btn-back" onclick="backToForm()">🔙 رجوع للتعديل</button>
+        </div>
+
+        <div class="form-scaler" id="formScaler">
+            <div id="leaveForm"></div>
+        </div>
+
+        <div class="btn-row" style="margin-top: 20px;">
+            <button id="btnSubmit" onclick="submitRequest()" style="background: var(--success-color); color: white; display: block;">
+                📤 إرسال الطلب
+            </button>
+        </div>
+        <span id="submitErrorMsg" class="error-msg"></span>
+    </div>
+
+    <!-- ============================================================ -->
     <!--  🎉 شاشة الشكر                                                -->
     <!-- ============================================================ -->
     <div id="screen-thanks" class="screen">
         <div class="thanks-box">
             <div class="icon">✅</div>
             <h1>تم الإرسال بنجاح!</h1>
-            <p>تم إرسال طلب الإجازة للمدير بنجاح</p>
-            <div style="margin-top: 25px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+            <p>تم إرسال الطلب بنجاح</p>
+            <p id="thanksRequestId" style="font-size: 13px; color: #9ca3af;"></p>
+            <div style="margin-top: 25px;">
                 <button class="home-btn query" style="padding: 14px 30px; font-size: 15px; min-width: auto;" onclick="goHome()">
-                    🏠 الرئيسية
-                </button>
-                <button class="home-btn new" style="padding: 14px 30px; font-size: 15px; min-width: auto;" onclick="showScreen('new'); resetForm();">
-                    📝 طلب جديد
+                    🏠 الصفحة الرئيسية
                 </button>
             </div>
         </div>
     </div>
 
+    <!-- ============================================================ -->
+    <!--  🔐 شاشة تسجيل دخول HR Site                                   -->
+    <!-- ============================================================ -->
+    <div id="screen-hrsite-login" class="screen">
+        <div class="home-screen">
+            <div class="home-logo">
+                <img src="https://moibrahimm4793.github.io/hr-leave-system/HAC.jpg" alt="HAC">
+                <img src="https://moibrahimm4793.github.io/hr-leave-system/CCC.jpg" alt="CCC">
+            </div>
+            <h1 class="home-title" style="color: var(--hrsite-color);">🟡 HR Site</h1>
+            <p class="home-subtitle">تسجيل الدخول</p>
+
+            <div class="input-panel" style="max-width: 400px; width: 100%;">
+                <div class="input-group">
+                    <div class="form-field" style="grid-column: 1 / -1;">
+                        <label>الإيميل</label>
+                        <input type="email" id="hrSiteLoginEmail" placeholder="hr@ccc.net">
+                    </div>
+                    <div class="form-field" style="grid-column: 1 / -1;">
+                        <label>كود التحقق</label>
+                        <input type="text" id="hrSiteLoginToken" placeholder="000000" maxlength="6">
+                    </div>
+                </div>
+                <div class="btn-row">
+                    <button onclick="loginHRSite()" style="background: var(--hrsite-color); color: white;">🔓 دخول</button>
+                </div>
+                <span id="hrSiteLoginError" class="error-msg"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!--  🟡 شاشة HR Site - قائمة الطلبات                              -->
+    <!-- ============================================================ -->
+    <div id="screen-hrsite" class="screen">
+        <div class="back-row">
+            <h3 style="color: var(--hrsite-color);">🟡 HR Site - الطلبات</h3>
+            <button class="btn-back" onclick="logoutHRSite()">🚪 خروج</button>
+        </div>
+
+        <div class="input-panel">
+            <h3>🔍 بحث</h3>
+            <div class="input-group">
+                <div class="form-field">
+                    <label>رقم الطلب / كود الموظف / الاسم</label>
+                    <input type="text" id="hrSiteSearchInput" placeholder="ابحث..." oninput="filterHRSiteRequests()">
+                </div>
+            </div>
+        </div>
+
+        <div id="hrSiteRequestsList"></div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!--  🟡 شاشة HR Site - تفاصيل الطلب                              -->
+    <!-- ============================================================ -->
+    <div id="screen-hrsite-detail" class="screen">
+        <div class="back-row">
+            <h3 style="color: var(--hrsite-color);">🟡 تفاصيل الطلب - HR Site</h3>
+            <button class="btn-back" onclick="backToHRSiteList()">🔙 رجوع</button>
+        </div>
+
+        <div class="input-panel">
+            <h3>✏️ تعديل الأيام (اختياري)</h3>
+            <div class="split-area">
+                <div class="split-box">
+                    <div class="type-input"><label>سنوية</label><input type="number" id="hrsite_annual" value="0" min="0"></div>
+                    <div class="type-input"><label>بدل أسبوعية</label><input type="number" id="hrsite_weekend" value="0" min="0"></div>
+                    <div class="type-input"><label>بدون أجر</label><input type="number" id="hrsite_withoutPay" value="0" min="0"></div>
+                    <div class="type-input"><label>مرضية</label><input type="number" id="hrsite_sick" value="0" min="0"></div>
+                    <div class="type-input"><label>ولادة</label><input type="number" id="hrsite_maternity" value="0" min="0"></div>
+                    <div class="type-input"><label>إصابة</label><input type="number" id="hrsite_injury" value="0" min="0"></div>
+                    <div class="type-input"><label>بدل راحات</label><input type="number" id="hrsite_rr" value="0" min="0"></div>
+                    <div class="type-input"><label>إضطرارية</label><input type="number" id="hrsite_compassionate" value="0" min="0"></div>
+                    <div class="type-input"><label>أبوة</label><input type="number" id="hrsite_paternity" value="0" min="0"></div>
+                </div>
+            </div>
+
+            <div class="input-group" style="margin-top: 15px;">
+                <div class="form-field">
+                    <label>تاريخ البداية (From)</label>
+                    <input type="date" id="hrsite_fromDate">
+                </div>
+                <div class="form-field">
+                    <label>تاريخ النهاية (To)</label>
+                    <input type="date" id="hrsite_toDate">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <div class="form-field" style="grid-column: 1 / -1;">
+                    <label>💬 تعليق HR Site (اختياري)</label>
+                    <textarea id="hrsite_comment" class="comment-box" placeholder="اكتب تعليقك..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-scaler">
+            <div id="hrsiteForm"></div>
+        </div>
+
+        <div class="btn-row" style="margin-top: 20px;">
+            <button onclick="submitHRSiteDecision('approve')" style="background: var(--success-color); color: white; padding: 14px;">✅ Approve</button>
+            <button onclick="submitHRSiteDecision('reject')" style="background: var(--danger-color); color: white; padding: 14px;">❌ Reject</button>
+        </div>
+        <span id="hrSiteDetailError" class="error-msg"></span>
+    </div>
+
+    <!-- ============================================================ -->
+    <!--  🔐 شاشة تسجيل دخول المدير                                    -->
+    <!-- ============================================================ -->
+    <div id="screen-manager-login" class="screen">
+        <div class="home-screen">
+            <div class="home-logo">
+                <img src="https://moibrahimm4793.github.io/hr-leave-system/HAC.jpg" alt="HAC">
+                <img src="https://moibrahimm4793.github.io/hr-leave-system/CCC.jpg" alt="CCC">
+            </div>
+            <h1 class="home-title" style="color: var(--manager-color);">🟠 المدير</h1>
+            <p class="home-subtitle">تسجيل الدخول</p>
+
+            <div class="input-panel" style="max-width: 400px; width: 100%;">
+                <div class="input-group">
+                    <div class="form-field" style="grid-column: 1 / -1;">
+                        <label>الإيميل</label>
+                        <input type="email" id="managerLoginEmail" placeholder="manager@ccc.net">
+                    </div>
+                    <div class="form-field" style="grid-column: 1 / -1;">
+                        <label>كود التحقق</label>
+                        <input type="text" id="managerLoginToken" placeholder="0000000" maxlength="7">
+                    </div>
+                </div>
+                <div class="btn-row">
+                    <button onclick="loginManager()" style="background: var(--manager-color); color: white;">🔓 دخول</button>
+                </div>
+                <span id="managerLoginError" class="error-msg"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!--  🟠 شاشة المدير - قائمة الطلبات                               -->
+    <!-- ============================================================ -->
+    <div id="screen-manager" class="screen">
+        <div class="back-row">
+            <h3 style="color: var(--manager-color);">🟠 المدير - الطلبات</h3>
+            <button class="btn-back" onclick="logoutManager()">🚪 خروج</button>
+        </div>
+
+        <div class="input-panel">
+            <h3>🔍 بحث</h3>
+            <div class="input-group">
+                <div class="form-field">
+                    <label>رقم الطلب / كود الموظف / الاسم</label>
+                    <input type="text" id="managerSearchInput" placeholder="ابحث..." oninput="filterManagerRequests()">
+                </div>
+            </div>
+        </div>
+
+        <div id="managerRequestsList"></div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!--  🟠 شاشة المدير - تفاصيل الطلب                                -->
+    <!-- ============================================================ -->
+    <div id="screen-manager-detail" class="screen">
+        <div class="back-row">
+            <h3 style="color: var(--manager-color);">🟠 تفاصيل الطلب - المدير</h3>
+            <button class="btn-back" onclick="backToManagerList()">🔙 رجوع</button>
+        </div>
+
+        <div class="form-scaler">
+            <div id="managerForm"></div>
+        </div>
+
+        <div class="signature-wrapper" style="margin-top: 20px;">
+            <label>✍️ توقيع المدير - ارفع صورة التوقيع</label>
+            <input type="file" id="managerSignatureFile" accept="image/*">
+            <div id="managerSignaturePreviewBox">
+                <img id="managerSignaturePreview" src="" alt="preview"><br>
+                <button type="button" class="btn-clear-sig" onclick="clearManagerSignature()">🗑️ مسح</button>
+            </div>
+        </div>
+
+        <div class="btn-row">
+            <button id="btnManagerApprove" onclick="submitManagerDecision('approve')" style="background: var(--success-color); color: white; padding: 14px;">✅ Approve</button>
+            <button onclick="submitManagerDecision('reject')" style="background: var(--danger-color); color: white; padding: 14px;">❌ Reject</button>
+        </div>
+        <span id="managerDetailError" class="error-msg"></span>
+    </div>
+
+    <!-- ============================================================ -->
+    <!--  🔐 شاشة تسجيل دخول HR Manager                                -->
+    <!-- ============================================================ -->
+    <div id="screen-hrmgr-login" class="screen">
+        <div class="home-screen">
+            <div class="home-logo">
+                <img src="https://moibrahimm4793.github.io/hr-leave-system/HAC.jpg" alt="HAC">
+                <img src="https://moibrahimm4793.github.io/hr-leave-system/CCC.jpg" alt="CCC">
+            </div>
+            <h1 class="home-title" style="color: var(--hrmgr-color);">🔴 HR Manager</h1>
+            <p class="home-subtitle">تسجيل الدخول</p>
+
+            <div class="input-panel" style="max-width: 400px; width: 100%;">
+                <div class="input-group">
+                    <div class="form-field" style="grid-column: 1 / -1;">
+                        <label>الإيميل</label>
+                        <input type="email" id="hrmgrLoginEmail" placeholder="hrmgr@ccc.net">
+                    </div>
+                    <div class="form-field" style="grid-column: 1 / -1;">
+                        <label>كود التحقق</label>
+                        <input type="text" id="hrmgrLoginToken" placeholder="0000000" maxlength="7">
+                    </div>
+                </div>
+                <div class="btn-row">
+                    <button onclick="loginHRMgr()" style="background: var(--hrmgr-color); color: white;">🔓 دخول</button>
+                </div>
+                <span id="hrmgrLoginError" class="error-msg"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!--  🔴 شاشة HR Manager - قائمة الطلبات                            -->
+    <!-- ============================================================ -->
+    <div id="screen-hrmgr" class="screen">
+        <div class="back-row">
+            <h3 style="color: var(--hrmgr-color);">🔴 HR Manager - طلبات الاستلاف</h3>
+            <button class="btn-back" onclick="logoutHRMgr()">🚪 خروج</button>
+        </div>
+
+        <div id="hrmgrRequestsList"></div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!--  🔴 شاشة HR Manager - تفاصيل الطلب                            -->
+    <!-- ============================================================ -->
+    <div id="screen-hrmgr-detail" class="screen">
+        <div class="back-row">
+            <h3 style="color: var(--hrmgr-color);">🔴 تفاصيل الطلب - HR Manager</h3>
+            <button class="btn-back" onclick="backToHRMgrList()">🔙 رجوع</button>
+        </div>
+
+        <div class="input-panel">
+            <h3>💬 تعليق HR Manager</h3>
+            <textarea id="hrmgrComment" class="comment-box" placeholder="اكتب تعليقك..."></textarea>
+        </div>
+
+        <div class="form-scaler">
+            <div id="hrmgrForm"></div>
+        </div>
+
+        <div class="btn-row" style="margin-top: 20px;">
+            <button onclick="submitHRMgrDecision('approve')" style="background: var(--success-color); color: white; padding: 14px;">✅ Approve</button>
+            <button onclick="submitHRMgrDecision('reject')" style="background: var(--danger-color); color: white; padding: 14px;">❌ Reject</button>
+        </div>
+        <span id="hrmgrDetailError" class="error-msg"></span>
+    </div>
+
+    <!-- ============================================================ -->
+    <!--  🔐 شاشة تسجيل دخول الأدمن                                    -->
+    <!-- ============================================================ -->
+    <div id="screen-admin-login" class="screen">
+        <div class="home-screen">
+            <div class="home-logo">
+                <img src="https://moibrahimm4793.github.io/hr-leave-system/HAC.jpg" alt="HAC">
+                <img src="https://moibrahimm4793.github.io/hr-leave-system/CCC.jpg" alt="CCC">
+            </div>
+            <h1 class="home-title" style="color: var(--admin-color);">🔧 Admin Panel</h1>
+            <p class="home-subtitle">لوحة تحكم الأدمن</p>
+
+            <div class="input-panel" style="max-width: 400px; width: 100%;">
+                <div class="input-group">
+                    <div class="form-field" style="grid-column: 1 / -1;">
+                        <label>كود الأدمن</label>
+                        <input type="text" id="adminLoginCode" placeholder="أدخل الكود" maxlength="10">
+                    </div>
+                </div>
+                <div class="btn-row">
+                    <button onclick="loginAdmin()" style="background: var(--admin-color); color: white;">🔓 دخول</button>
+                </div>
+                <span id="adminLoginError" class="error-msg"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!--  🔧 شاشة الأدمن - قائمة الطلبات                                -->
+    <!-- ============================================================ -->
+    <div id="screen-admin" class="screen">
+        <div class="back-row">
+            <h3 style="color: var(--admin-color);">🔧 Admin Panel - كل الطلبات</h3>
+            <button class="btn-back" onclick="logoutAdmin()">🚪 خروج</button>
+        </div>
+
+        <div class="input-panel">
+            <h3>🔍 بحث + فلتر</h3>
+            <div class="input-group">
+                <div class="form-field">
+                    <label>بحث (رقم الطلب / كود الموظف / الاسم)</label>
+                    <input type="text" id="adminSearchInput" placeholder="ابحث..." oninput="filterAdminRequests()">
+                </div>
+                <div class="form-field">
+                    <label>الفترة</label>
+                    <select id="adminPeriodSelect" onchange="filterAdminRequests()">
+                        <option value="">كل الفترات</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div id="adminRequestsList"></div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!--  🔧 شاشة الأدمن - تفاصيل الطلب                                -->
+    <!-- ============================================================ -->
+    <div id="screen-admin-detail" class="screen">
+        <div class="back-row">
+            <h3 style="color: var(--admin-color);">🔧 تعديل الطلب</h3>
+            <button class="btn-back" onclick="backToAdminList()">🔙 رجوع</button>
+        </div>
+
+        <div class="input-panel">
+            <h3>📝 معلومات الطلب</h3>
+            <div id="adminInfoBox" class="admin-info-box"></div>
+
+            <h3>📅 تعديل التواريخ</h3>
+            <div class="input-group">
+                <div class="form-field">
+                    <label>تاريخ البداية</label>
+                    <input type="date" id="adminFromDate">
+                </div>
+                <div class="form-field">
+                    <label>تاريخ النهاية</label>
+                    <input type="date" id="adminToDate">
+                </div>
+            </div>
+
+            <h3>📌 النوع</h3>
+            <div class="input-group">
+                <div class="form-field">
+                    <label>Type</label>
+                    <select id="adminType">
+                        <option value="Leave">Leave</option>
+                        <option value="Borrow">Borrow</option>
+                    </select>
+                </div>
+            </div>
+
+            <h3>✏️ تعديل الأيام</h3>
+            <div class="split-area">
+                <div class="split-box">
+                    <div class="type-input"><label>سنوية</label><input type="number" id="admin_annual" value="0" min="0"></div>
+                    <div class="type-input"><label>بدل أسبوعية</label><input type="number" id="admin_weekend" value="0" min="0"></div>
+                    <div class="type-input"><label>بدون أجر</label><input type="number" id="admin_withoutPay" value="0" min="0"></div>
+                    <div class="type-input"><label>مرضية</label><input type="number" id="admin_sick" value="0" min="0"></div>
+                    <div class="type-input"><label>ولادة</label><input type="number" id="admin_maternity" value="0" min="0"></div>
+                    <div class="type-input"><label>إصابة</label><input type="number" id="admin_injury" value="0" min="0"></div>
+                    <div class="type-input"><label>بدل راحات</label><input type="number" id="admin_rr" value="0" min="0"></div>
+                    <div class="type-input"><label>إضطرارية</label><input type="number" id="admin_compassionate" value="0" min="0"></div>
+                    <div class="type-input"><label>أبوة</label><input type="number" id="admin_paternity" value="0" min="0"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-scaler">
+            <div id="adminForm"></div>
+        </div>
+
+        <div class="btn-row" style="margin-top: 20px;">
+            <button onclick="submitAdminEdit()" style="background: var(--admin-color); color: white; padding: 14px;">💾 حفظ + صورة جديدة</button>
+        </div>
+        <span id="adminDetailError" class="error-msg"></span>
+    </div>
+
 </div>
+<script>
+    // JavaScript هيتم في الجزء 3
+</script>
+</body>
+</html>
 <script>
     // ============================================================
     //  ⚙️ الإعدادات
     // ============================================================
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxDXJH8NqMp9QYPhldR6i0i5IkAc6yPXMfIRYud0PLnTsG7UrzlhEsP5ZVRfQ9X_dl-/exec';
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz30kLdiBP4_7CdvJCA60A73Up1UriPRFfbpBWwuBycnMxOm9vEpRkRKi1870JLXEnH/exec';
 
     let currentEmployee = null;
     let signatureDataUrl = "";
+    let borrowSignatureDataUrl = "";
+    let currentRequestData = null;
+    let currentBorrowData = null;
+    let previewMode = 'leave';
+
+    let hrSiteEmail = '';
+    let hrSiteRequests = [];
+    let currentHRSiteRequest = null;
+
+    let managerEmail = '';
+    let managerRequests = [];
+    let currentManagerRequest = null;
+    let managerSigDataUrl = '';
+
+    let hrmgrEmail = '';
+    let hrmgrRequests = [];
+    let currentHRMgrRequest = null;
+
+    let adminLoggedIn = false;
+    let adminRequests = [];
+    let currentAdminRequest = null;
 
     // ============================================================
     //  🖥️ التنقل بين الشاشات
@@ -750,25 +1432,65 @@
 
     function goHome() {
         showScreen('home');
-        resetForm();
-        document.getElementById('queryResult').style.display = 'none';
-        document.getElementById('queryStaffId').value = '';
-        document.getElementById('queryError').innerText = '';
+        resetAllForms();
     }
 
-    window.addEventListener('load', function() {
+    function exitSession() {
+        resetAllForms();
         showScreen('home');
-        setMinDate();
-    });
+    }
+
+    function resetAllForms() {
+        // Query
+        const q = document.getElementById('queryStaffId');
+        if (q) q.value = '';
+        const qr = document.getElementById('queryResult');
+        if (qr) qr.style.display = 'none';
+        const qe = document.getElementById('queryError');
+        if (qe) qe.innerText = '';
+
+        // Leave form
+        const s = document.getElementById('startDate');
+        const e = document.getElementById('endDate');
+        if (s) s.value = '';
+        if (e) e.value = '';
+        const tdb = document.getElementById('totalDaysBox');
+        if (tdb) tdb.style.display = 'none';
+        const sa = document.getElementById('splitArea');
+        if (sa) sa.style.display = 'none';
+        const em = document.getElementById('errorMsg');
+        if (em) em.innerText = '';
+        const bc = document.getElementById('balanceCard');
+        if (bc) bc.style.display = 'none';
+
+        const types = ["annual","weekend","withoutPay","sick","maternity","injury","rr","compassionate","paternity"];
+        types.forEach(t => {
+            const el = document.getElementById('split_' + t);
+            if (el) el.value = 0;
+        });
+
+        clearSignature();
+        clearBorrowSignature();
+
+        // Borrow form
+        const bs = document.getElementById('borrowStartDate');
+        const be = document.getElementById('borrowEndDate');
+        if (bs) bs.value = '';
+        if (be) be.value = '';
+        const bdb = document.getElementById('borrowDaysBox');
+        if (bdb) bdb.style.display = 'none';
+        const bcm = document.getElementById('borrowComment');
+        if (bcm) bcm.value = '';
+
+        currentEmployee = null;
+        currentRequestData = null;
+        currentBorrowData = null;
+    }
 
     // ============================================================
     //  📅 تحديد أقل تاريخ مسموح
     // ============================================================
-    function setMinDate() {
-        const startInput = document.getElementById('startDate');
-        const endInput = document.getElementById('endDate');
-        if (!startInput || !endInput) return '';
-
+    function getMinDate() {
         const today = new Date();
         const todayDay = today.getDate();
         const todayMonth = today.getMonth();
@@ -784,138 +1506,82 @@
             minDate = new Date(lastDayOfPrevMonth.getFullYear(), lastDayOfPrevMonth.getMonth(), 26);
         }
 
-        const minDateStr = minDate.getFullYear() + '-' +
-                           String(minDate.getMonth() + 1).padStart(2, '0') + '-' +
-                           String(minDate.getDate()).padStart(2, '0');
+        return minDate.getFullYear() + '-' +
+               String(minDate.getMonth() + 1).padStart(2, '0') + '-' +
+               String(minDate.getDate()).padStart(2, '0');
+    }
 
-        startInput.min = minDateStr;
-        endInput.min = minDateStr;
-        return minDateStr;
+    function setMinDate() {
+        const minStr = getMinDate();
+        const startInput = document.getElementById('startDate');
+        const endInput = document.getElementById('endDate');
+        if (startInput) startInput.min = minStr;
+        if (endInput) endInput.min = minStr;
+        return minStr;
+    }
+
+    function setBorrowMinDate() {
+        const minStr = getMinDate();
+        const bs = document.getElementById('borrowStartDate');
+        const be = document.getElementById('borrowEndDate');
+        if (bs) bs.min = minStr;
+        if (be) be.min = minStr;
+        return minStr;
     }
 
     function isDateBeforeMin(dateStr) {
         if (!dateStr) return false;
-        const minDateStr = setMinDate();
-        const minDate = new Date(minDateStr);
-        const inputDate = new Date(dateStr);
-        return inputDate < minDate;
+        const minStr = getMinDate();
+        return new Date(dateStr) < new Date(minStr);
     }
 
     function updateEndDateMin() {
         const start = document.getElementById('startDate').value;
         const endInput = document.getElementById('endDate');
-        const minDateStr = setMinDate();
-
+        const minStr = getMinDate();
         if (start) {
-            const startDate = new Date(start);
-            const minDate = new Date(minDateStr);
-            const finalMin = startDate > minDate ? startDate : minDate;
-            const finalMinStr = finalMin.getFullYear() + '-' +
-                                String(finalMin.getMonth() + 1).padStart(2, '0') + '-' +
-                                String(finalMin.getDate()).padStart(2, '0');
-            endInput.min = finalMinStr;
-            if (endInput.value && endInput.value < finalMinStr) {
-                endInput.value = '';
-                document.getElementById('totalDaysBox').style.display = 'none';
-                document.getElementById('splitArea').style.display = 'none';
-                document.getElementById('errorMsg').innerText = '⚠️ تم مسح تاريخ النهاية';
-            }
+            const finalMin = new Date(start) > new Date(minStr) ? start : minStr;
+            endInput.min = finalMin;
         } else {
-            endInput.min = minDateStr;
+            endInput.min = minStr;
         }
     }
 
-    // ============================================================
-    //  📊 حساب الأيام
-    // ============================================================
-    function calculateDays() {
-        const start = document.getElementById('startDate').value;
-        const end = document.getElementById('endDate').value;
-        const errorEl = document.getElementById('errorMsg');
-
-        if (start && end) {
-            const startDate = new Date(start);
-            const endDate = new Date(end);
-
-            if (isDateBeforeMin(start)) {
-                errorEl.innerText = '⚠️ تاريخ البداية لا يمكن أن يكون قبل 26 من الشهر السابق';
-                document.getElementById('totalDaysBox').style.display = 'none';
-                document.getElementById('splitArea').style.display = 'none';
-                return;
-            }
-            if (isDateBeforeMin(end)) {
-                errorEl.innerText = '⚠️ تاريخ النهاية لا يمكن أن يكون قبل 26 من الشهر السابق';
-                document.getElementById('totalDaysBox').style.display = 'none';
-                document.getElementById('splitArea').style.display = 'none';
-                return;
-            }
-            if (startDate > endDate) {
-                errorEl.innerText = '⚠️ خطأ: تاريخ البداية لا يمكن أن يكون بعد تاريخ النهاية';
-                document.getElementById('totalDaysBox').style.display = 'none';
-                document.getElementById('splitArea').style.display = 'none';
-                return;
-            }
-
-            const diffDays = Math.ceil((endDate - startDate) / 86400000) + 1;
-            if (diffDays >= 1) {
-                errorEl.innerText = '';
-                document.getElementById('totalDaysDisplay').innerText = diffDays;
-                document.getElementById('totalDaysBox').style.display = 'block';
-                document.getElementById('splitArea').style.display = 'block';
-            }
+    function updateBorrowEndDateMin() {
+        const start = document.getElementById('borrowStartDate').value;
+        const endInput = document.getElementById('borrowEndDate');
+        const minStr = getMinDate();
+        if (start) {
+            const finalMin = new Date(start) > new Date(minStr) ? start : minStr;
+            endInput.min = finalMin;
+        } else {
+            endInput.min = minStr;
         }
     }
 
     function formatDate(d) {
-        return String(d.getDate()).padStart(2,'0') + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + d.getFullYear();
+        return String(d.getDate()).padStart(2,'0') + '-' + 
+               String(d.getMonth()+1).padStart(2,'0') + '-' + 
+               d.getFullYear();
     }
-    function formatDayName(d) { return d.toLocaleDateString('en-US', { weekday: 'long' }); }
 
-    // ============================================================
-    //  💰 جلب الرصيد
-    // ============================================================
-    function fetchEmployeeBalance() {
-        const staffId = document.getElementById('staffId').value.trim();
-        const balanceCard = document.getElementById('balanceCard');
-        const errorCard = document.getElementById('staffError');
-        const datesGroup = document.getElementById('datesGroup');
+    function formatDateISO(d) {
+        return d.getFullYear() + '-' +
+               String(d.getMonth() + 1).padStart(2, '0') + '-' +
+               String(d.getDate()).padStart(2, '0');
+    }
 
-        if (!staffId) {
-            balanceCard.style.display = 'none';
-            errorCard.style.display = 'none';
-            datesGroup.style.display = 'none';
-            currentEmployee = null;
-            return;
-        }
-
-        errorCard.style.display = 'none';
-        balanceCard.style.display = 'none';
-
-        jsonpRequest(GOOGLE_SCRIPT_URL + '?action=getBalance&staffId=' + encodeURIComponent(staffId),
-            function(res) {
-                if (!res || !res.found) {
-                    errorCard.style.display = 'block';
-                    datesGroup.style.display = 'none';
-                    currentEmployee = null;
-                    return;
-                }
-
-                currentEmployee = res;
-                document.getElementById('empName').innerText = res.name || '-';
-                document.getElementById('empTitle').innerText = res.title || '-';
-                document.getElementById('empBalance').innerText = res.leaveBalance || 0;
-                document.getElementById('empEntitlement').innerText = res.entitlement || 0;
-
-                const today = new Date();
-                document.getElementById('todayDate').innerText =
-                    String(today.getDate()).padStart(2,'0') + '-' +
-                    String(today.getMonth()+1).padStart(2,'0') + '-' +
-                    today.getFullYear();
-
-                balanceCard.style.display = 'grid';
-                datesGroup.style.display = 'grid';
+    function parseDate(dateStr) {
+        if (!dateStr) return null;
+        const parts = String(dateStr).split('-');
+        if (parts.length === 3) {
+            if (parts[0].length === 4) {
+                return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+            } else {
+                return new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
             }
-        );
+        }
+        return null;
     }
 
     // ============================================================
@@ -951,247 +1617,7 @@
     }
 
     // ============================================================
-    //  🔍 التحقق من التكرار
-    // ============================================================
-    function checkDuplicate(staffId, fromDate, toDate) {
-        return new Promise(function(resolve) {
-            const url = GOOGLE_SCRIPT_URL +
-                '?action=checkDuplicate' +
-                '&staffId=' + encodeURIComponent(staffId) +
-                '&fromDate=' + encodeURIComponent(fromDate) +
-                '&toDate=' + encodeURIComponent(toDate);
-
-            jsonpRequest(url, function(res) {
-                if (res === null) {
-                    resolve({ error: true });
-                } else {
-                    resolve(res);
-                }
-            }, 15000);
-        });
-    }
-
-    function showDuplicateMessage(info, staffId) {
-        let statusText = 'تحت التوقيع';
-        let statusColor = '#f59e0b';
-        let statusIcon = '⏳';
-
-        if (info.status === 'Approved' || info.status === 'Approved (LWP)') {
-            statusText = 'تمت الموافقة';
-            statusColor = '#10b981';
-            statusIcon = '✅';
-        } else if (info.status === 'Pending') {
-            statusText = 'تحت التوقيع';
-            statusColor = '#f59e0b';
-            statusIcon = '⏳';
-        } else if (info.status === 'PendingHR') {
-            statusText = 'تحت مراجعة HR';
-            statusColor = '#2563eb';
-            statusIcon = '🔵';
-        }
-
-        document.getElementById('leaveForm').style.display = 'none';
-        document.getElementById('btnSend').style.display = 'none';
-        document.getElementById('formScaler').style.display = 'none';
-
-        const box = document.getElementById('duplicateMsgBox');
-        box.style.display = 'block';
-        box.innerHTML = `
-            <div style="background:#fef2f2;border:2px solid #ef4444;border-radius:12px;padding:25px 20px;text-align:center;animation:scaleIn 0.3s ease;">
-                <div style="font-size:60px;margin-bottom:10px;">🚫</div>
-                <h3 style="color:#ef4444;font-size:20px;margin:0 0 10px;">هذا الطلب تم تقديمه سابقاً</h3>
-                <p style="color:#6b7280;font-size:14px;margin:0 0 15px;">لا يمكن تقديم نفس الطلب مرتين</p>
-                <div style="background:white;border:1px solid #e5e7eb;border-radius:8px;padding:15px;text-align:right;margin:15px 0;font-size:13px;line-height:2;">
-                    <div><strong>🆔 رقم الطلب:</strong> ${info.requestId || '-'}</div>
-                    <div><strong>📅 من:</strong> ${info.fromDate || '-'}</div>
-                    <div><strong>📅 إلى:</strong> ${info.toDate || '-'}</div>
-                    <div><strong>📌 الحالة:</strong> <span style="color:${statusColor};font-weight:bold;">${statusIcon} ${statusText}</span></div>
-                </div>
-                <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:15px;">
-                    <button onclick="showQueryFor('${staffId}')" style="padding:10px 20px;background:#8b5cf6;color:white;border:none;border-radius:8px;font-size:14px;font-weight:bold;cursor:pointer;">📊 عرض إجازاتي</button>
-                    <button onclick="resetForm()" style="padding:10px 20px;background:#6b7280;color:white;border:none;border-radius:8px;font-size:14px;font-weight:bold;cursor:pointer;">🔄 طلب جديد</button>
-                </div>
-            </div>
-        `;
-        box.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-
-    function showQueryFor(staffId) {
-        document.getElementById('queryStaffId').value = staffId;
-        showScreen('query');
-        queryEmployee();
-    }
-
-    // ============================================================
-    //  🔄 إعادة تعيين الفورم
-    // ============================================================
-    function resetForm() {
-        const box = document.getElementById('duplicateMsgBox');
-        if (box) { box.style.display = 'none'; box.innerHTML = ''; }
-
-        const startEl = document.getElementById('startDate');
-        const endEl = document.getElementById('endDate');
-        if (startEl) startEl.value = '';
-        if (endEl) endEl.value = '';
-
-        document.getElementById('totalDaysBox').style.display = 'none';
-        document.getElementById('splitArea').style.display = 'none';
-        document.getElementById('errorMsg').innerText = '';
-
-        const types = ["annual","weekend","withoutPay","maternity","sick","injury","rr","compassionate","paternity"];
-        types.forEach(t => {
-            const el = document.getElementById('split_' + t);
-            if (el) el.value = 0;
-        });
-
-        if (typeof clearSignature === 'function') clearSignature();
-
-        document.getElementById('leaveForm').style.display = 'none';
-        document.getElementById('btnSend').style.display = 'none';
-        document.getElementById('formScaler').style.display = 'none';
-        document.getElementById('balanceCard').style.display = 'none';
-        document.getElementById('staffError').style.display = 'none';
-        document.getElementById('datesGroup').style.display = 'none';
-        currentEmployee = null;
-    }
-
-    // ============================================================
-    //  🎬 توليد النموذج
-    // ============================================================
-    async function generateForm() {
-        const start = document.getElementById('startDate').value;
-        const end = document.getElementById('endDate').value;
-
-        if (!start || !end) {
-            document.getElementById('errorMsg').innerText = '⚠️ أدخل التواريخ';
-            return;
-        }
-
-        const staffId = document.getElementById('staffId').value.trim();
-        if (!staffId || !currentEmployee) {
-            document.getElementById('errorMsg').innerText = '⚠️ كود الموظف غير صحيح';
-            return;
-        }
-
-        const startDate = new Date(start);
-        const endDate = new Date(end);
-
-        if (isDateBeforeMin(start) || isDateBeforeMin(end)) {
-            document.getElementById('errorMsg').innerText = '⚠️ التاريخ قبل 26 من الشهر السابق';
-            return;
-        }
-        if (startDate > endDate) {
-            document.getElementById('errorMsg').innerText = '⚠️ تاريخ البداية بعد النهاية';
-            return;
-        }
-
-        const totalDays = Math.ceil((endDate - startDate) / 86400000) + 1;
-
-        const types = ["annual","weekend","withoutPay","maternity","sick","injury","rr","compassionate","paternity"];
-        let sumDays = 0, daysObj = {};
-        types.forEach(t => {
-            let val = parseInt(document.getElementById('split_' + t).value) || 0;
-            daysObj[t] = val;
-            sumDays += val;
-        });
-
-        if (sumDays !== totalDays) {
-            document.getElementById('errorMsg').innerText = `خطأ: المجموع (${sumDays}) ≠ الإجمالي (${totalDays})`;
-            return;
-        }
-
-        if (!signatureDataUrl) {
-            document.getElementById('errorMsg').innerText = '⚠️ ارفع صورة التوقيع';
-            return;
-        }
-
-        // فحص التكرار
-        const btnGen = document.getElementById('btnGenerate');
-        const originalText = btnGen.innerText;
-        btnGen.disabled = true;
-        btnGen.innerText = '⏳ جاري التحقق...';
-
-        const fromStr = formatDate(startDate);
-        const toStr = formatDate(endDate);
-        const isDuplicate = await checkDuplicate(staffId, fromStr, toStr);
-
-        btnGen.disabled = false;
-        btnGen.innerText = originalText;
-
-        if (isDuplicate.error) {
-            document.getElementById('errorMsg').innerText = '⚠️ فشل الاتصال بالخادم — حاول تاني';
-            return;
-        }
-
-        if (isDuplicate.exists) {
-            document.getElementById('errorMsg').innerText = '🚫 هذا الطلب تم تقديمه سابقاً — رقم الطلب: ' + isDuplicate.requestId;
-            showDuplicateMessage(isDuplicate, staffId);
-            return;
-        }
-
-        // إرسال للمدير مباشرة
-        sendToManager(staffId, daysObj, startDate, endDate, totalDays);
-    }
-
-    // ============================================================
-    //  📤 إرسال الطلب
-    // ============================================================
-    async function sendToManager(staffId, daysObj, startDate, endDate, totalDays) {
-        const btn = document.getElementById('btnGenerate');
-        btn.disabled = true;
-        btn.innerText = '⏳ جاري الإرسال...';
-
-        const types = ["annual","weekend","withoutPay","maternity","sick","injury","rr","compassionate","paternity"];
-        const typeLabels = {
-            annual: "Annual", weekend: "Weekend", withoutPay: "Without Pay",
-            maternity: "Maternity", sick: "Sick", injury: "Injury",
-            rr: "R&R", compassionate: "Compassionate", paternity: "Paternity"
-        };
-        let breakdown = [], mainType = "Annual", maxDays = 0;
-        types.forEach(t => {
-            const val = daysObj[t] || 0;
-            if (val > 0) {
-                breakdown.push(typeLabels[t] + ": " + val);
-                if (val > maxDays) { maxDays = val; mainType = typeLabels[t]; }
-            }
-        });
-
-        const returnDate = new Date(endDate.getTime() + 86400000);
-
-        const payload = {
-            employeeName: currentEmployee.name,
-            staffId: currentEmployee.code,
-            title: currentEmployee.title,
-            email: currentEmployee.email || '',
-            fromDate: formatDate(startDate),
-            toDate: formatDate(endDate),
-            returnDate: formatDate(returnDate),
-            totalDays: totalDays,
-            type: mainType,
-            reason: breakdown.join(' | '),
-            managerEmail: currentEmployee.managerEmail,
-            signature: signatureDataUrl
-        };
-
-        try {
-            await fetch(GOOGLE_SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify(payload)
-            });
-            console.log('✅ تم إرسال الطلب');
-            showScreen('thanks');
-        } catch (err) {
-            console.error('❌ خطأ في الإرسال:', err);
-            alert('❌ فشل الإرسال: ' + err.message);
-            btn.disabled = false;
-            btn.innerText = 'عرض النموذج';
-        }
-    }
-
-    // ============================================================
-    //  🔍 الاستعلام
+    //  🔍 الاستعلام عن الموظف
     // ============================================================
     function queryEmployee() {
         const staffId = document.getElementById('queryStaffId').value.trim();
@@ -1221,114 +1647,238 @@
                     return;
                 }
 
-                const requests = res.requests || [];
-                const today = new Date();
-                const monthNames = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
-                                    'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
-                const monthName = monthNames[today.getMonth()];
-                const year = today.getFullYear();
-
-                let tableHTML = '';
-                if (requests.length === 0) {
-                    tableHTML = `
-                        <div class="empty-state">
-                            <div class="icon">📭</div>
-                            <p style="margin:0;font-size:15px;">مفيش إجازات ليك في شهر ${monthName} ${year}</p>
-                        </div>
-                    `;
-                } else {
-                    tableHTML = `
-                        <div style="overflow-x:auto;">
-                            <table class="leaves-table">
-                                <thead>
-                                    <tr>
-                                        <th>من</th>
-                                        <th>إلى</th>
-                                        <th>الأيام</th>
-                                        <th>الحالة</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${requests.map((r, idx) => {
-                                        let statusColor, statusText, statusIcon;
-                                        if (r.status === 'Approved' || r.status === 'Approved (LWP)') {
-                                            statusColor = '#10b981';
-                                            statusText = 'تمت الموافقة';
-                                            statusIcon = '✅';
-                                        } else if (r.status === 'Rejected') {
-                                            statusColor = '#ef4444';
-                                            statusText = 'مرفوض';
-                                            statusIcon = '❌';
-                                        } else if (r.status === 'PendingHR') {
-                                            statusColor = '#2563eb';
-                                            statusText = 'تحت مراجعة HR';
-                                            statusIcon = '🔵';
-                                        } else {
-                                            statusColor = '#f59e0b';
-                                            statusText = 'تحت التوقيع';
-                                            statusIcon = '⏳';
-                                        }
-
-                                        const fromD = parseDateToStr(r.fromDate);
-                                        const toD = parseDateToStr(r.toDate);
-
-                                        return `
-                                            <tr style="background:${idx % 2 === 0 ? '#fff' : '#f9fafb'};">
-                                                <td>${fromD}</td>
-                                                <td>${toD}</td>
-                                                <td>${r.totalDays}</td>
-                                                <td style="color:${statusColor};font-weight:bold;">${statusIcon} ${statusText}</td>
-                                            </tr>
-                                        `;
-                                    }).join('')}
-                                </tbody>
-                            </table>
-                        </div>
-                    `;
-                }
-
-                resultEl.innerHTML = `
-                    <div class="query-balance-card">
-                        <div class="query-balance-inner">
-                            <div>
-                                <p class="query-balance-label">💰 الرصيد المتاح</p>
-                                <p class="query-balance-num">${res.balance}</p>
-                                <p class="query-balance-sub">يوم</p>
-                            </div>
-                            <div class="query-balance-divider"></div>
-                            <div>
-                                <p class="query-balance-label">📋 الاستحقاق السنوي</p>
-                                <p class="query-balance-num">${res.entitlement}</p>
-                                <p class="query-balance-sub">يوم</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="leaves-table-wrap">
-                        <h2>📊 إجازات شهر ${monthName} ${year}</h2>
-                        <p class="count">إجمالي: ${requests.length} طلب</p>
-                        ${tableHTML}
-                    </div>
-                `;
+                currentEmployee = {
+                    code: staffId,
+                    name: res.name,
+                    title: res.title,
+                    balance: res.balance,
+                    entitlement: res.entitlement
+                };
+                showResultScreen(res);
             }
         );
     }
 
-    function parseDateToStr(dateVal) {
-        if (!dateVal) return '-';
-        if (typeof dateVal === 'string') {
-            const parts = dateVal.split('-');
-            if (parts.length === 3 && parts[0].length <= 2) {
-                return dateVal;
-            }
+    function showResultScreen(res) {
+        const requests = res.requests || [];
+        const periodStart = res.periodStart || '';
+        const periodEnd = res.periodEnd || '';
+
+        let tableHTML = '';
+        if (requests.length === 0) {
+            tableHTML = `
+                <div class="empty-state">
+                    <div class="icon">📭</div>
+                    <p style="margin:0;font-size:15px;">مفيش طلبات في الفترة ${periodStart} → ${periodEnd}</p>
+                </div>
+            `;
+        } else {
+            tableHTML = `
+                <div style="overflow-x:auto;">
+                    <table class="leaves-table">
+                        <thead>
+                            <tr>
+                                <th>من</th>
+                                <th>إلى</th>
+                                <th>الأيام</th>
+                                <th>النوع</th>
+                                <th>الحالة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${requests.map((r, idx) => {
+                                let statusColor, statusText, statusIcon;
+                                if (r.status === 'Approved') {
+                                    statusColor = '#10b981';
+                                    statusText = 'تمت الموافقة';
+                                    statusIcon = '✅';
+                                } else if (r.status === 'Rejected') {
+                                    statusColor = '#ef4444';
+                                    statusText = 'مرفوض';
+                                    statusIcon = '❌';
+                                } else if (r.status === 'HRSiteApproved') {
+                                    statusColor = '#0891b2';
+                                    statusText = 'HR Site وافق';
+                                    statusIcon = '🟡';
+                                } else if (r.status === 'ManagerApproved') {
+                                    statusColor = '#ea580c';
+                                    statusText = 'المدير وافق';
+                                    statusIcon = '🟠';
+                                } else {
+                                    statusColor = '#f59e0b';
+                                    statusText = 'تحت المراجعة';
+                                    statusIcon = '⏳';
+                                }
+
+                                const fromD = parseDate(r.fromDate);
+                                const toD = parseDate(r.toDate);
+                                const typeLabel = r.type === 'Borrow' ? '💼 استلاف' : '🌴 إجازة';
+
+                                return `
+                                    <tr style="background:${idx % 2 === 0 ? '#fff' : '#f9fafb'};">
+                                        <td>${fromD ? formatDate(fromD) : '-'}</td>
+                                        <td>${toD ? formatDate(toD) : '-'}</td>
+                                        <td>${r.totalDays}</td>
+                                        <td>${typeLabel}</td>
+                                        <td style="color:${statusColor};font-weight:bold;">${statusIcon} ${statusText}</td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
         }
-        try {
-            const d = new Date(dateVal);
-            if (isNaN(d.getTime())) return String(dateVal);
-            return String(d.getDate()).padStart(2,'0') + '-' +
-                   String(d.getMonth()+1).padStart(2,'0') + '-' +
-                   d.getFullYear();
-        } catch (e) {
-            return String(dateVal);
+
+        const resultEl = document.getElementById('resultContent');
+        resultEl.innerHTML = `
+            <div class="query-balance-card">
+                <div class="query-balance-inner">
+                    <div>
+                        <p class="query-balance-label">💰 الرصيد المتاح</p>
+                        <p class="query-balance-num">${res.balance}</p>
+                        <p class="query-balance-sub">يوم</p>
+                    </div>
+                    <div class="query-balance-divider"></div>
+                    <div>
+                        <p class="query-balance-label">📋 الاستحقاق السنوي</p>
+                        <p class="query-balance-num">${res.entitlement}</p>
+                        <p class="query-balance-sub">يوم</p>
+                    </div>
+                </div>
+            </div>
+            <div style="background: white; padding: 15px; border-radius: 12px; margin-bottom: 15px; text-align: center;">
+                <div style="font-size: 14px; color: #6b7280;">
+                    👤 ${res.name} | 💼 ${res.title || '-'}
+                </div>
+                <div style="font-size: 13px; color: #9ca3af; margin-top: 5px;">
+                    📅 الفترة: ${periodStart} → ${periodEnd}
+                </div>
+            </div>
+            <div class="leaves-table-wrap">
+                <h2>📊 الطلبات في الفترة</h2>
+                <p class="count">إجمالي: ${requests.length} طلب</p>
+                ${tableHTML}
+            </div>
+        `;
+
+        // هل يظهر زرار الاستلاف؟
+        const btnBorrow = document.getElementById('btnBorrowOption');
+        if (res.balance <= 0) {
+            btnBorrow.style.display = 'flex';
+        } else {
+            btnBorrow.style.display = 'none';
+        }
+
+        showScreen('result');
+    }
+
+    function backToResult() {
+        showScreen('result');
+    }
+
+    function openLeaveForm() {
+        if (!currentEmployee) {
+            alert('ادخل الكود الأول');
+            return;
+        }
+        showLeaveForm();
+    }
+
+    function openBorrowForm() {
+        if (!currentEmployee) {
+            alert('ادخل الكود الأول');
+            return;
+        }
+        showBorrowForm();
+    }
+
+    function showLeaveForm() {
+        // عرض بطاقة الرصيد
+        document.getElementById('empName').innerText = currentEmployee.name || '-';
+        document.getElementById('empTitle').innerText = currentEmployee.title || '-';
+        document.getElementById('empBalance').innerText = currentEmployee.balance || 0;
+        document.getElementById('empEntitlement').innerText = currentEmployee.entitlement || 0;
+        document.getElementById('empProject').innerText = currentEmployee.project || '-';
+
+        const today = new Date();
+        document.getElementById('todayDate').innerText = formatDate(today);
+
+        document.getElementById('balanceCard').style.display = 'grid';
+        showScreen('new');
+    }
+
+    function showBorrowForm() {
+        document.getElementById('borrowEmpName').innerText = currentEmployee.name || '-';
+        document.getElementById('borrowEmpTitle').innerText = currentEmployee.title || '-';
+        document.getElementById('borrowEmpBalance').innerText = currentEmployee.balance || 0;
+        document.getElementById('borrowEmpEntitlement').innerText = currentEmployee.entitlement || 0;
+        document.getElementById('borrowBalanceCard').style.display = 'grid';
+        showScreen('borrow');
+    }
+
+    // ============================================================
+    //  📊 حساب الأيام
+    // ============================================================
+    function calculateDays() {
+        const start = document.getElementById('startDate').value;
+        const end = document.getElementById('endDate').value;
+        const errorEl = document.getElementById('errorMsg');
+
+        if (start && end) {
+            const startDate = new Date(start);
+            const endDate = new Date(end);
+
+            if (isDateBeforeMin(start) || isDateBeforeMin(end)) {
+                errorEl.innerText = '⚠️ التاريخ قبل 26 من الشهر السابق';
+                document.getElementById('totalDaysBox').style.display = 'none';
+                document.getElementById('splitArea').style.display = 'none';
+                return;
+            }
+            if (startDate > endDate) {
+                errorEl.innerText = '⚠️ تاريخ البداية بعد النهاية';
+                document.getElementById('totalDaysBox').style.display = 'none';
+                document.getElementById('splitArea').style.display = 'none';
+                return;
+            }
+
+            const diffDays = Math.ceil((endDate - startDate) / 86400000) + 1;
+            errorEl.innerText = '';
+            document.getElementById('totalDaysDisplay').innerText = diffDays;
+            document.getElementById('splitTotal').innerText = diffDays;
+            document.getElementById('totalDaysBox').style.display = 'block';
+            document.getElementById('splitArea').style.display = 'block';
+            checkSplit();
+        }
+    }
+
+    function checkSplit() {
+        const types = ["annual","weekend","withoutPay","sick","maternity","injury","rr","compassionate","paternity"];
+        let sum = 0;
+        types.forEach(t => {
+            sum += parseInt(document.getElementById('split_' + t).value) || 0;
+        });
+        document.getElementById('splitSum').innerText = sum;
+        const total = parseInt(document.getElementById('totalDaysDisplay').innerText) || 0;
+
+        if (sum === total && total > 0) {
+            document.getElementById('splitSum').style.color = '#10b981';
+        } else {
+            document.getElementById('splitSum').style.color = '#ef4444';
+        }
+    }
+
+    function calculateBorrowDays() {
+        const start = document.getElementById('borrowStartDate').value;
+        const end = document.getElementById('borrowEndDate').value;
+
+        if (start && end) {
+            const startDate = new Date(start);
+            const endDate = new Date(end);
+            if (startDate > endDate) return;
+            const diffDays = Math.ceil((endDate - startDate) / 86400000) + 1;
+            document.getElementById('borrowDaysDisplay').innerText = diffDays;
+            document.getElementById('borrowDaysBox').style.display = 'block';
         }
     }
 
@@ -1336,31 +1886,1381 @@
     //  ✍️ التوقيع
     // ============================================================
     document.addEventListener('DOMContentLoaded', function() {
-        const fileInput = document.getElementById('signatureFile');
-        if (!fileInput) return;
-        fileInput.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            if (!file.type.startsWith('image/')) { alert('اختر صورة'); return; }
-            if (file.size > 2 * 1024 * 1024) { alert('الصورة كبيرة'); return; }
-            const reader = new FileReader();
-            reader.onload = function(evt) {
-                signatureDataUrl = evt.target.result;
-                document.getElementById('signaturePreview').src = signatureDataUrl;
-                document.getElementById('signaturePreviewBox').style.display = 'block';
-            };
-            reader.readAsDataURL(file);
-        });
+        // توقيع طلب الإجازة
+        const sf = document.getElementById('signatureFile');
+        if (sf) {
+            sf.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                if (!file.type.startsWith('image/')) { alert('اختر صورة'); return; }
+                if (file.size > 2 * 1024 * 1024) { alert('الصورة كبيرة'); return; }
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    signatureDataUrl = evt.target.result;
+                    document.getElementById('signaturePreview').src = signatureDataUrl;
+                    document.getElementById('signaturePreviewBox').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // توقيع طلب الاستلاف
+        const bsf = document.getElementById('borrowSignatureFile');
+        if (bsf) {
+            bsf.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                if (!file.type.startsWith('image/')) { alert('اختر صورة'); return; }
+                if (file.size > 2 * 1024 * 1024) { alert('الصورة كبيرة'); return; }
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    borrowSignatureDataUrl = evt.target.result;
+                    document.getElementById('borrowSignaturePreview').src = borrowSignatureDataUrl;
+                    document.getElementById('borrowSignaturePreviewBox').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // توقيع المدير
+        const msf = document.getElementById('managerSignatureFile');
+        if (msf) {
+            msf.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                if (!file.type.startsWith('image/')) { alert('اختر صورة'); return; }
+                if (file.size > 2 * 1024 * 1024) { alert('الصورة كبيرة'); return; }
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    managerSigDataUrl = evt.target.result;
+                    document.getElementById('managerSignaturePreview').src = managerSigDataUrl;
+                    document.getElementById('managerSignaturePreviewBox').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            });
+        }
     });
 
     function clearSignature() {
         signatureDataUrl = "";
-        document.getElementById('signatureFile').value = '';
-        document.getElementById('signaturePreview').src = '';
-        document.getElementById('signaturePreviewBox').style.display = 'none';
+        const sf = document.getElementById('signatureFile');
+        if (sf) sf.value = '';
+        const sp = document.getElementById('signaturePreview');
+        if (sp) sp.src = '';
+        const spb = document.getElementById('signaturePreviewBox');
+        if (spb) spb.style.display = 'none';
     }
+
+    function clearBorrowSignature() {
+        borrowSignatureDataUrl = "";
+        const bsf = document.getElementById('borrowSignatureFile');
+        if (bsf) bsf.value = '';
+        const bsp = document.getElementById('borrowSignaturePreview');
+        if (bsp) bsp.src = '';
+        const bspb = document.getElementById('borrowSignaturePreviewBox');
+        if (bspb) bspb.style.display = 'none';
+    }
+
+    function clearManagerSignature() {
+        managerSigDataUrl = "";
+        const msf = document.getElementById('managerSignatureFile');
+        if (msf) msf.value = '';
+        const msp = document.getElementById('managerSignaturePreview');
+        if (msp) msp.src = '';
+        const mspb = document.getElementById('managerSignaturePreviewBox');
+        if (mspb) mspb.style.display = 'none';
+    }
+
+    // ============================================================
+    //  📄 معاينة النموذج (طلب إجازة)
+    // ============================================================
+    function previewForm() {
+        const start = document.getElementById('startDate').value;
+        const end = document.getElementById('endDate').value;
+        const errorEl = document.getElementById('errorMsg');
+
+        if (!start || !end) {
+            errorEl.innerText = '⚠️ أدخل التواريخ';
+            return;
+        }
+
+        const startDate = new Date(start);
+        const endDate = new Date(end);
+        const totalDays = Math.ceil((endDate - startDate) / 86400000) + 1;
+
+        const types = ["annual","weekend","withoutPay","sick","maternity","injury","rr","compassionate","paternity"];
+        let sum = 0;
+        const daysObj = {};
+        types.forEach(t => {
+            const val = parseInt(document.getElementById('split_' + t).value) || 0;
+            daysObj[t] = val;
+            sum += val;
+        });
+
+        if (sum !== totalDays) {
+            errorEl.innerText = `⚠️ المجموع (${sum}) ≠ الإجمالي (${totalDays})`;
+            return;
+        }
+
+        if (!signatureDataUrl) {
+            errorEl.innerText = '⚠️ ارفع صورة التوقيع';
+            return;
+        }
+
+        errorEl.innerText = '';
+        currentRequestData = {
+            staffId: currentEmployee.code,
+            employeeName: currentEmployee.name,
+            title: currentEmployee.title,
+            email: currentEmployee.email || '',
+            fromDate: start,
+            toDate: end,
+            totalDays: totalDays,
+            type: 'Leave',
+            reason: buildReasonString(daysObj),
+            daysObj: daysObj,
+            signature: signatureDataUrl
+        };
+
+        previewMode = 'leave';
+        renderPreviewForm(currentRequestData);
+        showScreen('preview');
+    }
+
+    function previewBorrowForm() {
+        const start = document.getElementById('borrowStartDate').value;
+        const end = document.getElementById('borrowEndDate').value;
+        const comment = document.getElementById('borrowComment').value.trim();
+        const errorEl = document.getElementById('borrowErrorMsg');
+
+        if (!start || !end) {
+            errorEl.innerText = '⚠️ أدخل التواريخ';
+            return;
+        }
+
+        const startDate = new Date(start);
+        const endDate = new Date(end);
+        const totalDays = Math.ceil((endDate - startDate) / 86400000) + 1;
+
+        if (!borrowSignatureDataUrl) {
+            errorEl.innerText = '⚠️ ارفع صورة التوقيع';
+            return;
+        }
+
+        errorEl.innerText = '';
+        currentBorrowData = {
+            staffId: currentEmployee.code,
+            employeeName: currentEmployee.name,
+            title: currentEmployee.title,
+            email: currentEmployee.email || '',
+            fromDate: start,
+            toDate: end,
+            totalDays: totalDays,
+            type: 'Borrow',
+            reason: 'Borrow: ' + totalDays + (comment ? ' | ' + comment : ''),
+            borrowDays: totalDays,
+            borrowComment: comment,
+            signature: borrowSignatureDataUrl
+        };
+
+        previewMode = 'borrow';
+        renderPreviewForm(currentBorrowData);
+        showScreen('preview');
+    }
+
+    function buildReasonString(daysObj) {
+        const labels = {
+            annual: 'Annual',
+            weekend: 'Weekend',
+            withoutPay: 'Without Pay',
+            maternity: 'Maternity',
+            sick: 'Sick',
+            injury: 'Injury',
+            rr: 'R&R',
+            compassionate: 'Compassionate',
+            paternity: 'Paternity'
+        };
+        const parts = [];
+        Object.keys(labels).forEach(key => {
+            if (daysObj[key] > 0) parts.push(labels[key] + ': ' + daysObj[key]);
+        });
+        return parts.join(' | ');
+    }
+
+    function renderPreviewForm(data) {
+        const startDate = new Date(data.fromDate);
+        const endDate = new Date(data.toDate);
+        const returnDate = new Date(endDate.getTime() + 86400000);
+
+        const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const fromDayName = dayNames[startDate.getDay()];
+        const toDayName = dayNames[endDate.getDay()];
+
+        const daysObj = data.daysObj || {};
+        const today = new Date();
+        const todayStr = formatDate(today);
+
+        const formHTML = `
+            <table class="header-table">
+                <tr>
+                    <td style="width: 25%;text-align: center;">
+                        <img src="https://moibrahimm4793.github.io/hr-leave-system/HAC.jpg" style="height: 80px; width: auto;">
+                    </td>
+                    <td style="width: 50%;">
+                        <div class="title-box" style="background: #ffffcc;">HUB</div>
+                        <div>New Alamein City Projects</div>
+                        <div>HAC&CCC JV</div>
+                        <div style="font-size: 11px;">نموذج طلب أجازة مع الموافقة</div>
+                        <div style="font-size: 16px; font-weight: bold;">LEAVE REQUEST & APPROVAL FORM</div>
+                    </td>
+                    <td style="width: 25%;text-align: center;">
+                        <img src="https://moibrahimm4793.github.io/hr-leave-system/CCC.jpg" style="height: 80px; width: auto;">
+                    </td>
+                </tr>
+            </table>
+
+            <div class="black-box">
+                TO BE COMPLETED BY EMPLOYEE , APPROVED BY THE DEPARTMENT HEAD AND PRESNTED TO PERSONNEL FOR APPROPRIATE ACTION<br>
+                AND DISTRIBUTION WELL IN ADVANCE BEFORE COMMANCEMENT OF LEAVE, OR IMMEDIATELY UPON RETURN FROM SICK LEAVE
+            </div>
+
+            <table class="main-table">
+                <tr>
+                    <td style="font-weight: bold;">Employee name :</td>
+                    <td><span class="line long">${data.employeeName}</span></td>
+                    <td style="font-weight: bold;">اسم الموظف </td>
+                    <td style="font-weight: bold;">Title :</td>
+                    <td><span class="line">${data.title}</span></td>
+                    <td style="font-weight: bold;">المهنة </td>
+                    <td style="font-weight: bold;">Staff no:</td>
+                    <td><span class="line">${data.staffId}</span></td>
+                    <td style="font-weight: bold;">رقم الموظف </td>
+                </tr>
+            </table>
+
+            <table class="main-table" style="margin-top: 3px;">
+                <tr>
+                    <td style="white-space: nowrap;">
+                        <span style="font-weight: bold;">I request leave from :</span>
+                        <span class="line" style="min-width: 60px; margin-left: 4px;">${fromDayName}</span>
+                        <span style="font-size: 10px;font-weight: bold;">يوم/Day</span>
+                        <span class="line" style="min-width: 80px; margin-left: 6px;">${formatDate(startDate)}</span>
+                        <span style="font-size: 10px;font-weight: bold;">تاريخ/Date</span>
+                        <span style="margin-left: 6px; font-size: 10px;font-weight: bold;">: تاريخ بداية الاجازة من</span>
+                    </td>
+                    <td style="white-space: nowrap; text-align: left; padding-left: 60px;">
+                        <span style="font-weight: bold;">To : -</span>
+                        <span class="line" style="min-width: 60px; margin-left: 4px;">${toDayName}</span>
+                        <span style="font-size: 10px;font-weight: bold;">يوم/Day</span>
+                        <span class="line" style="min-width: 80px; margin-left: 6px;">${formatDate(endDate)}</span>
+                        <span style="font-size: 10px;font-weight: bold;">تاريخ/Date</span>
+                        <span style="margin-left: 6px; font-size: 10px;font-weight: bold;">: الي</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="padding-top: 3px; font-weight: bold;">Leave requested :</td>
+                </tr>
+            </table>
+
+            <table class="leaves">
+                <tr>
+                    <td style="width: 33%;padding: 0 12px;">
+                        Days [ <span class="num-days">${daysObj.annual || 0}</span> ] Annual leave with pay / أجازة سنوية مدفوعة الأجر<br><br>
+                        Days [ <span class="num-days">${daysObj.weekend || 0}</span> ] Replace of weekends / بدل اجازه اسبوعيه<br><br>
+                        Days [ <span class="num-days">${daysObj.withoutPay || 0}</span> ] Leave Without Pay / اجازه بدون اجر
+                    </td>
+                    <td style="width: 33%; padding: 0 12px;">
+                        Days [ <span class="num-days">${daysObj.maternity || 0}</span> ] Maternity / أجازة ولادة<br><br>
+                        Days [ <span class="num-days">${daysObj.sick || 0}</span> ] Sick Leave / أجازة مرضية<br><br>
+                        Days [ <span class="num-days">${daysObj.injury || 0}</span> ] Industrial Injury / أجازة اصابة عمل<br><br>
+                        Days [ <span class="num-days">${daysObj.rr || 0}</span> ] Replace&Rest(R&R) / بدل راحات
+                    </td>
+                    <td style="width: 33%;">
+                        Days [ <span class="num-days">${daysObj.compassionate || 0}</span> ] Compassionate leave with pay : reason /<br>
+                        --------------------------<br><br>
+                        Days [ <span class="num-days">${daysObj.paternity || 0}</span> ] Paternity Leave
+                    </td>
+                </tr>
+            </table>
+
+            <table style="width: 100%; margin-top: 12px; border-collapse: collapse;">
+                <tr>
+                    <td colspan="3" style="border: 1px solid white; height: 34px; font-size: 11px; text-align: left; vertical-align: middle; font-weight: bold; padding: 0px 5px;">
+                        I shall resume duty on :  ------------  <span style="color: blue; font-weight: bold;">${formatDate(returnDate)}</span> ------------ : سأباشر عملى فى تاريخ
+                        &ensp;&ensp;&ensp;&ensp;&ensp;
+                        Signature : ------------
+                        <span class="sig-slot">${data.signature ? '<img src="' + data.signature + '">' : ''}</span>
+                        ------------ : التوقيع
+                        &ensp;&ensp;&ensp;&ensp;&ensp;
+                        Date : ------------ <span style="color: blue; font-weight: bold;">${todayStr}</span>   ------------ : التاريخ
+                    </td>
+                </tr>
+            </table>
+
+            <table class="approvals" style="margin-top: 8px;">
+                <tr>
+                    <td colspan="3" style="border: 1px solid black; font-size: 11px; background: #f9f9f9; font-weight: bold;">
+                        ENDORESEMENT BY DEPARTMENT HEAD
+                        <span style="margin-left: 16px;">- Request approved subject to verification of eligibility by Personnel Department موافقة الرئيس المباشر</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="border: 1px solid black; height: 34px; font-size: 11px; text-align: center; vertical-align: middle;font-weight: bold;">
+                        Name :--------------------------------------------------------------: الاسم
+                        &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+                        Signature :-----------------------------------------------------------: التوقيع
+                        &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+                        Date :-------------------------------: التاريخ
+                    </td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid black; width: 50%; height: 48px; text-align: center; vertical-align: middle; font-size: 11px;font-weight: bold;">
+                        HAC Representative---------------------------------------------------------------------
+                    </td>
+                    <td style="border: 1px solid black; width: 50%; height: 48px; text-align: center; vertical-align: middle; font-size: 11px;font-weight: bold;">
+                        CCC Representative---------------------------------------------------------------------
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="border-left: 1px solid black; border-right: 1px solid black; border-top: 1px solid black; border-bottom: 1px solid white; font-weight: bold; font-size: 11px;"><u>
+                            For Personnel Department Use Only : خاص بقسم شئون العاملين</u>
+                        <span style="float: right;">Annual leave entitlement per year ---[ ${currentEmployee.entitlement || 0} ]--- calendar / work days</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="border-left: 1px solid black; border-right: 1px solid black; border-top: 1px solid white; border-bottom: 1px solid white; font-size: 11px;font-weight: bold;text-decoration: underline;padding: 0px 5px;">Leave granted as shown :</td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="padding: 0; border-left: 1px solid black; border-right: 1px solid black; border-top: 1px solid white; border-bottom: 1px solid white;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
+                            <tr>
+                                <td style="width: 33%; padding: 6px; vertical-align: top; border: none; font-weight: bold;">
+                                    Annual Leave with pay :<br><br>
+                                    <div style="margin-bottom: 10px;">
+                                        &nbsp;&nbsp;&nbsp; Day accumulated<br>
+                                        <div style="margin-top: 6px;">---------- as of -------------------</div>
+                                    </div>
+                                    <div style="margin-bottom: 10px;">
+                                        [ ------] Less days now granted<br>
+                                        <div style="margin-top: 8px; white-space: nowrap;">From <span class="line" style="width: 60px; min-width: 60px;"></span> to <span class="line" style="width: 60px; min-width: 60px;"></span></div>
+                                    </div>
+                                    <div style="margin-top: 8px;">
+                                        -----[ <span style="color: blue;">0</span> ]----- Balance
+                                    </div>
+                                </td>
+                                <td style="width: 33%; padding: 6px; vertical-align: top; border: none; font-weight: bold;">
+                                    Leave without pay :<br><br>
+                                    <div style="white-space: nowrap;">
+                                        <span class="line" style="width: 70px; min-width: 70px;"></span> Days granted from
+                                        <span class="line" style="width: 70px; min-width: 70px;"></span> to
+                                        <span class="line" style="width: 70px; min-width: 70px;"></span>
+                                    </div>
+                                    <div style="height: 10px;"></div>
+                                    Rest and Recreation ( R&R) :<br><br>
+                                    <div style="white-space: nowrap;">
+                                        <span class="line" style="width: 70px; min-width: 70px;"></span> Days granted from
+                                        <span class="line" style="width: 70px; min-width: 70px;"></span> to
+                                        <span class="line" style="width: 70px; min-width: 70px;"></span>
+                                    </div>
+                                    <div style="height: 10px;"></div>
+                                    Compassionate Leave :<br><br>
+                                    <div style="white-space: nowrap;">
+                                        <span class="line" style="width: 70px; min-width: 70px;"></span> Days granted from
+                                        <span class="line" style="width: 70px; min-width: 70px;"></span> to
+                                        <span class="line" style="width: 70px; min-width: 70px;"></span>
+                                    </div>
+                                </td>
+                                <td style="width: 34%; padding: 6px; vertical-align: top; border: none; font-weight: bold;">
+                                    Sick Leave / Industrial Injury<br><br>
+                                    <div style="white-space: nowrap;">
+                                        <span class="line" style="width: 70px; min-width: 70px;"></span> Days @ full days<br><br>
+                                        <span class="line" style="width: 70px; min-width: 70px;"></span> Days @ 3/4 pay<br><br>
+                                        <span class="line" style="width: 70px; min-width: 70px;"></span> Days @ 1/2 pay<br><br>
+                                        <span class="line" style="width: 70px; min-width: 70px;"></span> Days @ 1/4 pay<br><br>
+                                        <span class="line" style="width: 70px; min-width: 70px;"></span> Days without pay
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="border-left: 1px solid black; border-right: 1px solid black; border-top: none; vertical-align: middle; height: 20px; font-size: 11px;">
+                        Comments : ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="border: 1px solid black; padding: 6px 8px; font-size: 11px; vertical-align: middle; text-align: center; font-weight: bold; height: 40px;">
+                        Name :--------------------------------------------------------------: الاسم
+                        &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+                        Signature :-----------------------------------------------------------: التوقيع
+                        &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+                        Date :-------------------------------: التاريخ
+                    </td>
+                </tr>
+            </table>
+        `;
+
+        document.getElementById('leaveForm').innerHTML = formHTML;
+        document.getElementById('leaveForm').style.display = 'block';
+    }
+
+    function backToForm() {
+        if (previewMode === 'leave') {
+            showScreen('new');
+        } else {
+            showScreen('borrow');
+        }
+    }
+
+    // ============================================================
+    //  📤 إرسال الطلب
+    // ============================================================
+    function submitRequest() {
+        const data = previewMode === 'leave' ? currentRequestData : currentBorrowData;
+        if (!data) {
+            alert('مفيش بيانات');
+            return;
+        }
+
+        const btn = document.getElementById('btnSubmit');
+        const errorEl = document.getElementById('submitErrorMsg');
+        btn.disabled = true;
+        btn.innerText = '⏳ جاري الإرسال...';
+        errorEl.innerText = '';
+
+        const payload = {
+            action: 'submitRequest',
+            staffId: data.staffId,
+            employeeName: data.employeeName,
+            title: data.title,
+            email: data.email,
+            fromDate: data.fromDate,
+            toDate: data.toDate,
+            totalDays: data.totalDays,
+            type: data.type,
+            reason: data.reason,
+            borrowDays: data.borrowDays || 0,
+            borrowComment: data.borrowComment || '',
+            signature: data.signature
+        };
+
+        const formData = new FormData();
+        for (const key in payload) formData.append(key, payload[key]);
+
+        fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            body: formData,
+            mode: 'no-cors'
+        })
+        .then(() => {
+            document.getElementById('thanksRequestId').innerText = data.staffId + ' - ' + data.fromDate + ' → ' + data.toDate;
+            showScreen('thanks');
+        })
+        .catch((err) => {
+            errorEl.innerText = '❌ فشل الإرسال: ' + err.message;
+            btn.disabled = false;
+            btn.innerText = '📤 إرسال الطلب';
+        });
+    }
+
+    // ============================================================
+    //  🟡 HR SITE
+    // ============================================================
+    function loginHRSite() {
+        const email = document.getElementById('hrSiteLoginEmail').value.trim();
+        const token = document.getElementById('hrSiteLoginToken').value.trim();
+        const errEl = document.getElementById('hrSiteLoginError');
+
+        if (!email || !token) {
+            errEl.innerText = '⚠️ أدخل الإيميل والكود';
+            return;
+        }
+
+        errEl.innerText = '⏳ جاري التحقق...';
+
+        jsonpRequest(GOOGLE_SCRIPT_URL + '?action=getHRSiteRequests&email=' + encodeURIComponent(email),
+            function(res) {
+                if (!res || !res.found) {
+                    errEl.innerText = '❌ الإيميل غير مسجل';
+                    return;
+                }
+                if (res.requests.length > 0) {
+                    const expectedToken = res.requests[0].token;
+                    if (token !== expectedToken) {
+                        errEl.innerText = '❌ كود التحقق غلط';
+                        return;
+                    }
+                }
+                hrSiteEmail = email;
+                hrSiteRequests = res.requests;
+                errEl.innerText = '';
+                renderHRSiteList();
+                showScreen('hrsite');
+            }
+        );
+    }
+
+    function logoutHRSite() {
+        hrSiteEmail = '';
+        hrSiteRequests = [];
+        document.getElementById('hrSiteLoginEmail').value = '';
+        document.getElementById('hrSiteLoginToken').value = '';
+        showScreen('home');
+    }
+
+    function renderHRSiteList() {
+        const listEl = document.getElementById('hrSiteRequestsList');
+        if (hrSiteRequests.length === 0) {
+            listEl.innerHTML = '<div class="empty-state"><div class="icon">📭</div><p>مفيش طلبات</p></div>';
+            return;
+        }
+
+        listEl.innerHTML = hrSiteRequests.map((r, idx) => `
+            <div class="request-row pending" onclick="openHRSiteDetail(${idx})">
+                <div class="request-row-header">
+                    <span class="request-row-id">${r.requestId}</span>
+                    <span class="request-status status-pending">⏳ Pending</span>
+                </div>
+                <div class="request-row-body">
+                    <div>👤 <strong>${r.name}</strong> (${r.staffId})</div>
+                    <div>📅 ${r.fromDate} → ${r.toDate} (${r.totalDays} يوم)</div>
+                    <div>📌 ${r.type}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function filterHRSiteRequests() {
+        const q = document.getElementById('hrSiteSearchInput').value.toLowerCase();
+        const filtered = hrSiteRequests.filter(r =>
+            String(r.requestId).toLowerCase().includes(q) ||
+            String(r.staffId).toLowerCase().includes(q) ||
+            String(r.name).toLowerCase().includes(q)
+        );
+
+        const listEl = document.getElementById('hrSiteRequestsList');
+        if (filtered.length === 0) {
+            listEl.innerHTML = '<div class="empty-state"><p>مفيش نتائج</p></div>';
+            return;
+        }
+        listEl.innerHTML = filtered.map((r) => {
+            const origIdx = hrSiteRequests.indexOf(r);
+            return `
+                <div class="request-row pending" onclick="openHRSiteDetail(${origIdx})">
+                    <div class="request-row-header">
+                        <span class="request-row-id">${r.requestId}</span>
+                        <span class="request-status status-pending">⏳ Pending</span>
+                    </div>
+                    <div class="request-row-body">
+                        <div>👤 <strong>${r.name}</strong> (${r.staffId})</div>
+                        <div>📅 ${r.fromDate} → ${r.toDate} (${r.totalDays} يوم)</div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function openHRSiteDetail(idx) {
+        currentHRSiteRequest = hrSiteRequests[idx];
+
+        document.getElementById('hrsite_annual').value = currentHRSiteRequest.annualDays || 0;
+        document.getElementById('hrsite_weekend').value = currentHRSiteRequest.weekendDays || 0;
+        document.getElementById('hrsite_withoutPay').value = currentHRSiteRequest.withoutPayDays || 0;
+        document.getElementById('hrsite_sick').value = currentHRSiteRequest.sickDays || 0;
+        document.getElementById('hrsite_maternity').value = currentHRSiteRequest.maternityDays || 0;
+        document.getElementById('hrsite_injury').value = currentHRSiteRequest.injuryDays || 0;
+        document.getElementById('hrsite_rr').value = currentHRSiteRequest.rrDays || 0;
+        document.getElementById('hrsite_compassionate').value = currentHRSiteRequest.compassionateDays || 0;
+        document.getElementById('hrsite_paternity').value = currentHRSiteRequest.paternityDays || 0;
+
+        document.getElementById('hrsite_fromDate').value = toISO(currentHRSiteRequest.fromDate);
+        document.getElementById('hrsite_toDate').value = toISO(currentHRSiteRequest.toDate);
+
+        const types = {
+            annual: currentHRSiteRequest.annualDays,
+            weekend: currentHRSiteRequest.weekendDays,
+            withoutPay: currentHRSiteRequest.withoutPayDays,
+            sick: currentHRSiteRequest.sickDays,
+            maternity: currentHRSiteRequest.maternityDays,
+            injury: currentHRSiteRequest.injuryDays,
+            rr: currentHRSiteRequest.rrDays,
+            compassionate: currentHRSiteRequest.compassionateDays,
+            paternity: currentHRSiteRequest.paternityDays
+        };
+
+        renderRolePreview('hrsiteForm', currentHRSiteRequest, types, 'hrsite');
+        showScreen('hrsite-detail');
+    }
+
+    function backToHRSiteList() {
+        currentHRSiteRequest = null;
+        showScreen('hrsite');
+    }
+
+    function submitHRSiteDecision(action) {
+        if (!currentHRSiteRequest) return;
+
+        const editedTypes = {
+            annual: parseInt(document.getElementById('hrsite_annual').value) || 0,
+            weekend: parseInt(document.getElementById('hrsite_weekend').value) || 0,
+            withoutPay: parseInt(document.getElementById('hrsite_withoutPay').value) || 0,
+            sick: parseInt(document.getElementById('hrsite_sick').value) || 0,
+            maternity: parseInt(document.getElementById('hrsite_maternity').value) || 0,
+            injury: parseInt(document.getElementById('hrsite_injury').value) || 0,
+            rr: parseInt(document.getElementById('hrsite_rr').value) || 0,
+            compassionate: parseInt(document.getElementById('hrsite_compassionate').value) || 0,
+            paternity: parseInt(document.getElementById('hrsite_paternity').value) || 0
+        };
+
+        const editedFrom = document.getElementById('hrsite_fromDate').value;
+        const editedTo = document.getElementById('hrsite_toDate').value;
+        const comment = document.getElementById('hrsite_comment').value;
+
+        const errEl = document.getElementById('hrSiteDetailError');
+        errEl.innerText = '⏳ جاري الحفظ...';
+
+        const formData = new FormData();
+        formData.append('action', 'hrSiteDecision');
+        formData.append('requestId', currentHRSiteRequest.requestId);
+        formData.append('action_type', action);
+        formData.append('comment', comment);
+        formData.append('editedTypes', JSON.stringify(editedTypes));
+        formData.append('editedFrom', editedFrom);
+        formData.append('editedTo', editedTo);
+
+        fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            body: formData,
+            mode: 'no-cors'
+        })
+        .then(() => {
+            errEl.style.color = '#10b981';
+            errEl.innerText = action === 'approve' ? '✅ تمت الموافقة' : '❌ تم الرفض';
+            setTimeout(() => {
+                backToHRSiteList();
+                // refresh
+                jsonpRequest(GOOGLE_SCRIPT_URL + '?action=getHRSiteRequests&email=' + encodeURIComponent(hrSiteEmail),
+                    function(res) {
+                        if (res && res.found) {
+                            hrSiteRequests = res.requests;
+                            renderHRSiteList();
+                        }
+                    }
+                );
+            }, 1500);
+        })
+        .catch((err) => {
+            errEl.style.color = '#ef4444';
+            errEl.innerText = '❌ فشل: ' + err.message;
+        });
+    }
+
+    // ============================================================
+    //  🟠 MANAGER
+    // ============================================================
+    function loginManager() {
+        const email = document.getElementById('managerLoginEmail').value.trim();
+        const token = document.getElementById('managerLoginToken').value.trim();
+        const errEl = document.getElementById('managerLoginError');
+
+        if (!email || !token) {
+            errEl.innerText = '⚠️ أدخل الإيميل والكود';
+            return;
+        }
+
+        errEl.innerText = '⏳ جاري التحقق...';
+
+        jsonpRequest(GOOGLE_SCRIPT_URL + '?action=getManagerRequests&email=' + encodeURIComponent(email),
+            function(res) {
+                if (!res || !res.found) {
+                    errEl.innerText = '❌ الإيميل غير مسجل';
+                    return;
+                }
+                if (res.requests.length > 0) {
+                    const expectedToken = res.requests[0].token + '1';
+                    if (token !== expectedToken) {
+                        errEl.innerText = '❌ كود التحقق غلط';
+                        return;
+                    }
+                }
+                managerEmail = email;
+                managerRequests = res.requests;
+                errEl.innerText = '';
+                renderManagerList();
+                showScreen('manager');
+            }
+        );
+    }
+
+    function logoutManager() {
+        managerEmail = '';
+        managerRequests = [];
+        document.getElementById('managerLoginEmail').value = '';
+        document.getElementById('managerLoginToken').value = '';
+        showScreen('home');
+    }
+
+    function renderManagerList() {
+        const listEl = document.getElementById('managerRequestsList');
+        if (managerRequests.length === 0) {
+            listEl.innerHTML = '<div class="empty-state"><div class="icon">📭</div><p>مفيش طلبات</p></div>';
+            return;
+        }
+
+        listEl.innerHTML = managerRequests.map((r, idx) => {
+            const statusClass = r.status === 'HRSiteApproved' ? 'hrsite-approved' : 'manager-approved';
+            const statusText = r.status === 'HRSiteApproved' ? '🟡 من HR Site' : '🟠 تحت المدير';
+            return `
+                <div class="request-row ${statusClass}" onclick="openManagerDetail(${idx})">
+                    <div class="request-row-header">
+                        <span class="request-row-id">${r.requestId}</span>
+                        <span class="request-status status-hrsite">${statusText}</span>
+                    </div>
+                    <div class="request-row-body">
+                        <div>👤 <strong>${r.name}</strong> (${r.staffId})</div>
+                        <div>📅 ${r.fromDate} → ${r.toDate} (${r.totalDays} يوم)</div>
+                        <div>📌 ${r.type}</div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function filterManagerRequests() {
+        const q = document.getElementById('managerSearchInput').value.toLowerCase();
+        const filtered = managerRequests.filter(r =>
+            String(r.requestId).toLowerCase().includes(q) ||
+            String(r.staffId).toLowerCase().includes(q) ||
+            String(r.name).toLowerCase().includes(q)
+        );
+
+        const listEl = document.getElementById('managerRequestsList');
+        listEl.innerHTML = filtered.map((r) => {
+            const origIdx = managerRequests.indexOf(r);
+            const statusClass = r.status === 'HRSiteApproved' ? 'hrsite-approved' : 'manager-approved';
+            const statusText = r.status === 'HRSiteApproved' ? '🟡 من HR Site' : '🟠 تحت المدير';
+            return `
+                <div class="request-row ${statusClass}" onclick="openManagerDetail(${origIdx})">
+                    <div class="request-row-header">
+                        <span class="request-row-id">${r.requestId}</span>
+                        <span class="request-status status-hrsite">${statusText}</span>
+                    </div>
+                    <div class="request-row-body">
+                        <div>👤 <strong>${r.name}</strong> (${r.staffId})</div>
+                        <div>📅 ${r.fromDate} → ${r.toDate}</div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function openManagerDetail(idx) {
+        currentManagerRequest = managerRequests[idx];
+        managerSigDataUrl = '';
+
+        const types = {
+            annual: currentManagerRequest.annualDays,
+            weekend: currentManagerRequest.weekendDays,
+            withoutPay: currentManagerRequest.withoutPayDays,
+            sick: currentManagerRequest.sickDays,
+            maternity: currentManagerRequest.maternityDays,
+            injury: currentManagerRequest.injuryDays,
+            rr: currentManagerRequest.rrDays,
+            compassionate: currentManagerRequest.compassionateDays,
+            paternity: currentManagerRequest.paternityDays
+        };
+
+        renderRolePreview('managerForm', currentManagerRequest, types, 'manager');
+        document.getElementById('managerSignaturePreviewBox').style.display = 'none';
+        showScreen('manager-detail');
+    }
+
+    function backToManagerList() {
+        currentManagerRequest = null;
+        managerSigDataUrl = '';
+        showScreen('manager');
+    }
+
+    function submitManagerDecision(action) {
+        if (!currentManagerRequest) return;
+        const errEl = document.getElementById('managerDetailError');
+
+        if (action === 'approve' && !managerSigDataUrl) {
+            errEl.innerText = '⚠️ ارفع صورة التوقيع';
+            return;
+        }
+
+        errEl.innerText = '⏳ جاري الحفظ...';
+
+        const formData = new FormData();
+        formData.append('action', 'managerDecision');
+        formData.append('requestId', currentManagerRequest.requestId);
+        formData.append('action_type', action);
+        formData.append('signature', managerSigDataUrl || '');
+
+        fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            body: formData,
+            mode: 'no-cors'
+        })
+        .then(() => {
+            errEl.style.color = '#10b981';
+            errEl.innerText = action === 'approve' ? '✅ تمت الموافقة' : '❌ تم الرفض';
+            setTimeout(() => {
+                backToManagerList();
+                jsonpRequest(GOOGLE_SCRIPT_URL + '?action=getManagerRequests&email=' + encodeURIComponent(managerEmail),
+                    function(res) {
+                        if (res && res.found) {
+                            managerRequests = res.requests;
+                            renderManagerList();
+                        }
+                    }
+                );
+            }, 1500);
+        })
+        .catch((err) => {
+            errEl.style.color = '#ef4444';
+            errEl.innerText = '❌ فشل: ' + err.message;
+        });
+    }
+
+    // ============================================================
+    //  🔴 HR MANAGER
+    // ============================================================
+    function loginHRMgr() {
+        const email = document.getElementById('hrmgrLoginEmail').value.trim();
+        const token = document.getElementById('hrmgrLoginToken').value.trim();
+        const errEl = document.getElementById('hrmgrLoginError');
+
+        if (!email || !token) {
+            errEl.innerText = '⚠️ أدخل الإيميل والكود';
+            return;
+        }
+
+        errEl.innerText = '⏳ جاري التحقق...';
+
+        jsonpRequest(GOOGLE_SCRIPT_URL + '?action=getHRMgrRequests&email=' + encodeURIComponent(email),
+            function(res) {
+                if (!res || !res.found) {
+                    errEl.innerText = '❌ الإيميل غير مسجل';
+                    return;
+                }
+                if (res.requests.length > 0) {
+                    const expectedToken = res.requests[0].token + '2';
+                    if (token !== expectedToken) {
+                        errEl.innerText = '❌ كود التحقق غلط';
+                        return;
+                    }
+                }
+                hrmgrEmail = email;
+                hrmgrRequests = res.requests;
+                errEl.innerText = '';
+                renderHRMgrList();
+                showScreen('hrmgr');
+            }
+        );
+    }
+
+    function logoutHRMgr() {
+        hrmgrEmail = '';
+        hrmgrRequests = [];
+        document.getElementById('hrmgrLoginEmail').value = '';
+        document.getElementById('hrmgrLoginToken').value = '';
+        showScreen('home');
+    }
+
+    function renderHRMgrList() {
+        const listEl = document.getElementById('hrmgrRequestsList');
+        if (hrmgrRequests.length === 0) {
+            listEl.innerHTML = '<div class="empty-state"><div class="icon">📭</div><p>مفيش طلبات استلاف</p></div>';
+            return;
+        }
+
+        listEl.innerHTML = hrmgrRequests.map((r, idx) => `
+            <div class="request-row manager-approved" onclick="openHRMgrDetail(${idx})">
+                <div class="request-row-header">
+                    <span class="request-row-id">${r.requestId}</span>
+                    <span class="request-status status-manager">🟠 من المدير</span>
+                </div>
+                <div class="request-row-body">
+                    <div>👤 <strong>${r.name}</strong> (${r.staffId})</div>
+                    <div>📅 ${r.fromDate} → ${r.toDate}</div>
+                    <div>💼 Borrow Days: ${r.borrowDays || r.totalDays}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function openHRMgrDetail(idx) {
+        currentHRMgrRequest = hrmgrRequests[idx];
+
+        const types = {
+            annual: currentHRMgrRequest.annualDays,
+            weekend: currentHRMgrRequest.weekendDays,
+            withoutPay: currentHRMgrRequest.withoutPayDays,
+            sick: currentHRMgrRequest.sickDays,
+            maternity: currentHRMgrRequest.maternityDays,
+            injury: currentHRMgrRequest.injuryDays,
+            rr: currentHRMgrRequest.rrDays,
+            compassionate: currentHRMgrRequest.compassionateDays,
+            paternity: currentHRMgrRequest.paternityDays
+        };
+
+        renderRolePreview('hrmgrForm', currentHRMgrRequest, types, 'hrmgr');
+        document.getElementById('hrmgrComment').value = '';
+        showScreen('hrmgr-detail');
+    }
+
+    function backToHRMgrList() {
+        currentHRMgrRequest = null;
+        showScreen('hrmgr');
+    }
+
+    function submitHRMgrDecision(action) {
+        if (!currentHRMgrRequest) return;
+        const errEl = document.getElementById('hrmgrDetailError');
+        const comment = document.getElementById('hrmgrComment').value;
+
+        errEl.innerText = '⏳ جاري الحفظ...';
+
+        const formData = new FormData();
+        formData.append('action', 'hrMgrDecision');
+        formData.append('requestId', currentHRMgrRequest.requestId);
+        formData.append('action_type', action);
+        formData.append('comment', comment);
+
+        fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            body: formData,
+            mode: 'no-cors'
+        })
+        .then(() => {
+            errEl.style.color = '#10b981';
+            errEl.innerText = action === 'approve' ? '✅ تمت الموافقة' : '❌ تم الرفض';
+            setTimeout(() => {
+                backToHRMgrList();
+                jsonpRequest(GOOGLE_SCRIPT_URL + '?action=getHRMgrRequests&email=' + encodeURIComponent(hrmgrEmail),
+                    function(res) {
+                        if (res && res.found) {
+                            hrmgrRequests = res.requests;
+                            renderHRMgrList();
+                        }
+                    }
+                );
+            }, 1500);
+        })
+        .catch((err) => {
+            errEl.style.color = '#ef4444';
+            errEl.innerText = '❌ فشل: ' + err.message;
+        });
+    }
+
+    // ============================================================
+    //  🔧 ADMIN
+    // ============================================================
+    function loginAdmin() {
+        const code = document.getElementById('adminLoginCode').value.trim();
+        const errEl = document.getElementById('adminLoginError');
+
+        if (!code) {
+            errEl.innerText = '⚠️ أدخل الكود';
+            return;
+        }
+
+        errEl.innerText = '⏳ جاري التحقق...';
+
+        if (code === '4012') {
+            adminLoggedIn = true;
+            errEl.innerText = '';
+            loadAdminRequests();
+            showScreen('admin');
+        } else {
+            errEl.innerText = '❌ كود غلط';
+        }
+    }
+
+    function logoutAdmin() {
+        adminLoggedIn = false;
+        adminRequests = [];
+        currentAdminRequest = null;
+        document.getElementById('adminLoginCode').value = '';
+        showScreen('home');
+    }
+
+    function loadAdminRequests() {
+        jsonpRequest(GOOGLE_SCRIPT_URL + '?action=getAdminRequests',
+            function(res) {
+                if (!res || !res.found) {
+                    adminRequests = [];
+                    renderAdminList();
+                    return;
+                }
+                adminRequests = res.requests;
+
+                // ملء قائمة الفترات
+                const sel = document.getElementById('adminPeriodSelect');
+                const currentVal = sel.value;
+                sel.innerHTML = '<option value="">كل الفترات</option>';
+                (res.periods || []).forEach(p => {
+                    const opt = document.createElement('option');
+                    opt.value = p;
+                    opt.textContent = p;
+                    if (p === currentVal) opt.selected = true;
+                    sel.appendChild(opt);
+                });
+
+                renderAdminList();
+            }
+        );
+    }
+
+    function renderAdminList() {
+        const listEl = document.getElementById('adminRequestsList');
+        const q = document.getElementById('adminSearchInput').value.toLowerCase();
+        const period = document.getElementById('adminPeriodSelect').value;
+
+        let filtered = adminRequests;
+        if (period) {
+            filtered = filtered.filter(r => r.period === period);
+        }
+        if (q) {
+            filtered = filtered.filter(r =>
+                String(r.requestId).toLowerCase().includes(q) ||
+                String(r.staffId).toLowerCase().includes(q) ||
+                String(r.name).toLowerCase().includes(q)
+            );
+        }
+
+        if (filtered.length === 0) {
+            listEl.innerHTML = '<div class="empty-state"><div class="icon">📭</div><p>مفيش طلبات</p></div>';
+            return;
+        }
+
+        listEl.innerHTML = filtered.map((r) => {
+            const origIdx = adminRequests.indexOf(r);
+            let statusClass, statusText;
+            if (r.status === 'Approved') { statusClass = 'approved'; statusText = '✅ Approved'; }
+            else if (r.status === 'Rejected') { statusClass = 'rejected'; statusText = '❌ Rejected'; }
+            else if (r.status === 'HRSiteApproved') { statusClass = 'hrsite-approved'; statusText = '🟡 HR Site'; }
+            else if (r.status === 'ManagerApproved') { statusClass = 'manager-approved'; statusText = '🟠 Manager'; }
+            else { statusClass = 'pending'; statusText = '⏳ Pending'; }
+
+            return `
+                <div class="request-row ${statusClass}" onclick="openAdminDetail(${origIdx})">
+                    <div class="request-row-header">
+                        <span class="request-row-id">${r.requestId}</span>
+                        <span class="request-status status-${statusClass}">${statusText}</span>
+                    </div>
+                    <div class="request-row-body">
+                        <div>👤 <strong>${r.name}</strong> (${r.staffId})</div>
+                        <div>📅 ${r.fromDate} → ${r.toDate} (${r.totalDays} يوم)</div>
+                        <div>📌 ${r.type} | 📆 ${r.period}</div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function filterAdminRequests() {
+        renderAdminList();
+    }
+
+    function openAdminDetail(idx) {
+        currentAdminRequest = adminRequests[idx];
+
+        document.getElementById('adminInfoBox').innerHTML = `
+            <div><strong>🆔 رقم الطلب:</strong> ${currentAdminRequest.requestId}</div>
+            <div><strong>👤 الموظف:</strong> ${currentAdminRequest.name} (${currentAdminRequest.staffId})</div>
+            <div><strong>📌 الحالة:</strong> ${currentAdminRequest.status}</div>
+            <div><strong>📆 الفترة:</strong> ${currentAdminRequest.period}</div>
+        `;
+
+        document.getElementById('adminFromDate').value = toISO(currentAdminRequest.fromDate);
+        document.getElementById('adminToDate').value = toISO(currentAdminRequest.toDate);
+        document.getElementById('adminType').value = currentAdminRequest.type || 'Leave';
+
+        document.getElementById('admin_annual').value = currentAdminRequest.annualDays || 0;
+        document.getElementById('admin_weekend').value = currentAdminRequest.weekendDays || 0;
+        document.getElementById('admin_withoutPay').value = currentAdminRequest.withoutPayDays || 0;
+        document.getElementById('admin_sick').value = currentAdminRequest.sickDays || 0;
+        document.getElementById('admin_maternity').value = currentAdminRequest.maternityDays || 0;
+        document.getElementById('admin_injury').value = currentAdminRequest.injuryDays || 0;
+        document.getElementById('admin_rr').value = currentAdminRequest.rrDays || 0;
+        document.getElementById('admin_compassionate').value = currentAdminRequest.compassionateDays || 0;
+        document.getElementById('admin_paternity').value = currentAdminRequest.paternityDays || 0;
+
+        const types = {
+            annual: currentAdminRequest.annualDays,
+            weekend: currentAdminRequest.weekendDays,
+            withoutPay: currentAdminRequest.withoutPayDays,
+            sick: currentAdminRequest.sickDays,
+            maternity: currentAdminRequest.maternityDays,
+            injury: currentAdminRequest.injuryDays,
+            rr: currentAdminRequest.rrDays,
+            compassionate: currentAdminRequest.compassionateDays,
+            paternity: currentAdminRequest.paternityDays
+        };
+
+        renderRolePreview('adminForm', currentAdminRequest, types, 'admin');
+        showScreen('admin-detail');
+    }
+
+    function backToAdminList() {
+        currentAdminRequest = null;
+        showScreen('admin');
+    }
+
+    function submitAdminEdit() {
+        if (!currentAdminRequest) return;
+        const errEl = document.getElementById('adminDetailError');
+        errEl.innerText = '⏳ جاري الحفظ...';
+
+        const newTypes = {
+            annual: parseInt(document.getElementById('admin_annual').value) || 0,
+            weekend: parseInt(document.getElementById('admin_weekend').value) || 0,
+            withoutPay: parseInt(document.getElementById('admin_withoutPay').value) || 0,
+            sick: parseInt(document.getElementById('admin_sick').value) || 0,
+            maternity: parseInt(document.getElementById('admin_maternity').value) || 0,
+            injury: parseInt(document.getElementById('admin_injury').value) || 0,
+            rr: parseInt(document.getElementById('admin_rr').value) || 0,
+            compassionate: parseInt(document.getElementById('admin_compassionate').value) || 0,
+            paternity: parseInt(document.getElementById('admin_paternity').value) || 0
+        };
+
+        const formData = new FormData();
+        formData.append('action', 'adminEditSave');
+        formData.append('requestId', currentAdminRequest.requestId);
+        formData.append('newTypes', JSON.stringify(newTypes));
+        formData.append('newFrom', document.getElementById('adminFromDate').value);
+        formData.append('newTo', document.getElementById('adminToDate').value);
+        formData.append('newType', document.getElementById('adminType').value);
+
+        fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            body: formData,
+            mode: 'no-cors'
+        })
+        .then(() => {
+            errEl.style.color = '#10b981';
+            errEl.innerText = '✅ تم الحفظ';
+            setTimeout(() => {
+                backToAdminList();
+                loadAdminRequests();
+            }, 1500);
+        })
+        .catch((err) => {
+            errEl.style.color = '#ef4444';
+            errEl.innerText = '❌ فشل: ' + err.message;
+        });
+    }
+
+    // ============================================================
+    //  🎨 Helper — تحويل تاريخ لـ ISO
+    // ============================================================
+    function toISO(dateStr) {
+        if (!dateStr) return '';
+        const d = parseDate(dateStr);
+        if (!d) return '';
+        return formatDateISO(d);
+    }
+
+    // ============================================================
+    //  🎨 عرض الفورم حسب الدور
+    // ============================================================
+    function renderRolePreview(containerId, req, types, role) {
+        const startDate = parseDate(req.fromDate);
+        const endDate = parseDate(req.toDate);
+        const returnDate = new Date(endDate.getTime() + 86400000);
+
+        const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const fromDayName = dayNames[startDate.getDay()];
+        const toDayName = dayNames[endDate.getDay()];
+
+        const today = new Date();
+        const todayStr = formatDate(today);
+
+        // الأقسام حسب الدور
+        const showManager = role !== 'hrsite';
+        const showHRSite = role !== 'hrsite';
+
+        let managerSection = '';
+        if (showManager) {
+            let managerSigImg = '';
+            if (req.managerSigUrl) {
+                managerSigImg = '<img src="' + req.managerSigUrl + '" style="max-height:38px; max-width:148px; vertical-align:middle;">';
+            } else {
+                managerSigImg = '***';
+            }
+            managerSection = `
+                <tr>
+                    <td colspan="3" style="border: 1px solid black; height: 60px; font-size: 11px; text-align: center; vertical-align: middle; font-weight: bold; padding: 4px 6px;">
+                        Name : -------<span style="font-weight:bold;">${req.managerName || 'MOIBRAHIM'}</span>------- : الاسم
+                        &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+                        Signature :------- <span class="mgr-sig-slot">${managerSigImg}</span> ------- : التوقيع
+                        &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;
+                        Date : -------<span style="font-weight:bold;">${req.approvalDate || todayStr}</span>------- : التاريخ
+                    </td>
+                </tr>
+            `;
+        }
+
+        const html = `
+            <table class="header-table">
+                <tr>
+                    <td style="width: 25%;text-align: center;">
+                        <img src="https://moibrahimm4793.github.io/hr-leave-system/HAC.jpg" style="height: 80px; width: auto;">
+                    </td>
+                    <td style="width: 50%;">
+                        <div class="title-box" style="background: #ffffcc;">HUB</div>
+                        <div>New Alamein City Projects</div>
+                        <div>HAC&CCC JV</div>
+                        <div style="font-size: 11px;">نموذج طلب أجازة مع الموافقة</div>
+                        <div style="font-size: 16px; font-weight: bold;">LEAVE REQUEST & APPROVAL FORM</div>
+                    </td>
+                    <td style="width: 25%;text-align: center;">
+                        <img src="https://moibrahimm4793.github.io/hr-leave-system/CCC.jpg" style="height: 80px; width: auto;">
+                    </td>
+                </tr>
+            </table>
+
+            <div class="black-box">
+                TO BE COMPLETED BY EMPLOYEE , APPROVED BY THE DEPARTMENT HEAD AND PRESNTED TO PERSONNEL FOR APPROPRIATE ACTION<br>
+                AND DISTRIBUTION WELL IN ADVANCE BEFORE COMMANCEMENT OF LEAVE, OR IMMEDIATELY UPON RETURN FROM SICK LEAVE
+            </div>
+
+            <table class="main-table">
+                <tr>
+                    <td style="font-weight: bold;">Employee name :</td>
+                    <td><span class="line long">${req.name}</span></td>
+                    <td style="font-weight: bold;">اسم الموظف </td>
+                    <td style="font-weight: bold;">Title :</td>
+                    <td><span class="line">${req.title || ''}</span></td>
+                    <td style="font-weight: bold;">المهنة </td>
+                    <td style="font-weight: bold;">Staff no:</td>
+                    <td><span class="line">${req.staffId}</span></td>
+                    <td style="font-weight: bold;">رقم الموظف </td>
+                </tr>
+            </table>
+
+            <table class="main-table" style="margin-top: 3px;">
+                <tr>
+                    <td style="white-space: nowrap;">
+                        <span style="font-weight: bold;">I request leave from :</span>
+                        <span class="line" style="min-width: 60px; margin-left: 4px;">${fromDayName}</span>
+                        <span style="font-size: 10px;font-weight: bold;">يوم/Day</span>
+                        <span class="line" style="min-width: 80px; margin-left: 6px;">${req.fromDate}</span>
+                        <span style="font-size: 10px;font-weight: bold;">تاريخ/Date</span>
+                        <span style="margin-left: 6px; font-size: 10px;font-weight: bold;">: تاريخ بداية الاجازة من</span>
+                    </td>
+                    <td style="white-space: nowrap; text-align: left; padding-left: 60px;">
+                        <span style="font-weight: bold;">To : -</span>
+                        <span class="line" style="min-width: 60px; margin-left: 4px;">${toDayName}</span>
+                        <span style="font-size: 10px;font-weight: bold;">يوم/Day</span>
+                        <span class="line" style="min-width: 80px; margin-left: 6px;">${req.toDate}</span>
+                        <span style="font-size: 10px;font-weight: bold;">تاريخ/Date</span>
+                        <span style="margin-left: 6px; font-size: 10px;font-weight: bold;">: الي</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="padding-top: 3px; font-weight: bold;">Leave requested :</td>
+                </tr>
+            </table>
+
+            <table class="leaves">
+                <tr>
+                    <td style="width: 33%;padding: 0 12px;">
+                        Days [ <span class="num-days">${types.annual || 0}</span> ] Annual leave with pay<br><br>
+                        Days [ <span class="num-days">${types.weekend || 0}</span> ] Replace of weekends<br><br>
+                        Days [ <span class="num-days">${types.withoutPay || 0}</span> ] Leave Without Pay
+                    </td>
+                    <td style="width: 33%; padding: 0 12px;">
+                        Days [ <span class="num-days">${types.maternity || 0}</span> ] Maternity<br><br>
+                        Days [ <span class="num-days">${types.sick || 0}</span> ] Sick Leave<br><br>
+                        Days [ <span class="num-days">${types.injury || 0}</span> ] Industrial Injury<br><br>
+                        Days [ <span class="num-days">${types.rr || 0}</span> ] Replace&Rest(R&R)
+                    </td>
+                    <td style="width: 33%;">
+                        Days [ <span class="num-days">${types.compassionate || 0}</span> ] Compassionate<br><br>
+                        Days [ <span class="num-days">${types.paternity || 0}</span> ] Paternity Leave
+                    </td>
+                </tr>
+            </table>
+
+            <table style="width: 100%; margin-top: 12px;">
+                <tr>
+                    <td colspan="3" style="border: 1px solid white; height: 34px; font-size: 11px; text-align: left; vertical-align: middle; font-weight: bold; padding: 0px 5px;">
+                        I shall resume duty on :  ------------  <span style="color: blue; font-weight: bold;">${formatDate(returnDate)}</span> ------------ : سأباشر عملى فى تاريخ
+                        &ensp;&ensp;&ensp;&ensp;&ensp;
+                        Signature : ------------
+                        <span class="sig-slot">${req.signatureUrl ? '<img src="' + req.signatureUrl + '">' : ''}</span>
+                        ------------ : التوقيع
+                        &ensp;&ensp;&ensp;&ensp;&ensp;
+                        Date : ------------ <span style="color: blue; font-weight: bold;">${todayStr}</span>   ------------ : التاريخ
+                    </td>
+                </tr>
+            </table>
+
+            <table class="approvals" style="margin-top: 8px;">
+                <tr>
+                    <td colspan="3" style="border: 1px solid black; font-size: 11px; background: #f9f9f9; font-weight: bold;">
+                        ENDORESEMENT BY DEPARTMENT HEAD
+                        <span style="margin-left: 16px;">- Request approved subject to verification of eligibility by Personnel Department موافقة الرئيس المباشر</span>
+                    </td>
+                </tr>
+                ${managerSection}
+                <tr>
+                    <td style="border: 1px solid black; width: 50%; height: 48px; text-align: center; vertical-align: middle; font-size: 11px;font-weight: bold;">
+                        HAC Representative---------------------------------------------------------------------
+                    </td>
+                    <td style="border: 1px solid black; width: 50%; height: 48px; text-align: center; vertical-align: middle; font-size: 11px;font-weight: bold;">
+                        CCC Representative---------------------------------------------------------------------
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="border-left: 1px solid black; border-right: 1px solid black; border-top: 1px solid black; font-weight: bold; font-size: 11px; padding: 4px;">
+                        <u>For Personnel Department Use Only</u>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="border: 1px solid black; padding: 6px; font-size: 11px; font-weight: bold;">
+                        Personnel Comments : ${req.hrSiteComment || '-----------'}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="border: 1px solid black; padding: 6px; font-size: 11px; font-weight: bold;">
+                        HR Manager Comments : ${req.hrComment || '-----------'}
+                    </td>
+                </tr>
+            </table>
+        `;
+
+        document.getElementById(containerId).innerHTML = html;
+    }
+
+    // ============================================================
+    //  🚀 تشغيل أولي
+    // ============================================================
+    window.addEventListener('load', function() {
+        // هل في URL parameters؟
+        const params = new URLSearchParams(window.location.search);
+        const action = params.get('action');
+
+        if (action === 'hrsite') {
+            showScreen('hrsite-login');
+        } else if (action === 'manager') {
+            showScreen('manager-login');
+        } else if (action === 'hrmanager') {
+            showScreen('hrmgr-login');
+        } else if (action === 'admin') {
+            showScreen('admin-login');
+        } else {
+            showScreen('home');
+        }
+
+        setMinDate();
+        setBorrowMinDate();
+    });
 
     window.addEventListener('resize', function() {});
 </script>
-</body>
-</html>
