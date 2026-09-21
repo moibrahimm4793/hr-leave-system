@@ -27,8 +27,6 @@
             color: var(--text-color);
         }
         .container { max-width: 1100px; margin: 0 auto; }
-
-        /* ============ الشاشات ============ */
         .screen { display: none; animation: fadeIn 0.3s ease; }
         .screen.active { display: block; }
         @keyframes fadeIn {
@@ -39,8 +37,6 @@
             from { transform: scale(0.7); opacity: 0; }
             to { transform: scale(1); opacity: 1; }
         }
-
-        /* ============ الشاشة الرئيسية ============ */
         .home-screen {
             display: flex;
             flex-direction: column;
@@ -104,8 +100,6 @@
         .home-btn .icon { font-size: 38px; }
         .home-btn.new { background: linear-gradient(135deg, #2563eb, #1e40af); }
         .home-btn.query { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
-
-        /* ============ لوحة الإدخال ============ */
         .input-panel {
             background: var(--input-bg);
             border-radius: 12px;
@@ -152,8 +146,6 @@
             background-color: white;
             box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
         }
-
-        /* ============ بطاقة الرصيد ============ */
         .balance-card {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -180,7 +172,6 @@
         .balance-label { font-size: 12px; opacity: 0.9; }
         .balance-value { font-size: 16px; font-weight: bold; }
         .balance-value.big { font-size: 34px; }
-
         .error-card {
             background: #fef2f2;
             border: 2px solid var(--danger-color);
@@ -192,8 +183,6 @@
             margin-bottom: 16px;
             animation: scaleIn 0.3s ease;
         }
-
-        /* ============ الأيام ============ */
         .total-days-box {
             background: #eff6ff;
             border: 1px solid #bfdbfe;
@@ -250,8 +239,6 @@
             font-weight: bold;
             outline: none;
         }
-
-        /* ============ الأزرار ============ */
         button {
             padding: 10px 20px;
             border: none;
@@ -295,8 +282,6 @@
             text-align: center;
             font-size: 14px;
         }
-
-        /* ============ التوقيع ============ */
         .signature-wrapper {
             margin-bottom: 14px;
             padding: 12px;
@@ -341,8 +326,6 @@
             cursor: pointer;
             font-weight: 600;
         }
-
-        /* ============ الفورم ============ */
         .form-scaler {
             position: relative;
             background: #fff;
@@ -431,8 +414,6 @@
             display: none;
         }
         .sig-slot img[src]:not([src=""]) { display: inline-block; }
-
-        /* ============ صفحة الشكر ============ */
         .thanks-box {
             background: white;
             border-radius: 16px;
@@ -454,8 +435,6 @@
             font-size: 16px;
             margin: 10px 0;
         }
-
-        /* ============ شاشة الاستعلام ============ */
         .query-balance-card {
             background: linear-gradient(135deg, #10b981, #059669);
             border-radius: 12px;
@@ -528,8 +507,6 @@
             color: var(--secondary-text);
         }
         .empty-state .icon { font-size: 60px; margin-bottom: 10px; }
-
-        /* ============ Mobile ============ */
         @media (max-width: 768px) {
             body { padding: 10px 5px; }
             .container { max-width: 100%; padding: 0 5px; }
@@ -552,9 +529,6 @@
 <body>
 <div class="container">
 
-    <!-- ============================================================ -->
-    <!--  🏠 الشاشة الرئيسية                                          -->
-    <!-- ============================================================ -->
     <div id="screen-home" class="screen active">
         <div class="home-screen">
             <div class="home-logo">
@@ -577,9 +551,6 @@
         </div>
     </div>
 
-    <!-- ============================================================ -->
-    <!--  🆕 شاشة طلب جديد                                            -->
-    <!-- ============================================================ -->
     <div id="screen-new" class="screen">
         <div class="back-row">
             <h3>🆕 طلب إجازة جديد</h3>
@@ -597,7 +568,6 @@
                 </div>
             </div>
 
-            <!-- بطاقة الرصيد -->
             <div class="balance-card" id="balanceCard" style="display:none;">
                 <div class="balance-item">
                     <span class="balance-label">👤 الاسم</span>
@@ -622,12 +592,10 @@
                 </div>
             </div>
 
-            <!-- رسالة خطأ الكود -->
             <div class="error-card" id="staffError" style="display:none;">
                 ❌ كود الموظف غير موجود في قاعدة البيانات
             </div>
 
-            <!-- التواريخ -->
             <div class="input-group" id="datesGroup" style="display:none;">
                 <div class="form-field">
                     <label>تاريخ البداية (From)</label>
@@ -643,12 +611,10 @@
                 </div>
             </div>
 
-            <!-- إجمالي الأيام -->
             <div class="total-days-box" id="totalDaysBox" style="display:none;">
                 إجمالي الأيام: <span id="totalDaysDisplay">0</span> يوم
             </div>
 
-            <!-- توزيع الأيام -->
             <div class="split-area" id="splitArea" style="display:none;">
                 <h4>وزّع الأيام:</h4>
                 <div class="split-box">
@@ -664,7 +630,6 @@
                 </div>
             </div>
 
-            <!-- التوقيع -->
             <div class="signature-wrapper">
                 <label>✍️ توقيع الموظف - ارفع صورة التوقيع</label>
                 <input type="file" id="signatureFile" accept="image/*">
@@ -683,9 +648,6 @@
         </div>
     </div>
 
-    <!-- ============================================================ -->
-    <!--  🔍 شاشة الاستعلام                                            -->
-    <!-- ============================================================ -->
     <div id="screen-query" class="screen">
         <div class="back-row">
             <h3>🔍 الاستعلام عن الرصيد والإجازات</h3>
@@ -709,9 +671,6 @@
         <div id="queryResult" style="display:none;"></div>
     </div>
 
-    <!-- ============================================================ -->
-    <!--  🎉 شاشة الشكر                                                -->
-    <!-- ============================================================ -->
     <div id="screen-thanks" class="screen">
         <div class="thanks-box">
             <div class="icon">✅</div>
@@ -730,17 +689,11 @@
 
 </div>
 <script>
-    // ============================================================
-    //  ⚙️ الإعدادات
-    // ============================================================
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyXAuzdQuAPakhszEo17VQ9iUwKdNl-SDAuEps1PlNQP8YWChSglk-jekhAmvy2oROu/exec';
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwektIO_rq_3U6IXyGd9chqXnTyWHMZ0uBfB2qdlrQkULWmUb9wpPQpNFkIsHpoY4JI/exec';
 
     let currentEmployee = null;
     let signatureDataUrl = "";
 
-    // ============================================================
-    //  🖥️ التنقل بين الشاشات
-    // ============================================================
     function showScreen(name) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         const target = document.getElementById('screen-' + name);
@@ -761,9 +714,6 @@
         setMinDate();
     });
 
-    // ============================================================
-    //  📅 تحديد أقل تاريخ مسموح
-    // ============================================================
     function setMinDate() {
         const startInput = document.getElementById('startDate');
         const endInput = document.getElementById('endDate');
@@ -825,9 +775,6 @@
         }
     }
 
-    // ============================================================
-    //  📊 حساب الأيام
-    // ============================================================
     function calculateDays() {
         const start = document.getElementById('startDate').value;
         const end = document.getElementById('endDate').value;
@@ -871,9 +818,6 @@
     }
     function formatDayName(d) { return d.toLocaleDateString('en-US', { weekday: 'long' }); }
 
-    // ============================================================
-    //  💰 جلب الرصيد
-    // ============================================================
     function fetchEmployeeBalance() {
         const staffId = document.getElementById('staffId').value.trim();
         const balanceCard = document.getElementById('balanceCard');
@@ -918,9 +862,6 @@
         );
     }
 
-    // ============================================================
-    //  🔍 JSONP Helper
-    // ============================================================
     function jsonpRequest(url, callback, timeoutMs) {
         timeoutMs = timeoutMs || 15000;
         const cbName = 'jsonpCb_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
@@ -950,9 +891,6 @@
         document.body.appendChild(script);
     }
 
-    // ============================================================
-    //  🔍 التحقق من التكرار
-    // ============================================================
     function checkDuplicate(staffId, fromDate, toDate) {
         return new Promise(function(resolve) {
             const url = GOOGLE_SCRIPT_URL +
@@ -1022,9 +960,6 @@
         queryEmployee();
     }
 
-    // ============================================================
-    //  🔄 إعادة تعيين الفورم
-    // ============================================================
     function resetForm() {
         const box = document.getElementById('duplicateMsgBox');
         if (box) { box.style.display = 'none'; box.innerHTML = ''; }
@@ -1055,9 +990,6 @@
         currentEmployee = null;
     }
 
-    // ============================================================
-    //  🎬 توليد النموذج
-    // ============================================================
     async function generateForm() {
         const start = document.getElementById('startDate').value;
         const end = document.getElementById('endDate').value;
@@ -1105,7 +1037,6 @@
             return;
         }
 
-        // فحص التكرار
         const btnGen = document.getElementById('btnGenerate');
         const originalText = btnGen.innerText;
         btnGen.disabled = true;
@@ -1129,13 +1060,9 @@
             return;
         }
 
-        // إرسال للمدير مباشرة
         sendToManager(staffId, daysObj, startDate, endDate, totalDays);
     }
 
-    // ============================================================
-    //  📤 إرسال الطلب
-    // ============================================================
     async function sendToManager(staffId, daysObj, startDate, endDate, totalDays) {
         const btn = document.getElementById('btnGenerate');
         btn.disabled = true;
@@ -1190,9 +1117,6 @@
         }
     }
 
-    // ============================================================
-    //  🔍 الاستعلام
-    // ============================================================
     function queryEmployee() {
         const staffId = document.getElementById('queryStaffId').value.trim();
         const errorEl = document.getElementById('queryError');
@@ -1332,9 +1256,6 @@
         }
     }
 
-    // ============================================================
-    //  ✍️ التوقيع
-    // ============================================================
     document.addEventListener('DOMContentLoaded', function() {
         const fileInput = document.getElementById('signatureFile');
         if (!fileInput) return;
