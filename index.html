@@ -8,12 +8,9 @@
 * { box-sizing: border-box; }
 body {
     font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
-    background: #f3f4f6;
-    margin: 0;
-    padding: 15px 8px;
-    color: #1f2937;
+    background: #f3f4f6; margin: 0; padding: 15px 8px; color: #1f2937;
 }
-.container { max-width: 1100px; margin: 0 auto; }
+.container { max-width: 1000px; margin: 0 auto; }
 
 /* Screens */
 .screen { display: none; animation: fadeIn 0.3s ease; }
@@ -53,152 +50,226 @@ body {
 .home-btn.new { background: linear-gradient(135deg, #2563eb, #1e40af); }
 .home-btn.query { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
 
-/* Back row */
-.back-row {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 16px; flex-wrap: wrap; gap: 10px;
+/* ============ Header الموحد ============ */
+.rv-header {
+    background: linear-gradient(135deg, #2563eb, #1e40af);
+    color: white; border-radius: 14px;
+    padding: 20px 25px; margin-bottom: 15px;
+    box-shadow: 0 8px 25px -5px rgba(37,99,235,0.4);
+    text-align: center;
 }
-.back-row h3 { margin: 0; color: #2563eb; font-size: 18px; }
+.rv-header .badge {
+    display: inline-block; background: rgba(255,255,255,0.25);
+    padding: 4px 14px; border-radius: 20px;
+    font-size: 12px; font-weight: bold; margin-bottom: 8px;
+    letter-spacing: 1px;
+}
+.rv-header h1 { margin: 0 0 6px; font-size: 22px; }
+.rv-header p { margin: 3px 0; font-size: 14px; opacity: 0.95; }
+.rv-header .emp-info {
+    background: rgba(255,255,255,0.15);
+    border-radius: 10px; padding: 10px 15px; margin-top: 12px;
+    display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;
+}
+.rv-header .emp-info div { font-size: 13px; }
+.rv-header .emp-info strong { font-size: 15px; }
+
+/* Back Button */
 .btn-back {
     background: #6b7280; color: white; padding: 10px 20px;
-    font-size: 14px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;
+    font-size: 14px; border: none; border-radius: 8px;
+    cursor: pointer; font-weight: 600; margin-bottom: 12px;
+}
+.btn-back:hover { background: #4b5563; }
+
+/* Edit Card */
+.edit-card {
+    background: white; border-radius: 14px;
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+    padding: 20px; margin-bottom: 15px;
+}
+.edit-card h3 {
+    margin: 0 0 16px; font-size: 16px; color: #1e40af;
+    display: flex; align-items: center; gap: 8px;
+    padding-bottom: 10px; border-bottom: 2px solid #eff6ff;
 }
 
-/* Alert */
+/* Info Row */
+.info-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin-bottom: 18px;
+}
+.info-field label {
+    display: block; font-size: 12px; font-weight: 600;
+    color: #6b7280; margin-bottom: 5px;
+}
+.info-field input, .info-field .auto-value {
+    width: 100%; padding: 10px 12px;
+    border: 2px solid #e5e7eb; border-radius: 8px;
+    font-size: 14px; font-weight: bold; color: #1f2937;
+    outline: none; background: #f9fafb;
+    font-family: inherit;
+}
+.info-field input:focus {
+    border-color: #2563eb; background: white;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+}
+.info-field .auto-value {
+    color: #10b981; border-color: #d1fae5;
+    background: #f0fdf4; cursor: default;
+}
+
+/* Dates Grid */
+.dates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin-bottom: 18px;
+}
+.date-field {
+    background: #f0f9ff; border: 2px solid #bfdbfe;
+    border-radius: 10px; padding: 10px;
+}
+.date-field label {
+    display: block; font-size: 12px; font-weight: bold;
+    color: #1e40af; margin-bottom: 5px;
+}
+.date-field input {
+    width: 100%; padding: 8px; border: 1px solid #d1d5db;
+    border-radius: 6px; font-size: 14px; font-weight: bold;
+    color: #2563eb; outline: none;
+    font-family: inherit;
+}
+.date-field input:focus { border-color: #2563eb; }
+.date-field .day-name {
+    display: block; text-align: center;
+    color: #10b981; font-size: 11px; font-weight: bold;
+    margin-top: 4px; min-height: 14px;
+}
+.date-field.return {
+    background: #f0fdf4; border-color: #d1fae5;
+}
+.date-field.return .auto-date {
+    padding: 8px; background: white;
+    border-radius: 6px; font-weight: bold;
+    color: #10b981; text-align: center;
+    font-size: 14px;
+}
+
+/* Days Grid */
+.days-label {
+    font-size: 13px; font-weight: bold; color: #1e40af;
+    margin-bottom: 10px;
+}
+.days-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+    margin-bottom: 15px;
+}
+.day-item {
+    background: #f9fafb; border: 2px solid #e5e7eb;
+    border-radius: 10px; padding: 10px; text-align: center;
+    transition: all 0.2s;
+}
+.day-item:focus-within {
+    border-color: #2563eb; background: white;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+}
+.day-item label {
+    display: block; font-size: 11px; color: #6b7280;
+    margin-bottom: 5px; font-weight: 600;
+}
+.day-item input {
+    width: 100%; padding: 6px;
+    border: 1px solid #d1d5db; border-radius: 6px;
+    font-size: 16px; font-weight: bold;
+    text-align: center; color: #2563eb;
+    outline: none; font-family: inherit;
+    background: white;
+}
+.day-item input:focus { border-color: #2563eb; }
+
+/* Totals */
+.totals-box {
+    background: #eff6ff; border: 1px solid #bfdbfe;
+    border-radius: 10px; padding: 12px;
+    text-align: center; font-weight: bold;
+    font-size: 13px;
+    display: flex; justify-content: center;
+    gap: 20px; flex-wrap: wrap;
+}
+.totals-box .num { color: #2563eb; font-size: 18px; }
+.totals-box .ok { color: #10b981; font-weight: bold; }
+.totals-box .bad { color: #ef4444; font-weight: bold; }
+
+/* Signature */
+.sig-section {
+    background: #f0f9ff; border: 2px dashed #2563eb;
+    border-radius: 12px; padding: 15px;
+    text-align: center; margin-bottom: 15px;
+}
+.sig-section label {
+    display: block; font-size: 13px;
+    font-weight: bold; color: #1e40af; margin-bottom: 8px;
+}
+.sig-section input[type="file"] {
+    padding: 8px; border: 1.5px dashed #2563eb;
+    border-radius: 8px; background: white;
+    cursor: pointer; font-size: 13px; width: 100%;
+    font-family: inherit;
+}
+.sig-preview { display: none; margin-top: 12px; text-align: center; }
+.sig-preview img {
+    max-height: 80px; max-width: 100%;
+    border: 1px solid #bfdbfe; border-radius: 6px;
+    padding: 3px; background: white;
+}
+.btn-clear-sig {
+    background: #f97316; color: white; margin-top: 8px;
+    padding: 6px 14px; font-size: 12px;
+    border: none; border-radius: 6px;
+    cursor: pointer; font-weight: bold;
+}
+
+/* Buttons */
+.actions {
+    display: flex; gap: 10px; margin-top: 15px;
+    flex-wrap: wrap; justify-content: center;
+}
+.action-btn {
+    padding: 14px 32px; border: none; border-radius: 10px;
+    font-size: 15px; font-weight: bold; cursor: pointer;
+    color: white; min-width: 160px;
+    transition: all 0.2s;
+    font-family: inherit;
+}
+.action-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+.action-btn:disabled { background: #9ca3af !important; cursor: not-allowed; }
+.action-btn.primary { background: linear-gradient(135deg, #2563eb, #1e40af); }
+.action-btn.approve { background: linear-gradient(135deg, #10b981, #059669); }
+.action-btn.reject { background: linear-gradient(135deg, #ef4444, #dc2626); }
+.action-btn.forward { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+.action-btn.cancel { background: #6b7280; }
+
+.status-msg {
+    text-align: center; margin-top: 12px;
+    font-weight: bold; min-height: 20px; font-size: 14px;
+}
+
+/* Alerts */
 .alert {
-    padding: 12px 16px; border-radius: 10px; margin-bottom: 15px;
-    font-weight: bold; text-align: center; animation: scaleIn 0.3s;
+    padding: 12px 16px; border-radius: 10px;
+    margin-bottom: 15px; font-weight: bold;
+    text-align: center; animation: scaleIn 0.3s;
 }
 .alert.error { background: #fef2f2; border: 2px solid #ef4444; color: #ef4444; }
 .alert.success { background: #f0fdf4; border: 2px solid #10b981; color: #10b981; }
 .alert.info { background: #eff6ff; border: 2px solid #2563eb; color: #1e40af; }
 
-/* Form wrapper */
-#formContainer {
-    background: white; border-radius: 12px;
-    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
-    padding: 15px; margin-bottom: 15px;
-    overflow-x: auto;
-}
-#leaveForm {
-    background: white; padding: 12px 14px;
-    font-family: Arial, sans-serif; font-size: 12px;
-    min-width: 700px;
-}
-
-/* Form tables */
-.header-table { width: 100%; border-collapse: collapse; margin-bottom: 3px; }
-.header-table td { text-align: center; font-weight: bold; vertical-align: middle; }
-.title-box { border: 1px solid black; padding: 4px 6px; font-size: 16px; background: #ffffcc; }
-.black-box {
-    border: 1px solid black; padding: 4px 6px; font-size: 9px;
-    text-align: center; margin-bottom: 6px; font-weight: bold; line-height: 1.4;
-}
-table.main-table { width: 100%; border-collapse: collapse; }
-table.main-table td { padding: 3px 4px; vertical-align: middle; font-weight: bold; }
-
-/* Form inputs */
-.form-input {
-    background: transparent;
-    border: none;
-    border-bottom: 1.5px solid #2563eb;
-    color: #2563eb;
-    font-weight: bold;
-    font-family: inherit;
-    font-size: 12px;
-    text-align: center;
-    outline: none;
-    padding: 2px 4px;
-    min-width: 50px;
-}
-.form-input:focus {
-    background: #eff6ff;
-    border-bottom: 2px solid #1e40af;
-}
-.form-input[readonly] { color: #10b981; cursor: default; border-bottom-color: #10b981; }
-.form-input.error { border-bottom-color: #ef4444; background: #fef2f2; }
-.form-input.auto { color: #10b981; border-bottom-color: #d1fae5; }
-
-/* Line look for static text */
-.line {
-    border-bottom: 1px solid black;
-    min-width: 80px; display: inline-block;
-    text-align: center; color: #2563eb; font-weight: bold;
-    padding: 2px 4px;
-}
-.line.long { min-width: 160px; }
-
-/* Leave table */
-table.leaves { width: 100%; border-collapse: collapse; font-size: 10px; margin-top: 6px; }
-table.leaves td { border: none; padding: 2px 4px; vertical-align: top; line-height: 1.8; }
-
-/* Day input */
-.day-input {
-    width: 45px; text-align: center;
-    color: #2563eb; font-weight: bold;
-    background: #eff6ff;
-    border: 1.5px solid #bfdbfe;
-    border-radius: 4px; padding: 2px;
-    font-size: 12px;
-    outline: none;
-}
-.day-input:focus { border-color: #2563eb; background: white; }
-
-/* Totals row */
-.totals-row {
-    background: #f0f9ff;
-    border: 1px solid #bfdbfe;
-    border-radius: 8px;
-    padding: 8px 12px;
-    margin-top: 8px;
-    text-align: center;
-    font-weight: bold;
-    font-size: 12px;
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    flex-wrap: wrap;
-}
-.totals-row .num { color: #2563eb; font-size: 16px; }
-.totals-row .ok { color: #10b981; }
-.totals-row .bad { color: #ef4444; }
-
-/* Signature area */
-.sig-area {
-    margin-top: 10px; padding: 10px;
-    background: #f0f9ff; border: 2px dashed #2563eb;
-    border-radius: 8px; text-align: center;
-}
-.sig-area label { display: block; font-size: 12px; font-weight: bold; color: #1e40af; margin-bottom: 6px; }
-.sig-area input[type="file"] {
-    font-size: 12px; padding: 6px;
-    border: 1.5px dashed #2563eb; border-radius: 6px;
-    background: white; cursor: pointer; width: 100%;
-}
-.sig-preview { display: none; margin-top: 10px; text-align: center; }
-.sig-preview img {
-    max-height: 80px; max-width: 100%;
-    border: 1px solid #bfdbfe; border-radius: 6px; padding: 3px; background: white;
-}
-.btn-clear-sig {
-    background: #f97316; color: white; margin-top: 6px;
-    padding: 5px 12px; font-size: 11px;
-    border: none; border-radius: 5px; cursor: pointer; font-weight: bold;
-}
-
-/* Submit button */
-.submit-area { text-align: center; padding: 15px 0; }
-#btnSubmit {
-    padding: 16px 45px; background: linear-gradient(135deg, #2563eb, #1e40af);
-    color: white; border: none; border-radius: 12px;
-    font-size: 17px; font-weight: bold; cursor: pointer;
-    box-shadow: 0 4px 15px rgba(37,99,235,0.3);
-    transition: all 0.2s;
-}
-#btnSubmit:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(37,99,235,0.4); }
-#btnSubmit:disabled { background: #9ca3af; cursor: not-allowed; box-shadow: none; }
-
-/* Query screen */
+/* Query */
 .input-panel {
     background: white; border-radius: 12px;
     box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
@@ -207,29 +278,35 @@ table.leaves td { border: none; padding: 2px 4px; vertical-align: top; line-heig
 }
 .input-panel h3 {
     margin: 0 0 14px; font-size: 17px;
-    color: #2563eb; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;
+    color: #2563eb; border-bottom: 2px solid #e5e7eb;
+    padding-bottom: 8px;
 }
-.form-field label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; color: #6b7280; }
+.form-field label {
+    display: block; font-size: 13px;
+    font-weight: 600; margin-bottom: 5px; color: #6b7280;
+}
 .form-field input {
     width: 100%; padding: 10px 12px;
     border: 1px solid #e5e7eb; border-radius: 8px;
-    font-size: 14px; background: #f9fafb; outline: none;
+    font-size: 14px; background: #f9fafb;
+    outline: none; font-family: inherit;
 }
-.form-field input:focus { border-color: #2563eb; background: white; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
-.btn-primary {
-    padding: 12px 30px; background: #2563eb; color: white;
-    border: none; border-radius: 8px;
-    font-size: 15px; font-weight: bold; cursor: pointer;
-    width: 100%; margin-top: 10px;
+.form-field input:focus {
+    border-color: #2563eb; background: white;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
 }
-.error-msg { color: #ef4444; font-weight: bold; margin-top: 8px; display: block; text-align: center; font-size: 14px; }
-
-/* Query results */
+.error-msg {
+    color: #ef4444; font-weight: bold; margin-top: 8px;
+    display: block; text-align: center; font-size: 14px;
+}
 .query-balance-card {
     background: linear-gradient(135deg, #10b981, #059669);
-    border-radius: 12px; padding: 25px; margin-bottom: 20px; color: white;
+    border-radius: 12px; padding: 25px;
+    margin-bottom: 20px; color: white;
 }
-.query-balance-inner { display: flex; justify-content: space-around; text-align: center; }
+.query-balance-inner {
+    display: flex; justify-content: space-around; text-align: center;
+}
 .query-balance-inner > div { flex: 1; }
 .query-balance-divider { width: 1px; background: rgba(255,255,255,0.3); }
 .query-balance-num { font-size: 42px; font-weight: bold; margin: 0; }
@@ -239,12 +316,25 @@ table.leaves td { border: none; padding: 2px 4px; vertical-align: top; line-heig
     background: white; border-radius: 12px;
     padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);
 }
-.leaves-table-wrap h2 { color: #1f2937; margin: 0 0 15px; font-size: 19px; }
-.leaves-table-wrap .count { color: #6b7280; font-size: 14px; margin: 0 0 15px; }
-.leaves-table { width: 100%; border-collapse: collapse; font-size: 14px; }
-.leaves-table th { padding: 12px; border: 1px solid #e5e7eb; background: #f3f4f6; text-align: center; }
-.leaves-table td { padding: 12px; border: 1px solid #e5e7eb; text-align: center; }
-.empty-state { text-align: center; padding: 40px 20px; color: #6b7280; }
+.leaves-table-wrap h2 {
+    color: #1f2937; margin: 0 0 15px; font-size: 19px;
+}
+.leaves-table-wrap .count {
+    color: #6b7280; font-size: 14px; margin: 0 0 15px;
+}
+.leaves-table {
+    width: 100%; border-collapse: collapse; font-size: 14px;
+}
+.leaves-table th {
+    padding: 12px; border: 1px solid #e5e7eb;
+    background: #f3f4f6; text-align: center;
+}
+.leaves-table td {
+    padding: 12px; border: 1px solid #e5e7eb; text-align: center;
+}
+.empty-state {
+    text-align: center; padding: 40px 20px; color: #6b7280;
+}
 .empty-state .icon { font-size: 60px; margin-bottom: 10px; }
 
 /* Thanks */
@@ -258,14 +348,21 @@ table.leaves td { border: none; padding: 2px 4px; vertical-align: top; line-heig
 .thanks-box .icon { font-size: 90px; margin-bottom: 15px; }
 .thanks-box h1 { color: #10b981; font-size: 28px; margin: 0 0 15px; }
 .thanks-box p { color: #6b7280; font-size: 16px; margin: 10px 0; }
-.thanks-box .btn-row { margin-top: 25px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.thanks-box .btn-row {
+    margin-top: 25px; display: flex; gap: 10px;
+    justify-content: center; flex-wrap: wrap;
+}
 
 /* Mobile */
-@media (max-width: 768px) {
+@media (max-width: 600px) {
     body { padding: 10px 5px; }
-    #formContainer { padding: 8px; }
-    #leaveForm { font-size: 11px; min-width: 650px; }
+    .rv-header { padding: 16px; }
+    .rv-header h1 { font-size: 18px; }
     .home-btn { min-width: 100%; padding: 20px 30px; }
+    .edit-card { padding: 15px; }
+    .days-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; }
+    .day-item { padding: 8px 5px; }
+    .action-btn { min-width: 100%; padding: 12px 20px; }
     .query-balance-inner { flex-direction: column; gap: 15px; }
     .query-balance-divider { display: none; }
 }
@@ -274,9 +371,7 @@ table.leaves td { border: none; padding: 2px 4px; vertical-align: top; line-heig
 <body>
 <div class="container">
 
-    <!-- ============================================ -->
-    <!-- 🏠 SCREEN: HOME                              -->
-    <!-- ============================================ -->
+    <!-- ============ HOME ============ -->
     <div id="screen-home" class="screen active">
         <div class="home-screen">
             <div class="home-logo">
@@ -298,195 +393,137 @@ table.leaves td { border: none; padding: 2px 4px; vertical-align: top; line-heig
         </div>
     </div>
 
-    <!-- ============================================ -->
-    <!-- 🆕 SCREEN: NEW REQUEST (Fillable Form)       -->
-    <!-- ============================================ -->
+    <!-- ============ NEW REQUEST ============ -->
     <div id="screen-new" class="screen">
-        <div class="back-row">
-            <h3>🆕 طلب إجازة جديد</h3>
-            <button class="btn-back" onclick="goHome()">🏠 الرئيسية</button>
+        <button class="btn-back" onclick="goHome()">🏠 الرئيسية</button>
+
+        <div class="rv-header">
+            <div class="badge">🆕 NEW REQUEST</div>
+            <h1>طلب إجازة جديد</h1>
+            <p>املأ البيانات أدناه</p>
         </div>
 
         <div id="alertBox" class="alert" style="display:none;"></div>
 
-        <div id="formContainer">
-            <div id="leaveForm">
-
-                <!-- Header -->
-                <table class="header-table">
-                    <tr>
-                        <td style="width: 25%;">
-                            <img src="https://moibrahimm4793.github.io/hr-leave-system/HAC.jpg" style="height: 70px;">
-                        </td>
-                        <td style="width: 50%;">
-                            <div class="title-box">HUB</div>
-                            <div>New Alamein City Projects</div>
-                            <div>HAC&CCC JV</div>
-                            <div style="font-size: 11px;">نموذج طلب أجازة مع الموافقة</div>
-                            <div style="font-size: 16px; font-weight: bold;">LEAVE REQUEST & APPROVAL FORM</div>
-                        </td>
-                        <td style="width: 25%;">
-                            <img src="https://moibrahimm4793.github.io/hr-leave-system/CCC.jpg" style="height: 70px;">
-                        </td>
-                    </tr>
-                </table>
-
-                <div class="black-box">
-                    TO BE COMPLETED BY EMPLOYEE , APPROVED BY THE DEPARTMENT HEAD AND PRESNTED TO PERSONNEL FOR APPROPRIATE ACTION<br>
-                    AND DISTRIBUTION WELL IN ADVANCE BEFORE COMMANCEMENT OF LEAVE, OR IMMEDIATELY UPON RETURN FROM SICK LEAVE
+        <!-- Employee Info -->
+        <div class="edit-card">
+            <h3>👤 بيانات الموظف</h3>
+            <div class="info-row">
+                <div class="info-field">
+                    <label>رقم الموظف (Staff No) *</label>
+                    <input type="text" id="staffIdInput" placeholder="مثال: 5233" onblur="fetchEmployee()" maxlength="10">
                 </div>
-
-                <!-- Employee Info Row -->
-                <table class="main-table">
-                    <tr>
-                        <td style="text-align:right; white-space:nowrap;">Employee name :</td>
-                        <td><span class="line long auto" id="empNameDisplay" style="padding: 3px 8px; display:inline-block; min-width: 160px;">-</span></td>
-                        <td style="text-align:right;">اسم الموظف</td>
-                        <td style="text-align:right; white-space:nowrap;">Title :</td>
-                        <td><span class="line auto" id="empTitleDisplay" style="padding: 3px 8px; display:inline-block;">-</span></td>
-                        <td style="text-align:right;">المهنة</td>
-                        <td style="text-align:right; white-space:nowrap;">Staff no:</td>
-                        <td>
-                            <input type="text" id="staffIdInput" class="form-input"
-                                   style="width: 70px;" placeholder="..."
-                                   onblur="fetchEmployee()" maxlength="10">
-                        </td>
-                        <td style="text-align:right;">رقم الموظف</td>
-                    </tr>
-                </table>
-
-                <!-- Dates Row -->
-                <table class="main-table" style="margin-top: 6px;">
-                    <tr>
-                        <td style="white-space:nowrap; font-weight: bold;">
-                            I request leave from :
-                            <input type="date" id="fromDate" class="form-input"
-                                   style="width: 130px; margin-left: 6px;"
-                                   onchange="recalculateAll()">
-                            <span id="fromDayName" class="auto" style="color:#10b981; font-weight: bold; margin-left: 4px;">--</span>
-                            <span style="font-size: 10px;">: تاريخ بداية الاجازة من</span>
-                        </td>
-                        <td style="white-space:nowrap; font-weight: bold; padding-right: 30px;">
-                            To : -
-                            <input type="date" id="toDate" class="form-input"
-                                   style="width: 130px; margin: 0 6px;"
-                                   onchange="recalculateAll()">
-                            <span id="toDayName" class="auto" style="color:#10b981; font-weight: bold;">--</span>
-                            <span style="font-size: 10px;">: الي</span>
-                        </td>
-                    </tr>
-                </table>
-
-                <!-- Leave Requested Header -->
-                <div style="font-weight: bold; padding: 6px 4px 2px;">Leave requested :</div>
-
-                <!-- Leave Types -->
-                <table class="leaves">
-                    <tr>
-                        <td style="width: 33%; padding: 0 8px;">
-                            Days [<input type="number" class="day-input" id="annualDays" min="0" value="0" oninput="updateTotals()">]
-                            Annual leave with pay / أجازة سنوية<br><br>
-                            Days [<input type="number" class="day-input" id="weekendDays" min="0" value="0" oninput="updateTotals()">]
-                            Replace of weekends / بدل اجازه اسبوعيه<br><br>
-                            Days [<input type="number" class="day-input" id="withoutPayDays" min="0" value="0" oninput="updateTotals()">]
-                            Leave Without Pay / اجازه بدون اجر
-                        </td>
-                        <td style="width: 33%; padding: 0 8px;">
-                            Days [<input type="number" class="day-input" id="maternityDays" min="0" value="0" oninput="updateTotals()">]
-                            Maternity / أجازة ولادة<br><br>
-                            Days [<input type="number" class="day-input" id="sickDays" min="0" value="0" oninput="updateTotals()">]
-                            Sick Leave / أجازة مرضية<br><br>
-                            Days [<input type="number" class="day-input" id="injuryDays" min="0" value="0" oninput="updateTotals()">]
-                            Industrial Injury / أجازة اصابة عمل<br><br>
-                            Days [<input type="number" class="day-input" id="rrDays" min="0" value="0" oninput="updateTotals()">]
-                            Replace&Rest(R&R) / بدل راحات
-                        </td>
-                        <td style="width: 34%; padding: 0 8px;">
-                            Days [<input type="number" class="day-input" id="compassionateDays" min="0" value="0" oninput="updateTotals()">]
-                            Compassionate leave<br><br>
-                            Days [<input type="number" class="day-input" id="paternityDays" min="0" value="0" oninput="updateTotals()">]
-                            Paternity Leave / أجازة أبوة
-                        </td>
-                    </tr>
-                </table>
-
-                <!-- Totals Row -->
-                <div class="totals-row">
-                    <div>📅 Total Days: <span class="num" id="totalDaysDisplay">0</span></div>
-                    <div>📊 Allocated: <span class="num" id="allocatedDaysDisplay">0</span></div>
-                    <div id="checkStatus">⚪</div>
+                <div class="info-field">
+                    <label>الاسم (Name)</label>
+                    <div class="auto-value" id="empNameDisplay">-</div>
                 </div>
-
-                <!-- Return Date -->
-                <table style="width: 100%; margin-top: 10px;">
-                    <tr>
-                        <td style="font-weight: bold; padding: 4px; font-size: 11px;">
-                            I shall resume duty on :
-                            ------
-                            <span id="returnDateDisplay" style="color: #2563eb; font-weight: bold;">--</span>
-                            ------ : سأباشر عملى فى تاريخ
-                        </td>
-                    </tr>
-                </table>
-
-                <!-- Signature -->
-                <div class="sig-area">
-                    <label>✍️ توقيع الموظف — ارفع صورة التوقيع *</label>
-                    <input type="file" id="signatureFile" accept="image/*">
-                    <div class="sig-preview" id="sigPreview">
-                        <img id="sigImg" src="" alt="preview">
-                        <br>
-                        <button type="button" class="btn-clear-sig" onclick="clearSignature()">🗑️ مسح التوقيع</button>
-                    </div>
+                <div class="info-field">
+                    <label>الوظيفة (Title)</label>
+                    <div class="auto-value" id="empTitleDisplay">-</div>
                 </div>
+            </div>
+            <div class="info-row">
+                <div class="info-field">
+                    <label>💰 الرصيد المتاح</label>
+                    <div class="auto-value" id="empBalanceDisplay">-</div>
+                </div>
+                <div class="info-field">
+                    <label>📅 تاريخ اليوم</label>
+                    <div class="auto-value" id="todayDisplay">-</div>
+                </div>
+            </div>
+        </div>
 
+        <!-- Dates -->
+        <div class="edit-card">
+            <h3>📅 تواريخ الإجازة</h3>
+            <div class="dates-grid">
+                <div class="date-field">
+                    <label>من (From) *</label>
+                    <input type="date" id="fromDate" onchange="recalcAll()">
+                    <span class="day-name" id="fromDay">--</span>
+                </div>
+                <div class="date-field">
+                    <label>إلى (To) *</label>
+                    <input type="date" id="toDate" onchange="recalcAll()">
+                    <span class="day-name" id="toDay">--</span>
+                </div>
+                <div class="date-field return">
+                    <label>العودة للعمل (Return)</label>
+                    <div class="auto-date" id="returnDate">--</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Days -->
+        <div class="edit-card">
+            <h3>📊 توزيع الأيام</h3>
+            <div class="days-label">أدخل عدد الأيام لكل نوع:</div>
+            <div class="days-grid">
+                <div class="day-item"><label>سنوية (Annual)</label><input type="number" id="annual" min="0" value="0" oninput="updateTotals()"></div>
+                <div class="day-item"><label>بدل أسبوعية</label><input type="number" id="weekend" min="0" value="0" oninput="updateTotals()"></div>
+                <div class="day-item"><label>بدون أجر</label><input type="number" id="withoutPay" min="0" value="0" oninput="updateTotals()"></div>
+                <div class="day-item"><label>مرضية</label><input type="number" id="sick" min="0" value="0" oninput="updateTotals()"></div>
+                <div class="day-item"><label>ولادة</label><input type="number" id="maternity" min="0" value="0" oninput="updateTotals()"></div>
+                <div class="day-item"><label>إصابة</label><input type="number" id="injury" min="0" value="0" oninput="updateTotals()"></div>
+                <div class="day-item"><label>بدل راحات R&R</label><input type="number" id="rr" min="0" value="0" oninput="updateTotals()"></div>
+                <div class="day-item"><label>إضطرارية</label><input type="number" id="compassionate" min="0" value="0" oninput="updateTotals()"></div>
+                <div class="day-item"><label>أبوة</label><input type="number" id="paternity" min="0" value="0" oninput="updateTotals()"></div>
+            </div>
+            <div class="totals-box">
+                <div>📅 إجمالي الأيام: <span class="num" id="totalDisplay">0</span></div>
+                <div>📊 موزّع: <span class="num" id="allocatedDisplay">0</span></div>
+                <div id="checkStatus">⚪</div>
+            </div>
+        </div>
+
+        <!-- Signature -->
+        <div class="edit-card">
+            <h3>✍️ التوقيع</h3>
+            <div class="sig-section">
+                <label>ارفع صورة توقيعك *</label>
+                <input type="file" id="signatureFile" accept="image/*">
+                <div class="sig-preview" id="sigPreview">
+                    <img id="sigImg" src="" alt="preview">
+                    <br>
+                    <button type="button" class="btn-clear-sig" onclick="clearSignature()">🗑️ مسح</button>
+                </div>
             </div>
         </div>
 
         <!-- Submit -->
-        <div class="submit-area">
-            <button id="btnSubmit" onclick="submitForm()">📤 إرسال للمراجعة</button>
+        <div class="actions">
+            <button class="action-btn primary" id="btnSubmit" onclick="submitForm()">📤 إرسال للمراجعة</button>
         </div>
+        <div class="status-msg" id="statusMsg"></div>
     </div>
 
-    <!-- ============================================ -->
-    <!-- 🔍 SCREEN: QUERY                             -->
-    <!-- ============================================ -->
+    <!-- ============ QUERY ============ -->
     <div id="screen-query" class="screen">
-        <div class="back-row">
-            <h3>🔍 الاستعلام عن الرصيد والإجازات</h3>
-            <button class="btn-back" onclick="goHome()">🏠 الرئيسية</button>
-        </div>
+        <button class="btn-back" onclick="goHome()">🏠 الرئيسية</button>
 
         <div class="input-panel">
-            <h3>أدخل كود الموظف</h3>
+            <h3>🔍 الاستعلام عن الرصيد والإجازات</h3>
             <div class="form-field">
                 <label>كود الموظف (Staff No)</label>
                 <input type="text" id="queryStaffId" placeholder="مثال: 5233">
             </div>
-            <button class="btn-primary" onclick="queryEmployee()">🔍 استعلام</button>
+            <button class="action-btn primary" style="width:100%;margin-top:12px;" onclick="queryEmployee()">🔍 استعلام</button>
             <span id="queryError" class="error-msg"></span>
         </div>
 
         <div id="queryResult" style="display:none;"></div>
     </div>
 
-    <!-- ============================================ -->
-    <!-- 🎉 SCREEN: THANKS                            -->
-    <!-- ============================================ -->
+    <!-- ============ THANKS ============ -->
     <div id="screen-thanks" class="screen">
         <div class="thanks-box">
             <div class="icon">✅</div>
             <h1>تم الإرسال بنجاح!</h1>
             <p>تم إرسال طلبك للمراجعة</p>
-            <p style="font-size: 14px; color: #9ca3af;" id="thanksRequestId"></p>
             <div class="btn-row">
-                <button class="home-btn query" style="padding: 14px 30px; font-size: 15px; min-width: auto;" onclick="goHome()">
-                    🏠 الرئيسية
-                </button>
-                <button class="home-btn new" style="padding: 14px 30px; font-size: 15px; min-width: auto;" onclick="resetForm(); showScreen('new');">
-                    📝 طلب جديد
-                </button>
+                <button class="home-btn query" style="padding:14px 30px;font-size:15px;min-width:auto;" onclick="goHome()">🏠 الرئيسية</button>
+                <button class="home-btn new" style="padding:14px 30px;font-size:15px;min-width:auto;" onclick="resetForm();showScreen('new');">📝 طلب جديد</button>
             </div>
         </div>
     </div>
@@ -494,24 +531,18 @@ table.leaves td { border: none; padding: 2px 4px; vertical-align: top; line-heig
 </div>
 
 <script>
-// ============================================================
-//  ⚙️ الإعدادات
-// ============================================================
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby1BBq2ipEbxmuJWXGWobaqUkx7ooqi_iC9uOuZPinNPM0DgvGNLGAHRZXmWVojv6II/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxxiEhXGWQCNNbYGXxM2TC2FtOcCUgXca4aYczOfFHE7FiuYBAyNFLVgZEQN5jUIZXX/exec';
 
 let currentEmployee = null;
 let signatureDataUrl = '';
 
-// ============================================================
-//  🖥️ التنقل بين الشاشات
-// ============================================================
+// ============ Navigation ============
 function showScreen(name) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    const target = document.getElementById('screen-' + name);
-    if (target) target.classList.add('active');
+    const t = document.getElementById('screen-' + name);
+    if (t) t.classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
-
 function goHome() {
     showScreen('home');
     resetForm();
@@ -519,174 +550,126 @@ function goHome() {
     document.getElementById('queryStaffId').value = '';
     document.getElementById('queryError').innerText = '';
 }
-
 function showAlert(msg, type) {
     const el = document.getElementById('alertBox');
     el.className = 'alert ' + (type || 'info');
     el.innerText = msg;
     el.style.display = 'block';
-    if (type !== 'error') {
-        setTimeout(() => { el.style.display = 'none'; }, 4000);
-    }
+    if (type !== 'error') setTimeout(() => el.style.display = 'none', 4000);
 }
-function hideAlert() {
-    document.getElementById('alertBox').style.display = 'none';
-}
+function hideAlert() { document.getElementById('alertBox').style.display = 'none'; }
 
-// ============================================================
-//  📅 قواعد التواريخ (26 من الشهر السابق)
-// ============================================================
+// ============ Min Date ============
 function getMinDate() {
     const today = new Date();
-    let minDate;
-    if (today.getDate() >= 26) {
-        minDate = new Date(today.getFullYear(), today.getMonth(), 26);
-    } else {
-        const firstOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-        const lastOfPrev = new Date(firstOfMonth);
-        lastOfPrev.setDate(0);
-        minDate = new Date(lastOfPrev.getFullYear(), lastOfPrev.getMonth(), 26);
-    }
-    return minDate;
+    if (today.getDate() >= 26) return new Date(today.getFullYear(), today.getMonth(), 26);
+    const first = new Date(today.getFullYear(), today.getMonth(), 1);
+    const last = new Date(first); last.setDate(0);
+    return new Date(last.getFullYear(), last.getMonth(), 26);
 }
-
 function toInputDate(d) {
-    return d.getFullYear() + '-' +
-           String(d.getMonth() + 1).padStart(2, '0') + '-' +
-           String(d.getDate()).padStart(2, '0');
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
 }
-
-function formatDateForSheet(dateStr) {
+function formatSheet(dateStr) {
     if (!dateStr) return '';
     const d = new Date(dateStr);
-    return String(d.getDate()).padStart(2, '0') + '-' +
-           String(d.getMonth() + 1).padStart(2, '0') + '-' +
-           d.getFullYear();
+    return String(d.getDate()).padStart(2,'0') + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + d.getFullYear();
 }
-
 function getDayName(dateStr) {
     if (!dateStr) return '';
     return new Date(dateStr).toLocaleDateString('en-US', { weekday: 'long' });
 }
 
-// ============================================================
-//  👤 جلب بيانات الموظف
-// ============================================================
+// ============ Fetch Employee ============
 function fetchEmployee() {
     const staffId = document.getElementById('staffIdInput').value.trim();
-    const empNameEl = document.getElementById('empNameDisplay');
-    const empTitleEl = document.getElementById('empTitleDisplay');
+    const nameEl = document.getElementById('empNameDisplay');
+    const titleEl = document.getElementById('empTitleDisplay');
+    const balEl = document.getElementById('empBalanceDisplay');
 
     if (!staffId) {
-        empNameEl.innerText = '-';
-        empTitleEl.innerText = '-';
+        nameEl.innerText = '-'; titleEl.innerText = '-'; balEl.innerText = '-';
         currentEmployee = null;
         return;
     }
+    nameEl.innerText = '⏳ جاري...'; titleEl.innerText = '⏳'; balEl.innerText = '⏳';
 
-    empNameEl.innerText = '⏳';
-    empTitleEl.innerText = '⏳';
-
-    jsonpRequest(SCRIPT_URL + '?action=getBalance&staffId=' + encodeURIComponent(staffId),
-        function(res) {
-            if (!res || !res.found) {
-                empNameEl.innerText = '❌ غير موجود';
-                empTitleEl.innerText = '❌';
-                currentEmployee = null;
-                showAlert('❌ كود الموظف غير موجود', 'error');
-                return;
-            }
-            currentEmployee = res;
-            empNameEl.innerText = res.name || '-';
-            empTitleEl.innerText = res.title || '-';
-            hideAlert();
-            showAlert('✅ ' + res.name + ' | الرصيد: ' + res.leaveBalance + ' يوم', 'success');
+    jsonp(SCRIPT_URL + '?action=getBalance&staffId=' + encodeURIComponent(staffId), function(res) {
+        if (!res || !res.found) {
+            nameEl.innerText = '❌ غير موجود'; titleEl.innerText = '❌'; balEl.innerText = '❌';
+            currentEmployee = null;
+            showAlert('❌ كود الموظف غير موجود', 'error');
+            return;
         }
-    );
+        currentEmployee = res;
+        nameEl.innerText = res.name || '-';
+        titleEl.innerText = res.title || '-';
+        balEl.innerText = (res.leaveBalance || 0) + ' يوم';
+        hideAlert();
+        showAlert('✅ ' + res.name + ' | الرصيد: ' + res.leaveBalance + ' يوم', 'success');
+    });
 }
 
-// ============================================================
-//  🔄 إعادة الحساب الكامل
-// ============================================================
-function recalculateAll() {
-    const from = document.getElementById('fromDate').value;
-    const to = document.getElementById('toDate').value;
+// ============ Recalculate All ============
+function recalcAll() {
+    const f = document.getElementById('fromDate').value;
+    const t = document.getElementById('toDate').value;
+    document.getElementById('fromDay').innerText = getDayName(f) || '--';
+    document.getElementById('toDay').innerText = getDayName(t) || '--';
 
-    // Day names
-    document.getElementById('fromDayName').innerText = getDayName(from) || '--';
-    document.getElementById('toDayName').innerText = getDayName(to) || '--';
-
-    // Total days
     let total = 0;
-    if (from && to) {
-        const f = new Date(from);
-        const t = new Date(to);
-        if (t >= f) {
-            total = Math.ceil((t - f) / 86400000) + 1;
-        }
+    if (f && t) {
+        const fd = new Date(f), td = new Date(t);
+        if (td >= fd) total = Math.ceil((td - fd) / 86400000) + 1;
     }
-    document.getElementById('totalDaysDisplay').innerText = total;
+    document.getElementById('totalDisplay').innerText = total;
 
-    // Return date (To + 1)
-    if (to) {
-        const r = new Date(to);
-        r.setDate(r.getDate() + 1);
-        document.getElementById('returnDateDisplay').innerText = formatDateForSheet(toInputDate(r));
+    if (t) {
+        const r = new Date(t); r.setDate(r.getDate() + 1);
+        document.getElementById('returnDate').innerText = formatSheet(toInputDate(r));
     } else {
-        document.getElementById('returnDateDisplay').innerText = '--';
+        document.getElementById('returnDate').innerText = '--';
     }
-
     updateTotals();
 }
 
-// ============================================================
-//  ➕ تحديث مجموع الأيام
-// ============================================================
 function updateTotals() {
-    const ids = ['annualDays','weekendDays','withoutPayDays','maternityDays',
-                 'sickDays','injuryDays','rrDays','compassionateDays','paternityDays'];
+    const ids = ['annual','weekend','withoutPay','sick','maternity','injury','rr','compassionate','paternity'];
     let sum = 0;
-    ids.forEach(id => {
-        sum += parseInt(document.getElementById(id).value) || 0;
-    });
-    document.getElementById('allocatedDaysDisplay').innerText = sum;
+    ids.forEach(id => sum += parseInt(document.getElementById(id).value) || 0);
+    document.getElementById('allocatedDisplay').innerText = sum;
 
-    const total = parseInt(document.getElementById('totalDaysDisplay').innerText) || 0;
-    const statusEl = document.getElementById('checkStatus');
-    if (total === 0) {
-        statusEl.innerHTML = '⚪';
-    } else if (sum === total) {
-        statusEl.innerHTML = '<span class="ok">✅ متطابق</span>';
-    } else {
-        statusEl.innerHTML = '<span class="bad">❌ ' + (sum > total ? 'زيادة ' : 'ناقص ') + Math.abs(total - sum) + '</span>';
-    }
+    const total = parseInt(document.getElementById('totalDisplay').innerText) || 0;
+    const st = document.getElementById('checkStatus');
+    if (total === 0) st.innerHTML = '⚪';
+    else if (sum === total) st.innerHTML = '<span class="ok">✅ متطابق</span>';
+    else st.innerHTML = '<span class="bad">❌ ' + (sum > total ? 'زيادة ' : 'ناقص ') + Math.abs(total - sum) + '</span>';
 }
 
-// ============================================================
-//  ✍️ التوقيع
-// ============================================================
+// ============ Signature ============
 document.addEventListener('DOMContentLoaded', function() {
-    const fileInput = document.getElementById('signatureFile');
-    if (!fileInput) return;
-    fileInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        if (!file.type.startsWith('image/')) { alert('اختر صورة'); return; }
-        if (file.size > 2 * 1024 * 1024) { alert('الصورة كبيرة (الحد 2MB)'); return; }
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-            signatureDataUrl = evt.target.result;
+    const fi = document.getElementById('signatureFile');
+    if (fi) fi.addEventListener('change', function(e) {
+        const f = e.target.files[0]; if (!f) return;
+        if (!f.type.startsWith('image/')) { alert('اختر صورة'); return; }
+        if (f.size > 2 * 1024 * 1024) { alert('الصورة كبيرة (2MB)'); return; }
+        const r = new FileReader();
+        r.onload = ev => {
+            signatureDataUrl = ev.target.result;
             document.getElementById('sigImg').src = signatureDataUrl;
             document.getElementById('sigPreview').style.display = 'block';
         };
-        reader.readAsDataURL(file);
+        r.readAsDataURL(f);
     });
 
-    // Set min date
-    const minDate = getMinDate();
-    const minStr = toInputDate(minDate);
+    const min = getMinDate(), minStr = toInputDate(min);
     document.getElementById('fromDate').min = minStr;
     document.getElementById('toDate').min = minStr;
+
+    const today = new Date();
+    document.getElementById('todayDisplay').innerText =
+        String(today.getDate()).padStart(2,'0') + '-' +
+        String(today.getMonth()+1).padStart(2,'0') + '-' + today.getFullYear();
 });
 
 function clearSignature() {
@@ -696,77 +679,53 @@ function clearSignature() {
     document.getElementById('sigPreview').style.display = 'none';
 }
 
-// ============================================================
-//  📤 إرسال النموذج
-// ============================================================
+// ============ Submit ============
 async function submitForm() {
     const staffId = document.getElementById('staffIdInput').value.trim();
-    const from = document.getElementById('fromDate').value;
-    const to = document.getElementById('toDate').value;
+    const f = document.getElementById('fromDate').value;
+    const t = document.getElementById('toDate').value;
 
-    // Validations
     if (!staffId) { showAlert('⚠️ أدخل كود الموظف', 'error'); return; }
     if (!currentEmployee) { showAlert('⚠️ كود الموظف غير صحيح', 'error'); return; }
-    if (!from || !to) { showAlert('⚠️ أدخل التواريخ', 'error'); return; }
+    if (!f || !t) { showAlert('⚠️ أدخل التواريخ', 'error'); return; }
 
-    const fromD = new Date(from);
-    const toD = new Date(to);
-    const minD = getMinDate();
-    if (fromD < minD) { showAlert('⚠️ تاريخ البداية قبل 26 من الشهر السابق', 'error'); return; }
-    if (toD < minD) { showAlert('⚠️ تاريخ النهاية قبل 26 من الشهر السابق', 'error'); return; }
-    if (toD < fromD) { showAlert('⚠️ تاريخ البداية بعد النهاية', 'error'); return; }
+    const fd = new Date(f), td = new Date(t), md = getMinDate();
+    if (fd < md) { showAlert('⚠️ تاريخ البداية قبل 26 من الشهر السابق', 'error'); return; }
+    if (td < md) { showAlert('⚠️ تاريخ النهاية قبل 26 من الشهر السابق', 'error'); return; }
+    if (td < fd) { showAlert('⚠️ تاريخ البداية بعد النهاية', 'error'); return; }
 
-    const totalDays = Math.ceil((toD - fromD) / 86400000) + 1;
+    const totalDays = Math.ceil((td - fd) / 86400000) + 1;
 
     const types = {
-        annual: parseInt(document.getElementById('annualDays').value) || 0,
-        weekend: parseInt(document.getElementById('weekendDays').value) || 0,
-        withoutPay: parseInt(document.getElementById('withoutPayDays').value) || 0,
-        maternity: parseInt(document.getElementById('maternityDays').value) || 0,
-        sick: parseInt(document.getElementById('sickDays').value) || 0,
-        injury: parseInt(document.getElementById('injuryDays').value) || 0,
-        rr: parseInt(document.getElementById('rrDays').value) || 0,
-        compassionate: parseInt(document.getElementById('compassionateDays').value) || 0,
-        paternity: parseInt(document.getElementById('paternityDays').value) || 0
+        annual: parseInt(document.getElementById('annual').value) || 0,
+        weekend: parseInt(document.getElementById('weekend').value) || 0,
+        withoutPay: parseInt(document.getElementById('withoutPay').value) || 0,
+        sick: parseInt(document.getElementById('sick').value) || 0,
+        maternity: parseInt(document.getElementById('maternity').value) || 0,
+        injury: parseInt(document.getElementById('injury').value) || 0,
+        rr: parseInt(document.getElementById('rr').value) || 0,
+        compassionate: parseInt(document.getElementById('compassionate').value) || 0,
+        paternity: parseInt(document.getElementById('paternity').value) || 0
     };
-    const sumDays = Object.values(types).reduce((a, b) => a + b, 0);
+    const sum = Object.values(types).reduce((a, b) => a + b, 0);
 
-    if (sumDays !== totalDays) {
-        showAlert('⚠️ مجموع الأيام (' + sumDays + ') ≠ الإجمالي (' + totalDays + ')', 'error');
-        return;
-    }
+    if (sum !== totalDays) { showAlert('⚠️ مجموع الأيام (' + sum + ') ≠ الإجمالي (' + totalDays + ')', 'error'); return; }
     if (!signatureDataUrl) { showAlert('⚠️ ارفع صورة التوقيع', 'error'); return; }
 
-    // Check duplicate
     const btn = document.getElementById('btnSubmit');
-    btn.disabled = true;
-    btn.innerText = '⏳ جاري التحقق...';
+    const statusEl = document.getElementById('statusMsg');
+    btn.disabled = true; statusEl.innerText = '⏳ جاري التحقق من التكرار...';
 
     try {
-        const dupCheck = await checkDuplicate(staffId, formatDateForSheet(from), formatDateForSheet(to));
-        if (dupCheck.error) {
-            showAlert('⚠️ فشل الاتصال — حاول تاني', 'error');
-            btn.disabled = false; btn.innerText = '📤 إرسال للمراجعة';
-            return;
-        }
-        if (dupCheck.exists) {
-            showAlert('🚫 هذا الطلب تم تقديمه سابقاً — رقم الطلب: ' + dupCheck.requestId, 'error');
-            btn.disabled = false; btn.innerText = '📤 إرسال للمراجعة';
-            return;
-        }
+        const dup = await checkDup(staffId, formatSheet(f), formatSheet(t));
+        if (dup.error) { showAlert('⚠️ فشل الاتصال', 'error'); btn.disabled = false; statusEl.innerText = ''; return; }
+        if (dup.exists) { showAlert('🚫 هذا الطلب تم تقديمه سابقاً — ' + dup.requestId, 'error'); btn.disabled = false; statusEl.innerText = ''; return; }
 
-        // Build payload
-        const returnDate = new Date(toD); returnDate.setDate(returnDate.getDate() + 1);
+        const returnDate = new Date(td); returnDate.setDate(returnDate.getDate() + 1);
 
-        const typeLabels = {
-            annual:"Annual", weekend:"Weekend", withoutPay:"Without Pay",
-            maternity:"Maternity", sick:"Sick", injury:"Injury",
-            rr:"R&R", compassionate:"Compassionate", paternity:"Paternity"
-        };
+        const labels = { annual:'Annual', weekend:'Weekend', withoutPay:'Without Pay', sick:'Sick', maternity:'Maternity', injury:'Injury', rr:'R&R', compassionate:'Compassionate', paternity:'Paternity' };
         const breakdown = [];
-        Object.keys(types).forEach(k => {
-            if (types[k] > 0) breakdown.push(typeLabels[k] + ": " + types[k]);
-        });
+        Object.keys(types).forEach(k => { if (types[k] > 0) breakdown.push(labels[k] + ': ' + types[k]); });
 
         const payload = {
             action: 'employeeSubmit',
@@ -777,184 +736,144 @@ async function submitForm() {
             managerEmail: currentEmployee.managerEmail,
             hrEmail: currentEmployee.hrEmail,
             project: currentEmployee.project || '',
-            fromDate: formatDateForSheet(from),
-            toDate: formatDateForSheet(to),
-            returnDate: formatDateForSheet(toInputDate(returnDate)),
+            fromDate: formatSheet(f),
+            toDate: formatSheet(t),
+            returnDate: formatSheet(toInputDate(returnDate)),
             totalDays: totalDays,
             types: types,
             reason: breakdown.join(' | '),
             signature: signatureDataUrl
         };
 
-        btn.innerText = '⏳ جاري الإرسال...';
-
+        statusEl.innerText = '⏳ جاري الإرسال...';
         await fetch(SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors',
+            method: 'POST', mode: 'no-cors',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify(payload)
         });
 
-        document.getElementById('thanksRequestId').innerText = 'Staff: ' + staffId;
-        showScreen('thanks');
         resetForm();
-
+        showScreen('thanks');
     } catch (err) {
-        showAlert('❌ فشل الإرسال: ' + err.message, 'error');
+        showAlert('❌ فشل: ' + err.message, 'error');
     } finally {
-        btn.disabled = false;
-        btn.innerText = '📤 إرسال للمراجعة';
+        btn.disabled = false; statusEl.innerText = '';
     }
 }
 
-// ============================================================
-//  🔍 فحص التكرار
-// ============================================================
-function checkDuplicate(staffId, fromDate, toDate) {
-    return new Promise(function(resolve) {
-        const url = SCRIPT_URL +
-            '?action=checkDuplicate&staffId=' + encodeURIComponent(staffId) +
-            '&fromDate=' + encodeURIComponent(fromDate) +
-            '&toDate=' + encodeURIComponent(toDate);
-        jsonpRequest(url, function(res) {
-            if (res === null) resolve({ error: true });
-            else resolve(res);
-        });
+function checkDup(staffId, fromDate, toDate) {
+    return new Promise(resolve => {
+        const url = SCRIPT_URL + '?action=checkDuplicate&staffId=' + encodeURIComponent(staffId) +
+            '&fromDate=' + encodeURIComponent(fromDate) + '&toDate=' + encodeURIComponent(toDate);
+        jsonp(url, res => resolve(res === null ? { error: true } : res));
     });
 }
 
-// ============================================================
-//  🔄 إعادة تعيين
-// ============================================================
+// ============ Reset ============
 function resetForm() {
     document.getElementById('staffIdInput').value = '';
     document.getElementById('empNameDisplay').innerText = '-';
     document.getElementById('empTitleDisplay').innerText = '-';
+    document.getElementById('empBalanceDisplay').innerText = '-';
     document.getElementById('fromDate').value = '';
     document.getElementById('toDate').value = '';
-    document.getElementById('fromDayName').innerText = '--';
-    document.getElementById('toDayName').innerText = '--';
-    document.getElementById('returnDateDisplay').innerText = '--';
-    document.getElementById('totalDaysDisplay').innerText = '0';
-    document.getElementById('allocatedDaysDisplay').innerText = '0';
+    document.getElementById('fromDay').innerText = '--';
+    document.getElementById('toDay').innerText = '--';
+    document.getElementById('returnDate').innerText = '--';
+    document.getElementById('totalDisplay').innerText = '0';
+    document.getElementById('allocatedDisplay').innerText = '0';
     document.getElementById('checkStatus').innerHTML = '⚪';
-    ['annualDays','weekendDays','withoutPayDays','maternityDays',
-     'sickDays','injuryDays','rrDays','compassionateDays','paternityDays']
+    ['annual','weekend','withoutPay','sick','maternity','injury','rr','compassionate','paternity']
         .forEach(id => document.getElementById(id).value = 0);
     clearSignature();
     currentEmployee = null;
     hideAlert();
 }
 
-// ============================================================
-//  🔍 JSONP Helper
-// ============================================================
-function jsonpRequest(url, callback, timeoutMs) {
-    timeoutMs = timeoutMs || 15000;
-    const cbName = 'jsonpCb_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
+// ============ JSONP ============
+function jsonp(url, cb, timeout = 15000) {
+    const name = 'jsonpCb_' + Date.now() + '_' + Math.floor(Math.random()*1000);
     const sep = url.indexOf('?') === -1 ? '?' : '&';
-    const timeoutId = setTimeout(function() { cleanup(); callback(null); }, timeoutMs);
-
+    const tid = setTimeout(() => { cleanup(); cb(null); }, timeout);
     function cleanup() {
-        const s = document.getElementById(cbName);
+        const s = document.getElementById(name);
         if (s) s.remove();
-        try { delete window[cbName]; } catch(e) {}
-        clearTimeout(timeoutId);
+        try { delete window[name]; } catch(e) {}
+        clearTimeout(tid);
     }
-    window[cbName] = function(res) { cleanup(); callback(res); };
-
-    const script = document.createElement('script');
-    script.id = cbName;
-    script.src = url + sep + 'callback=' + cbName;
-    script.onerror = function() { cleanup(); callback(null); };
-    document.body.appendChild(script);
+    window[name] = res => { cleanup(); cb(res); };
+    const s = document.createElement('script');
+    s.id = name;
+    s.src = url + sep + 'callback=' + name;
+    s.onerror = () => { cleanup(); cb(null); };
+    document.body.appendChild(s);
 }
 
-// ============================================================
-//  🔍 الاستعلام
-// ============================================================
+// ============ Query ============
 function queryEmployee() {
     const staffId = document.getElementById('queryStaffId').value.trim();
-    const errorEl = document.getElementById('queryError');
-    const resultEl = document.getElementById('queryResult');
+    const errEl = document.getElementById('queryError');
+    const resEl = document.getElementById('queryResult');
 
-    if (!staffId) { errorEl.innerText = '⚠️ أدخل كود الموظف'; return; }
+    if (!staffId) { errEl.innerText = '⚠️ أدخل كود الموظف'; return; }
+    errEl.innerText = '';
+    resEl.style.display = 'none';
+    resEl.innerHTML = '<div style="text-align:center;padding:30px;color:#6b7280;">⏳ جاري التحميل...</div>';
+    resEl.style.display = 'block';
 
-    errorEl.innerText = '';
-    resultEl.style.display = 'none';
-    resultEl.innerHTML = '<div style="text-align:center;padding:30px;color:#6b7280;">⏳ جاري التحميل...</div>';
-    resultEl.style.display = 'block';
-
-    jsonpRequest(SCRIPT_URL + '?action=getEmployeeLeaves&staffId=' + encodeURIComponent(staffId),
-        function(res) {
-            if (!res || !res.found) {
-                resultEl.innerHTML = '<div style="background:white;border-radius:12px;padding:40px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.08);">' +
-                    '<div style="font-size:80px;margin-bottom:15px;">❌</div>' +
-                    '<h2 style="color:#ef4444;margin:0 0 10px;font-size:22px;">كود الموظف غير موجود</h2>' +
-                    '<p style="color:#6b7280;margin:0;">تأكد من الكود وحاول تاني</p></div>';
-                return;
-            }
-
-            const requests = res.requests || [];
-            const today = new Date();
-            const monthNames = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
-            const monthName = monthNames[today.getMonth()];
-            const year = today.getFullYear();
-
-            let tableHTML = '';
-            if (requests.length === 0) {
-                tableHTML = '<div class="empty-state"><div class="icon">📭</div><p style="margin:0;font-size:15px;">مفيش إجازات في شهر ' + monthName + ' ' + year + '</p></div>';
-            } else {
-                tableHTML = '<div style="overflow-x:auto;"><table class="leaves-table"><thead><tr>' +
-                    '<th>من</th><th>إلى</th><th>الأيام</th><th>الحالة</th></tr></thead><tbody>';
-                requests.forEach((r, idx) => {
-                    let statusColor, statusText, statusIcon;
-                    if (r.status === 'Approved' || r.status === 'Approved (LWP)') {
-                        statusColor = '#10b981'; statusText = 'تمت الموافقة'; statusIcon = '✅';
-                    } else if (r.status === 'Reject' || r.status === 'Rejected') {
-                        statusColor = '#ef4444'; statusText = 'مرفوض'; statusIcon = '❌';
-                    } else if (r.status === 'PendingHR') {
-                        statusColor = '#2563eb'; statusText = 'تحت مراجعة HR'; statusIcon = '🔵';
-                    } else {
-                        statusColor = '#f59e0b'; statusText = 'تحت المراجعة'; statusIcon = '⏳';
-                    }
-                    tableHTML += '<tr style="background:' + (idx % 2 === 0 ? '#fff' : '#f9fafb') + ';">' +
-                        '<td>' + parseDateToStr(r.fromDate) + '</td>' +
-                        '<td>' + parseDateToStr(r.toDate) + '</td>' +
-                        '<td>' + r.totalDays + '</td>' +
-                        '<td style="color:' + statusColor + ';font-weight:bold;">' + statusIcon + ' ' + statusText + '</td>' +
-                        '</tr>';
-                });
-                tableHTML += '</tbody></table></div>';
-            }
-
-            resultEl.innerHTML =
-                '<div class="query-balance-card"><div class="query-balance-inner">' +
-                '<div><p class="query-balance-label">💰 الرصيد المتاح</p><p class="query-balance-num">' + res.balance + '</p><p class="query-balance-sub">يوم</p></div>' +
-                '<div class="query-balance-divider"></div>' +
-                '<div><p class="query-balance-label">📋 الاستحقاق السنوي</p><p class="query-balance-num">' + res.entitlement + '</p><p class="query-balance-sub">يوم</p></div>' +
-                '</div></div>' +
-                '<div class="leaves-table-wrap"><h2>📊 إجازات شهر ' + monthName + ' ' + year + '</h2>' +
-                '<p class="count">إجمالي: ' + requests.length + ' طلب</p>' + tableHTML + '</div>';
+    jsonp(SCRIPT_URL + '?action=getEmployeeLeaves&staffId=' + encodeURIComponent(staffId), function(res) {
+        if (!res || !res.found) {
+            resEl.innerHTML = '<div style="background:white;border-radius:12px;padding:40px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.08);">' +
+                '<div style="font-size:80px;margin-bottom:15px;">❌</div>' +
+                '<h2 style="color:#ef4444;margin:0 0 10px;font-size:22px;">كود الموظف غير موجود</h2></div>';
+            return;
         }
-    );
+        const requests = res.requests || [];
+        const months = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+        const today = new Date();
+        const mName = months[today.getMonth()], year = today.getFullYear();
+
+        let tableHTML = '';
+        if (requests.length === 0) {
+            tableHTML = '<div class="empty-state"><div class="icon">📭</div><p>مفيش إجازات في شهر ' + mName + ' ' + year + '</p></div>';
+        } else {
+            tableHTML = '<div style="overflow-x:auto;"><table class="leaves-table"><thead><tr><th>من</th><th>إلى</th><th>الأيام</th><th>الحالة</th></tr></thead><tbody>';
+            requests.forEach((r, i) => {
+                let c, txt, ic;
+                if (r.status === 'Approved' || r.status === 'Approved (LWP)') { c = '#10b981'; txt = 'موافق'; ic = '✅'; }
+                else if (r.status === 'Reject' || r.status === 'Rejected') { c = '#ef4444'; txt = 'مرفوض'; ic = '❌'; }
+                else if (r.status === 'PendingHR') { c = '#2563eb'; txt = 'HR Manager'; ic = '🔵'; }
+                else { c = '#f59e0b'; txt = 'تحت المراجعة'; ic = '⏳'; }
+                tableHTML += '<tr style="background:' + (i%2===0?'#fff':'#f9fafb') + ';"><td>' + parseDate(r.fromDate) + '</td><td>' + parseDate(r.toDate) + '</td><td>' + r.totalDays + '</td><td style="color:' + c + ';font-weight:bold;">' + ic + ' ' + txt + '</td></tr>';
+            });
+            tableHTML += '</tbody></table></div>';
+        }
+
+        resEl.innerHTML =
+            '<div class="query-balance-card"><div class="query-balance-inner">' +
+            '<div><p class="query-balance-label">💰 الرصيد</p><p class="query-balance-num">' + res.balance + '</p><p class="query-balance-sub">يوم</p></div>' +
+            '<div class="query-balance-divider"></div>' +
+            '<div><p class="query-balance-label">📋 الاستحقاق</p><p class="query-balance-num">' + res.entitlement + '</p><p class="query-balance-sub">يوم</p></div>' +
+            '</div></div>' +
+            '<div class="leaves-table-wrap"><h2>📊 إجازات شهر ' + mName + ' ' + year + '</h2>' +
+            '<p class="count">إجمالي: ' + requests.length + ' طلب</p>' + tableHTML + '</div>';
+    });
 }
 
-function parseDateToStr(dateVal) {
-    if (!dateVal) return '-';
-    if (typeof dateVal === 'string') {
-        const parts = dateVal.split('-');
-        if (parts.length === 3 && parts[0].length <= 2) return dateVal;
+function parseDate(v) {
+    if (!v) return '-';
+    if (typeof v === 'string') {
+        const p = v.split('-');
+        if (p.length === 3 && p[0].length <= 2) return v;
     }
     try {
-        const d = new Date(dateVal);
-        if (isNaN(d.getTime())) return String(dateVal);
-        return String(d.getDate()).padStart(2,'0') + '-' +
-               String(d.getMonth()+1).padStart(2,'0') + '-' + d.getFullYear();
-    } catch (e) { return String(dateVal); }
+        const d = new Date(v);
+        if (isNaN(d.getTime())) return String(v);
+        return String(d.getDate()).padStart(2,'0') + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + d.getFullYear();
+    } catch (e) { return String(v); }
 }
 
-window.addEventListener('load', function() { showScreen('home'); });
+window.addEventListener('load', () => showScreen('home'));
 </script>
 </body>
 </html>
