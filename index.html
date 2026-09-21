@@ -917,21 +917,52 @@
         setMinDate();
     }
 
-    window.addEventListener('load', function() {
-        try {
-            if (typeof google !== 'undefined' && google.script && google.script.url) {
-                google.script.url.getLocation(function(location) {
-                    const action = (location.parameter && location.parameter.action) || '';
-                    initApp(action);
-                });
-            } else {
-                const params = new URLSearchParams(window.location.search);
-                initApp(params.get('action') || '');
-            }
-        } catch (e) {
-            const params = new URLSearchParams(window.location.search);
-            initApp(params.get('action') || '');
+    // ============================================================
+//  🚀 بدء التطبيق
+// ============================================================
+function bootApp() {
+    // جرّب كل الطرق لقراءة الـ action
+    let action = '';
+
+    // الطريقة 1: من Google Script URL
+    try {
+        if (typeof google !== 'undefined' && google.script && google.script.url) {
+            google.script.url.getLocation(function(location) {
+                action = (location.parameter && location.parameter.action) || '';
+                initApp(action);
+            });
+            return;
         }
+    } catch (e) {}
+
+    // الطريقة 2: من الـ URL العادي
+    try {
+        const params = new URLSearchParams(window.location.search);
+        action = params.get('action') || '';
+    } catch (e) {}
+
+    // الطريقة 3: من الـ hash
+    if (!action) {
+        try {
+            const hash = window.location.hash || '';
+            const m = hash.match(/action=([^&]+)/);
+            if (m) action = decodeURIComponent(m[1]);
+        } catch (e) {}
+    }
+
+    // الطريقة 4: من parent URL
+    if (!action) {
+        try {
+            const parentUrl = window.parent && window.parent.location ? window.parent.location.href : '';
+            const m = parentUrl.match(/action=([^&]+)/);
+            if (m) action = decodeURIComponent(m[1]);
+        } catch (e) {}
+    }
+
+    initApp(action);
+}
+
+window.addEventListener('load', bootApp);
     });
 
     // ============================================================
