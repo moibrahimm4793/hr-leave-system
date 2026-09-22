@@ -360,7 +360,6 @@ body {
 <body>
 <div class="container">
 
-    <!-- HOME -->
     <div id="screen-home" class="screen active">
         <div class="home-screen">
             <div class="home-logo">
@@ -382,7 +381,6 @@ body {
         </div>
     </div>
 
-    <!-- NEW REQUEST -->
     <div id="screen-new" class="screen">
         <button class="btn-back" onclick="goHome()">🏠 الرئيسية</button>
 
@@ -482,7 +480,6 @@ body {
         <div class="status-msg" id="statusMsg"></div>
     </div>
 
-    <!-- QUERY -->
     <div id="screen-query" class="screen">
         <button class="btn-back" onclick="goHome()">🏠 الرئيسية</button>
 
@@ -499,7 +496,6 @@ body {
         <div id="queryResult" style="display:none;"></div>
     </div>
 
-    <!-- THANKS -->
     <div id="screen-thanks" class="screen">
         <div class="thanks-box">
             <div class="icon">✅</div>
@@ -515,7 +511,7 @@ body {
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby6vkBif5jKq3i7N_KVl3qwAX4EODpq2kIo8Y4v2FfdSyygLpDMIyxCyr98hfuSdn78/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxJab7ae4hIlPpvSrnJOpBG-qbY3wsLKMvdpcaN-y7_ud9MpuJYAkO_PkCw5VE7QnqE/exec';
 
 let currentEmployee = null;
 let signatureDataUrl = '';
@@ -880,11 +876,11 @@ function queryEmployee() {
                     let c, txt, ic;
                     if (r.status === 'Approved' || r.status === 'Approved (LWP)') {
                         c = '#10b981'; txt = 'موافق'; ic = '✅';
-                   } else if (r.status === 'Reject' || r.status === 'Rejected') {
+                    } else if (r.status === 'Reject' || r.status === 'Rejected') {
                         c = '#ef4444'; txt = 'مرفوض'; ic = '❌';
                     } else if (r.status === 'Cancelled' || r.status === 'Canceled') {
                         c = '#f59e0b'; txt = 'ملغي'; ic = '🚫';
-                    } else if (r.status === 'PendingHR') {                        
+                    } else if (r.status === 'PendingHR') {
                         c = '#2563eb'; txt = 'HR Manager'; ic = '🔵';
                     } else {
                         c = '#f59e0b'; txt = 'تحت المراجعة'; ic = '⏳';
