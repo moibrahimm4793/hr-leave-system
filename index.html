@@ -543,7 +543,7 @@ body {
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxqevgQBjRmsEQimgbtv2n4GH9JFaKL4vdPsfvWI781r-fA88PNpxE59_Yg356cNQ/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw80F6DkJNbFXqCQmt_0mLpIOInUxtI79b50oGdJA7aDVhrDEkVQIpYDAS64AyMZtRe/exec';
 
 let currentEmployee = null;
 let signatureDataUrl = '';
@@ -586,8 +586,8 @@ function toInputDate(d) {
            String(d.getMonth() + 1).padStart(2, '0') + '-' +
            String(d.getDate()).padStart(2, '0');
 }
+// ⚠️ نسيب ISO زي ما هو (Y-m-d) — عشان Script يستقبلها صح
 function formatSheet(dateStr) {
-    // ISO format (YYYY-MM-DD) — unambiguous في كل الـ Locales
     if (!dateStr) return '';
     return dateStr;
 }
@@ -649,7 +649,12 @@ function recalcAll() {
 
     if (t) {
         const r = new Date(t); r.setDate(r.getDate() + 1);
-        document.getElementById('returnDate').innerText = formatSheet(toInputDate(r));
+        // عرض التاريخ كـ DD-MMM-YYYY
+        const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        document.getElementById('returnDate').innerText =
+            String(r.getDate()).padStart(2,'0') + '-' +
+            months[r.getMonth()] + '-' +
+            r.getFullYear();
     } else {
         document.getElementById('returnDate').innerText = '--';
     }
@@ -693,9 +698,10 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('toDate').min = minStr;
 
     const today = new Date();
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     document.getElementById('todayDisplay').innerText =
-        String(today.getDate()).padStart(2, '0') + '-' +
-        String(today.getMonth() + 1).padStart(2, '0') + '-' +
+        String(today.getDate()).padStart(2,'0') + '-' +
+        months[today.getMonth()] + '-' +
         today.getFullYear();
 });
 
@@ -762,7 +768,9 @@ async function submitForm() {
             return;
         }
 
+        // Return = To + 1
         const returnDate = new Date(td); returnDate.setDate(returnDate.getDate() + 1);
+        const returnIso = toInputDate(returnDate);
 
         const labels = {
             annual: 'Annual', weekend: 'Weekend', withoutPay: 'Without Pay',
@@ -785,7 +793,7 @@ async function submitForm() {
             project: currentEmployee.project || '',
             fromDate: formatSheet(f),
             toDate: formatSheet(t),
-            returnDate: formatSheet(toInputDate(returnDate)),
+            returnDate: returnIso,
             totalDays: totalDays,
             types: types,
             reason: breakdown.join(' | '),
@@ -948,19 +956,7 @@ function queryEmployee() {
 
 function parseDate(v) {
     if (!v) return '-';
-    if (typeof v === 'string') {
-        const p = v.split('-');
-        if (p.length === 3 && p[0].length <= 2) return v;
-    }
-    try {
-        const d = new Date(v);
-        if (isNaN(d.getTime())) return String(v);
-        return String(d.getDate()).padStart(2, '0') + '-' +
-               String(d.getMonth() + 1).padStart(2, '0') + '-' +
-               d.getFullYear();
-    } catch (e) {
-        return String(v);
-    }
+    return String(v);
 }
 
 // ============ Init ============
