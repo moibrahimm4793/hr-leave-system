@@ -511,7 +511,7 @@ body {
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxJab7ae4hIlPpvSrnJOpBG-qbY3wsLKMvdpcaN-y7_ud9MpuJYAkO_PkCw5VE7QnqE/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxoBcMjEa5e59Cbbdc0tbHZLAubsZW4TG01zFMsb5oQ2yjl0BnAzj8rA9iY8-oq_Q/exec';
 
 let currentEmployee = null;
 let signatureDataUrl = '';
@@ -914,9 +914,22 @@ function queryEmployee() {
 
 function parseDate(v) {
     if (!v) return '-';
-    return String(v);
+    var s = String(v);
+    // لو ISO format (فيه T و Z) → حوّلها
+    if (s.indexOf('T') !== -1) {
+        try {
+            var d = new Date(s);
+            if (!isNaN(d.getTime())) {
+                var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+                return String(d.getUTCDate()).padStart(2,'0') + '-' +
+                       months[d.getUTCMonth()] + '-' +
+                       d.getUTCFullYear();
+            }
+        } catch(e) {}
+    }
+    // لو DD-MMM-YYYY أو غيرها → سيبها زي ما هي
+    return s;
 }
-
 window.addEventListener('load', () => showScreen('home'));
 </script>
 </body>
