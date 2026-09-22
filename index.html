@@ -515,7 +515,7 @@ body {
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwYNv2FBt5qDOICYr4l-TMOml2OyzXA3nqSBn5YEhq0UATG5y_6ANTna2SfKK9wqMnW/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzR1vh3CdGvnrwSuCT3CHJaorfQxiVRx67zpLZaZsNEsr6Gt0K_C-UfHedNpaXsXWGm/exec';
 
 let currentEmployee = null;
 let signatureDataUrl = '';
@@ -880,9 +880,11 @@ function queryEmployee() {
                     let c, txt, ic;
                     if (r.status === 'Approved' || r.status === 'Approved (LWP)') {
                         c = '#10b981'; txt = 'موافق'; ic = '✅';
-                    } else if (r.status === 'Reject' || r.status === 'Rejected') {
+                   } else if (r.status === 'Reject' || r.status === 'Rejected') {
                         c = '#ef4444'; txt = 'مرفوض'; ic = '❌';
-                    } else if (r.status === 'PendingHR') {
+                    } else if (r.status === 'Cancelled' || r.status === 'Canceled') {
+                        c = '#f59e0b'; txt = 'ملغي'; ic = '🚫';
+                    } else if (r.status === 'PendingHR') {                        
                         c = '#2563eb'; txt = 'HR Manager'; ic = '🔵';
                     } else {
                         c = '#f59e0b'; txt = 'تحت المراجعة'; ic = '⏳';
