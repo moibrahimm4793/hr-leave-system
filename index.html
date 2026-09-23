@@ -223,6 +223,110 @@ body {
     font-family: inherit;
 }
 
+/* ✅ قسم المرفقات */
+.attach-section {
+    background: #fef2f2;
+    border: 2px solid #dc2626;
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+.attach-section.tests {
+    background: #fef3c7;
+    border-color: #f59e0b;
+}
+.attach-section h4 {
+    margin: 0 0 6px;
+    font-size: 14px;
+    color: #dc2626;
+}
+.attach-section.tests h4 {
+    color: #d97706;
+}
+.attach-section .hint {
+    font-size: 11px;
+    color: #6b7280;
+    margin: 0 0 12px;
+}
+.attach-row {
+    background: white;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.attach-row .num {
+    font-weight: bold;
+    font-size: 13px;
+    color: #374151;
+    min-width: 25px;
+}
+.attach-row .badge {
+    font-size: 10px;
+    font-weight: bold;
+    padding: 2px 8px;
+    border-radius: 10px;
+    white-space: nowrap;
+}
+.attach-row .badge.required {
+    background: #fee2e2;
+    color: #dc2626;
+}
+.attach-row .badge.optional {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+.attach-row input[type="file"] {
+    flex: 1;
+    min-width: 180px;
+    padding: 6px;
+    border: 1.5px dashed #d1d5db;
+    border-radius: 6px;
+    font-size: 12px;
+    background: #f9fafb;
+    font-family: inherit;
+    cursor: pointer;
+}
+.attach-row .preview {
+    display: none;
+    width: 100%;
+    margin-top: 8px;
+    padding: 8px;
+    background: #f0fdf4;
+    border: 1px solid #10b981;
+    border-radius: 6px;
+    text-align: center;
+}
+.attach-row .preview img {
+    max-height: 60px;
+    max-width: 100%;
+    border-radius: 4px;
+    display: block;
+    margin: 0 auto 6px;
+}
+.attach-row .preview .info {
+    display: block;
+    font-size: 11px;
+    color: #10b981;
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+.attach-row .btn-clear {
+    background: #dc2626;
+    color: white;
+    border: none;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: pointer;
+    font-family: inherit;
+}
+
 .actions {
     display: flex; gap: 10px; margin-top: 15px;
     flex-wrap: wrap; justify-content: center;
@@ -354,6 +458,7 @@ body {
     .action-btn { min-width: 100%; padding: 12px 20px; }
     .query-balance-inner { flex-direction: column; gap: 15px; }
     .query-balance-divider { display: none; }
+    .attach-row input[type="file"] { min-width: 100%; }
 }
 </style>
 </head>
@@ -377,7 +482,7 @@ body {
         <span class="icon">🔍</span>
         <span>الاستعلام عن الرصيد</span>
     </button>
-    <a class="home-btn" style="background:linear-gradient(135deg,#10b981,#059669);text-decoration:none;" href="https://script.google.com/macros/s/AKfycbwwFqG_yDeJ786CbLZS1FH6zKlgbPtQJgzQPvp04a9ZONrPELsul5ILy2mCNYq9nT0D/exec?action=hrsitelog">
+    <a class="home-btn" style="background:linear-gradient(135deg,#10b981,#059669);text-decoration:none;" href="https://script.google.com/macros/s/AKfycbxRkSpfOcbbwoW-RkMoAGWh9MXVoP3M-0UnQUkQ0sHZlMh9v8Ouxh7PTYg6_rzykue5/exec?action=hrsitelog">
         <span class="icon">📋</span>
         <span>سجل المشروع</span>
     </a>
@@ -465,6 +570,119 @@ body {
             </div>
         </div>
 
+        <!-- ✅ قسم المرفقات الطبية (يظهر فقط لما Sick > 0) -->
+        <div class="edit-card" id="attachmentSection" style="display:none;">
+            <h3>📎 المرفقات الطبية (مطلوبة للإجازة المرضية)</h3>
+
+            <!-- ✅ القسم 1: التوصية الطبية لدكتور الموقع -->
+            <div class="attach-section">
+                <h4>🏥 التوصية الطبية لدكتور الموقع <span style="color:#ef4444;">*</span></h4>
+                <p class="hint">ارفع صورة واحدة على الأقل (الحد الأقصى 3 صور)</p>
+
+                <!-- خانة 1 (إجبارية) -->
+                <div class="attach-row">
+                    <span class="num">1.</span>
+                    <span class="badge required">إجباري</span>
+                    <input type="file" id="medRec_0" accept="image/*,application/pdf">
+                    <div class="preview" id="medRecPreview_0">
+                        <img id="medRecImg_0" src="" alt="preview">
+                        <span class="info" id="medRecInfo_0"></span>
+                        <button type="button" class="btn-clear" onclick="clearAttachment('medicalRec', 0)">🗑️ مسح</button>
+                    </div>
+                </div>
+
+                <!-- خانة 2 -->
+                <div class="attach-row">
+                    <span class="num">2.</span>
+                    <span class="badge optional">اختياري</span>
+                    <input type="file" id="medRec_1" accept="image/*,application/pdf">
+                    <div class="preview" id="medRecPreview_1">
+                        <img id="medRecImg_1" src="" alt="preview">
+                        <span class="info" id="medRecInfo_1"></span>
+                        <button type="button" class="btn-clear" onclick="clearAttachment('medicalRec', 1)">🗑️ مسح</button>
+                    </div>
+                </div>
+
+                <!-- خانة 3 -->
+                <div class="attach-row">
+                    <span class="num">3.</span>
+                    <span class="badge optional">اختياري</span>
+                    <input type="file" id="medRec_2" accept="image/*,application/pdf">
+                    <div class="preview" id="medRecPreview_2">
+                        <img id="medRecImg_2" src="" alt="preview">
+                        <span class="info" id="medRecInfo_2"></span>
+                        <button type="button" class="btn-clear" onclick="clearAttachment('medicalRec', 2)">🗑️ مسح</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ✅ القسم 2: الفحوصات الطبية الخارجية -->
+            <div class="attach-section tests">
+                <h4>🔬 الفحوصات الطبية الخارجية <span style="color:#ef4444;">*</span></h4>
+                <p class="hint">ارفع صورة واحدة على الأقل (الحد الأقصى 5 صور)</p>
+
+                <!-- خانة 1 (إجبارية) -->
+                <div class="attach-row">
+                    <span class="num">1.</span>
+                    <span class="badge required">إجباري</span>
+                    <input type="file" id="extTest_0" accept="image/*,application/pdf">
+                    <div class="preview" id="extTestPreview_0">
+                        <img id="extTestImg_0" src="" alt="preview">
+                        <span class="info" id="extTestInfo_0"></span>
+                        <button type="button" class="btn-clear" onclick="clearAttachment('externalTests', 0)">🗑️ مسح</button>
+                    </div>
+                </div>
+
+                <!-- خانة 2 -->
+                <div class="attach-row">
+                    <span class="num">2.</span>
+                    <span class="badge optional">اختياري</span>
+                    <input type="file" id="extTest_1" accept="image/*,application/pdf">
+                    <div class="preview" id="extTestPreview_1">
+                        <img id="extTestImg_1" src="" alt="preview">
+                        <span class="info" id="extTestInfo_1"></span>
+                        <button type="button" class="btn-clear" onclick="clearAttachment('externalTests', 1)">🗑️ مسح</button>
+                    </div>
+                </div>
+
+                <!-- خانة 3 -->
+                <div class="attach-row">
+                    <span class="num">3.</span>
+                    <span class="badge optional">اختياري</span>
+                    <input type="file" id="extTest_2" accept="image/*,application/pdf">
+                    <div class="preview" id="extTestPreview_2">
+                        <img id="extTestImg_2" src="" alt="preview">
+                        <span class="info" id="extTestInfo_2"></span>
+                        <button type="button" class="btn-clear" onclick="clearAttachment('externalTests', 2)">🗑️ مسح</button>
+                    </div>
+                </div>
+
+                <!-- خانة 4 -->
+                <div class="attach-row">
+                    <span class="num">4.</span>
+                    <span class="badge optional">اختياري</span>
+                    <input type="file" id="extTest_3" accept="image/*,application/pdf">
+                    <div class="preview" id="extTestPreview_3">
+                        <img id="extTestImg_3" src="" alt="preview">
+                        <span class="info" id="extTestInfo_3"></span>
+                        <button type="button" class="btn-clear" onclick="clearAttachment('externalTests', 3)">🗑️ مسح</button>
+                    </div>
+                </div>
+
+                <!-- خانة 5 -->
+                <div class="attach-row">
+                    <span class="num">5.</span>
+                    <span class="badge optional">اختياري</span>
+                    <input type="file" id="extTest_4" accept="image/*,application/pdf">
+                    <div class="preview" id="extTestPreview_4">
+                        <img id="extTestImg_4" src="" alt="preview">
+                        <span class="info" id="extTestInfo_4"></span>
+                        <button type="button" class="btn-clear" onclick="clearAttachment('externalTests', 4)">🗑️ مسح</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="edit-card">
             <h3>✍️ التوقيع</h3>
             <div class="sig-section">
@@ -515,10 +733,26 @@ body {
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwwFqG_yDeJ786CbLZS1FH6zKlgbPtQJgzQPvp04a9ZONrPELsul5ILy2mCNYq9nT0D/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxRkSpfOcbbwoW-RkMoAGWh9MXVoP3M-0UnQUkQ0sHZlMh9v8Ouxh7PTYg6_rzykue5/exec';
 
 let currentEmployee = null;
 let signatureDataUrl = '';
+
+// ✅ متغيرات المرفقات
+var attachments = {
+    medicalRec: [
+        { data: '', name: '', type: '' },
+        { data: '', name: '', type: '' },
+        { data: '', name: '', type: '' }
+    ],
+    externalTests: [
+        { data: '', name: '', type: '' },
+        { data: '', name: '', type: '' },
+        { data: '', name: '', type: '' },
+        { data: '', name: '', type: '' },
+        { data: '', name: '', type: '' }
+    ]
+};
 
 function showScreen(name) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -639,6 +873,68 @@ function updateTotals() {
     if (total === 0) st.innerHTML = '⚪';
     else if (sum === total) st.innerHTML = '<span class="ok">✅ متطابق</span>';
     else st.innerHTML = '<span class="bad">❌ ' + (sum > total ? 'زيادة ' : 'ناقص ') + Math.abs(total - sum) + '</span>';
+
+    // ✅ إظهار/إخفاء قسم المرفقات حسب Sick
+    var sickDays = parseInt(document.getElementById('sick').value) || 0;
+    var attachSection = document.getElementById('attachmentSection');
+    if (attachSection) {
+        if (sickDays > 0) {
+            attachSection.style.display = 'block';
+        } else {
+            attachSection.style.display = 'none';
+            // ✅ امسح كل المرفقات
+            for (var i = 0; i < 3; i++) clearAttachment('medicalRec', i);
+            for (var j = 0; j < 5; j++) clearAttachment('externalTests', j);
+        }
+    }
+}
+
+// ✅ ربط خانات المرفقات
+function bindAttachment(inputId, section, idx, previewId, imgId, infoId) {
+    var inp = document.getElementById(inputId);
+    if (!inp) return;
+    
+    inp.addEventListener('change', function(e) {
+        var f = e.target.files[0];
+        if (!f) return;
+        
+        // ✅ تحقق من النوع
+        var allowed = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
+        if (allowed.indexOf(f.type) === -1) {
+            alert('⚠️ مسموح بس: صور (JPG/PNG) أو PDF');
+            this.value = '';
+            return;
+        }
+        
+        // ✅ تحقق من الحجم (5 MB)
+        if (f.size > 5 * 1024 * 1024) {
+            alert('⚠️ الملف كبير — الحد الأقصى 5 MB');
+            this.value = '';
+            return;
+        }
+        
+        var r = new FileReader();
+        r.onload = function(ev) {
+            attachments[section][idx].data = ev.target.result;
+            attachments[section][idx].name = f.name;
+            attachments[section][idx].type = f.type;
+            
+            document.getElementById(imgId).src = ev.target.result;
+            document.getElementById(infoId).innerText = f.name + ' (' + Math.round(f.size/1024) + ' KB)';
+            document.getElementById(previewId).style.display = 'block';
+        };
+        r.readAsDataURL(f);
+    });
+}
+
+function clearAttachment(section, idx) {
+    attachments[section][idx] = { data: '', name: '', type: '' };
+    
+    var prefix = (section === 'medicalRec') ? 'medRec_' : 'extTest_';
+    var inp = document.getElementById(prefix + idx);
+    if (inp) inp.value = '';
+    var prev = document.getElementById(prefix + 'Preview_' + idx);
+    if (prev) prev.style.display = 'none';
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -656,6 +952,17 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         r.readAsDataURL(f);
     });
+
+    // ✅ ربط كل خانات المرفقات
+    bindAttachment('medRec_0', 'medicalRec', 0, 'medRecPreview_0', 'medRecImg_0', 'medRecInfo_0');
+    bindAttachment('medRec_1', 'medicalRec', 1, 'medRecPreview_1', 'medRecImg_1', 'medRecInfo_1');
+    bindAttachment('medRec_2', 'medicalRec', 2, 'medRecPreview_2', 'medRecImg_2', 'medRecInfo_2');
+    
+    bindAttachment('extTest_0', 'externalTests', 0, 'extTestPreview_0', 'extTestImg_0', 'extTestInfo_0');
+    bindAttachment('extTest_1', 'externalTests', 1, 'extTestPreview_1', 'extTestImg_1', 'extTestInfo_1');
+    bindAttachment('extTest_2', 'externalTests', 2, 'extTestPreview_2', 'extTestImg_2', 'extTestInfo_2');
+    bindAttachment('extTest_3', 'externalTests', 3, 'extTestPreview_3', 'extTestImg_3', 'extTestInfo_3');
+    bindAttachment('extTest_4', 'externalTests', 4, 'extTestPreview_4', 'extTestImg_4', 'extTestInfo_4');
 
     const min = getMinDate();
     const minStr = toInputDate(min);
@@ -712,6 +1019,18 @@ async function submitForm() {
     }
     if (!signatureDataUrl) { showAlert('⚠️ ارفع صورة التوقيع', 'error'); return; }
 
+    // ✅ تحقق من المرفقات للإجازة المرضية
+    if (types.sick > 0) {
+        if (!attachments.medicalRec[0].data) {
+            showAlert('⚠️ التوصية الطبية: ارفع صورة واحدة على الأقل', 'error');
+            return;
+        }
+        if (!attachments.externalTests[0].data) {
+            showAlert('⚠️ الفحوصات الطبية: ارفع صورة واحدة على الأقل', 'error');
+            return;
+        }
+    }
+
     const btn = document.getElementById('btnSubmit');
     const statusEl = document.getElementById('statusMsg');
     btn.disabled = true;
@@ -760,7 +1079,8 @@ async function submitForm() {
             totalDays: totalDays,
             types: types,
             reason: breakdown.join(' | '),
-            signature: signatureDataUrl
+            signature: signatureDataUrl,
+            attachments: attachments  // ✅ المرفقات
         };
 
         statusEl.innerText = '⏳ جاري الإرسال...';
@@ -808,6 +1128,10 @@ function resetForm() {
      'injury','rr','compassionate','paternity']
         .forEach(id => document.getElementById(id).value = 0);
     clearSignature();
+    // ✅ تصفير المرفقات
+    for (var i = 0; i < 3; i++) clearAttachment('medicalRec', i);
+    for (var j = 0; j < 5; j++) clearAttachment('externalTests', j);
+    document.getElementById('attachmentSection').style.display = 'none';
     currentEmployee = null;
     hideAlert();
 }
@@ -919,7 +1243,6 @@ function queryEmployee() {
 function parseDate(v) {
     if (!v) return '-';
     var s = String(v);
-    // لو ISO format (فيه T و Z) → حوّلها
     if (s.indexOf('T') !== -1) {
         try {
             var d = new Date(s);
@@ -931,7 +1254,6 @@ function parseDate(v) {
             }
         } catch(e) {}
     }
-    // لو DD-MMM-YYYY أو غيرها → سيبها زي ما هي
     return s;
 }
 window.addEventListener('load', () => showScreen('home'));
